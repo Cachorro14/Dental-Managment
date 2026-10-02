@@ -33,6 +33,11 @@ export interface RoleSummary {
     name: string;
 }
 
+export interface ClinicStaffAssignableRole {
+    name: 'RECEPTIONIST' | 'DENTIST';
+    label: string;
+}
+
 export interface Feature {
     code: string;
     label: string;
@@ -83,6 +88,55 @@ export interface Patient {
     deleted_at?: string | null;
 }
 
+export interface DentistSummary {
+    id: number;
+    name: string;
+}
+
+export interface ClinicalHistory {
+    id?: number;
+    patient_id: number;
+    allergies: string | null;
+    medical_conditions: string | null;
+    current_medications: string | null;
+    surgical_history: string | null;
+    family_history: string | null;
+    habits: string | null;
+    clinical_notes: string | null;
+}
+
+export type OdontogramStatus =
+    | 'not_assessed'
+    | 'healthy'
+    | 'caries'
+    | 'filled'
+    | 'crown'
+    | 'missing'
+    | 'extraction'
+    | 'other';
+
+export interface OdontogramEntry {
+    tooth_number: number;
+    status: OdontogramStatus;
+    notes: string;
+    findings: OdontogramFinding[];
+}
+
+export type OdontogramSurface = 'mesial' | 'distal' | 'vestibular' | 'lingual' | 'occlusal' | 'incisal';
+
+export interface OdontogramFinding {
+    surface: OdontogramSurface;
+    condition: 'caries' | 'restoration' | 'fracture' | 'wear' | 'lesion' | 'sealant' | 'other';
+    severity: 'mild' | 'moderate' | 'severe';
+    notes: string;
+}
+
+export interface OdontogramAssessmentSummary {
+    id: number;
+    assessed_at: string;
+    created_by: string;
+}
+
 export interface Appointment {
     id: number;
     patient_id: number;
@@ -94,6 +148,11 @@ export interface Appointment {
     notes: string | null;
     patient?: Pick<Patient, 'id' | 'first_name' | 'last_name'>;
     dentist?: { id: number; name: string } | null;
+}
+
+export interface AppointmentFormOptions {
+    patients: Pick<Patient, 'id' | 'first_name' | 'last_name'>[];
+    dentists: Array<{ id: number; name: string }>;
 }
 
 export interface AuditLog {

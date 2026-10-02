@@ -10,7 +10,7 @@ export default function Welcome({ auth, branding }: PageProps) {
                 <div className="mx-auto flex min-h-screen max-w-7xl flex-col px-6 py-8 lg:px-10">
                     <header className="flex items-center justify-between">
                         <Link href="/" className="flex items-center gap-3">
-                            {branding.logoUrl ? <img src={branding.logoUrl} alt={branding.name} className="h-10 max-w-44 object-contain" /> : <ClinicMark className="h-10 w-10 text-blue-300" />}
+                            {branding.logoUrl ? <span className="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-full bg-white"><img src={branding.logoUrl} alt={branding.name} className="h-full w-full object-cover" /></span> : <ClinicMark className="h-10 w-10 text-blue-300" />}
                             <span className="font-semibold tracking-tight">{branding.name}</span>
                         </Link>
                         <Link href={auth.user ? route('dashboard') : route('login')} className="rounded-full border border-white/20 px-5 py-2 text-sm font-medium text-slate-200 transition hover:border-teal-300 hover:text-teal-200">{auth.user ? 'Ir al panel' : 'Ingresar'}</Link>

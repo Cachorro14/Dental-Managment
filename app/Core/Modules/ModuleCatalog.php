@@ -13,6 +13,7 @@ final class ModuleCatalog
     {
         return [
             'USER_MANAGEMENT' => ['label' => 'Gestion de usuarios', 'dependencies' => []],
+            'CLINIC_STAFF' => ['label' => 'Personal de la clínica', 'dependencies' => []],
             'PATIENTS' => ['label' => 'Patients', 'dependencies' => []],
             'APPOINTMENTS' => ['label' => 'Appointments', 'dependencies' => ['PATIENTS']],
             'CLINICAL_HISTORY' => ['label' => 'Clinical History', 'dependencies' => ['PATIENTS']],

@@ -21,6 +21,9 @@ class RolesAndPermissionsSeeder extends Seeder
             'users.create',
             'users.update',
             'users.delete',
+            'clinic_staff.view',
+            'clinic_staff.create',
+            'clinic_staff.update',
             'roles.view',
             'roles.create',
             'roles.update',
@@ -38,9 +41,15 @@ class RolesAndPermissionsSeeder extends Seeder
             'appointments.update',
             'appointments.delete',
             'patients.view',
+            'patients.view_all',
+            'patients.assign_dentists',
             'patients.create',
             'patients.update',
             'patients.delete',
+            'clinical_history.view',
+            'clinical_history.update',
+            'odontogram.view',
+            'odontogram.update',
         ];
 
         foreach ($permissions as $permission) {
@@ -77,25 +86,47 @@ class RolesAndPermissionsSeeder extends Seeder
             'users.view',
             'users.create',
             'users.update',
+            'clinic_staff.view',
+            'clinic_staff.create',
+            'clinic_staff.update',
+            'appointments.view',
+            'appointments.create',
+            'appointments.update',
+            'appointments.delete',
+            'patients.view',
+            'patients.view_all',
+            'patients.assign_dentists',
             'settings.view',
             'settings.update',
+            'clinical_history.view',
+            'odontogram.view',
+            'clinical_history.update',
+            'odontogram.update',
         ]);
 
         $receptionist->syncPermissions([
+            'patients.view',
+            'patients.view_all',
+            'patients.create',
+            'patients.update',
+            'appointments.view',
+            'appointments.create',
+            'appointments.update',
+            'clinical_history.view',
+            'odontogram.view',
+        ]);
+
+        $dentist->syncPermissions([
             'patients.view',
             'patients.create',
             'patients.update',
             'appointments.view',
             'appointments.create',
             'appointments.update',
-        ]);
-
-        $dentist->syncPermissions([
-            'patients.view',
-            'patients.update',
-            'appointments.view',
-            'appointments.create',
-            'appointments.update',
+            'clinical_history.view',
+            'clinical_history.update',
+            'odontogram.view',
+            'odontogram.update',
         ]);
     }
 }

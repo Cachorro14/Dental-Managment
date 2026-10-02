@@ -19,12 +19,12 @@ class UserManagementController extends Controller
         $search = request()->string('search')->trim()->toString();
 
         return Inertia::render('Admin/Users/Index', [
-            'users' => User::query()
+            'users' => Inertia::defer(fn () => User::query()
                 ->with('roles:id,name')
                 ->when($search !== '', fn ($query) => $query->where(fn ($query) => $query->where('name', 'like', "%{$search}%")->orWhere('email', 'like', "%{$search}%")))
                 ->latest()
                 ->paginate(15)
-                ->withQueryString(),
+                ->withQueryString()),
             'filters' => ['search' => $search],
         ]);
     }

@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests\Modules\Appointments;
 
+use App\Models\Modules\Patients\Patient;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Validator;
 
 class UpdateAppointmentRequest extends FormRequest
 {
@@ -30,5 +32,23 @@ class UpdateAppointmentRequest extends FormRequest
             'reason' => ['nullable', 'string', 'max:255'],
             'notes' => ['nullable', 'string', 'max:5000'],
         ];
+    }
+
+    /** @return array<int, \Closure(Validator): void> */
+    public function after(): array
+    {
+        return [function (Validator $validator): void {
+            $user = $this->user();
+
+            if ($validator->errors()->has('patient_id') || $user->can('patients.view_all')) {
+                return;
+            }
+
+            $patient = Patient::query()->find($this->integer('patient_id'));
+
+            if ($patient === null || ! $patient->isAssignedToDentist($user)) {
+                $validator->errors()->add('patient_id', 'Solo puedes cambiar la cita a un paciente asignado a tu cuenta.');
+            }
+        }];
     }
 }

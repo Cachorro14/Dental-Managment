@@ -12,7 +12,8 @@ class PatientPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->can('patients.view');
+        return $user->can('patients.view')
+            && ($user->can('patients.view_all') || $user->hasRole('DENTIST'));
     }
 
     /**
@@ -20,7 +21,7 @@ class PatientPolicy
      */
     public function view(User $user, Patient $patient): bool
     {
-        return $user->can('patients.view');
+        return $user->can('patients.view') && $this->canAccessPatient($user, $patient);
     }
 
     /**
@@ -36,7 +37,7 @@ class PatientPolicy
      */
     public function update(User $user, Patient $patient): bool
     {
-        return $user->can('patients.update');
+        return $user->can('patients.update') && $this->canAccessPatient($user, $patient);
     }
 
     /**
@@ -44,7 +45,7 @@ class PatientPolicy
      */
     public function delete(User $user, Patient $patient): bool
     {
-        return $user->can('patients.delete');
+        return $user->can('patients.delete') && $this->canAccessPatient($user, $patient);
     }
 
     /**
@@ -61,5 +62,10 @@ class PatientPolicy
     public function forceDelete(User $user, Patient $patient): bool
     {
         return false;
+    }
+
+    private function canAccessPatient(User $user, Patient $patient): bool
+    {
+        return $user->can('patients.view_all') || $patient->isAssignedToDentist($user);
     }
 }

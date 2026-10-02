@@ -6,8 +6,8 @@ Este archivo conserva el avance del proyecto entre conversaciones. El todo list 
 
 - Fase actual: Fase 8
 - Estado: En progreso
-- Siguiente objetivo: iniciar Clinical History después de cerrar la verificación visual de la interfaz.
-- Última actualización: 2026-09-28
+- Siguiente objetivo: iniciar Treatments.
+- Última actualización: 2026-09-30
 
 ## Fases
 
@@ -63,7 +63,9 @@ Este archivo conserva el avance del proyecto entre conversaciones. El todo list 
 - Módulo `USER_MANAGEMENT`: CRUD de usuarios, gestión de roles y permisos, acceso exclusivo de `SUPER_ADMIN` y protecciones de cuentas críticas completados.
 - Interfaz visible traducida al español y sin branding visible de Laravel: completado.
 - Acceso de `SUPER_ADMIN` a todos los módulos: completado.
-- Módulos clínicos posteriores: pendiente, comenzando por Clinical History.
+- Clinical History: ficha clínica por paciente, permisos, migración, preservación de notas médicas, interfaz Inertia y pruebas completados.
+- Odontogram: registro de estado y notas para las 32 piezas permanentes, permisos, migración, interfaz Inertia y pruebas completados.
+- Módulos clínicos posteriores: pendiente, comenzando por Treatments.
 
 ## Historial
 
@@ -97,3 +99,7 @@ Este archivo conserva el avance del proyecto entre conversaciones. El todo list 
 - Se corrigieron las expectativas de branding de `Laravel` a `Clinica Dental`.
 - Se agregó acceso inicial de `SUPER_ADMIN` a todos los módulos.
 - Verificación final: 28 pruebas, 69 assertions, TypeScript y build de producción pasaron; Pint pasó.
+- Se implementó Clinical History con ficha clínica única por paciente, permisos explícitos para consulta/edición y migración de notas médicas existentes.
+- Verificación de Clinical History: 37 pruebas, 88 assertions, TypeScript, build de producción y Pint pasaron.
+- Se implementó Odontogram con 32 piezas FDI, estados dentales, notas por pieza, permisos diferenciados y vista de consulta para recepción.
+- Verificación de Odontogram: 42 pruebas, 99 assertions, TypeScript, build de producción y Pint pasaron.

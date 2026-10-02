@@ -1,6 +1,5 @@
 import Checkbox from '@/Components/Checkbox';
 import InputError from '@/Components/InputError';
-import InputLabel from '@/Components/InputLabel';
 import PrimaryButton from '@/Components/PrimaryButton';
 import TextInput from '@/Components/TextInput';
 import GuestLayout from '@/Layouts/GuestLayout';
@@ -32,47 +31,50 @@ export default function Login({
         <GuestLayout>
             <Head title="Ingresar" />
 
-            {status && (
-                <div className="mb-4 text-sm font-medium text-green-600">
-                    {status}
-                </div>
-            )}
+            <div className="guest-form-surface rounded-xl p-5 sm:p-6">
+                {status && (
+                    <div className="mb-4 text-sm font-medium text-green-600">
+                        {status}
+                    </div>
+                )}
 
-            <form onSubmit={submit}>
-                <div>
-                    <InputLabel htmlFor="email" value="Email" />
-
+                <form onSubmit={submit} className="space-y-5">
+                <div className="relative">
                     <TextInput
                         id="email"
                         type="email"
                         name="email"
                         value={data.email}
-                        className="mt-1 block w-full"
+                        className="peer block w-full placeholder:text-transparent"
+                        placeholder=" "
+                        aria-label="Correo electronico"
                         autoComplete="username"
                         isFocused={true}
                         onChange={(e) => setData('email', e.target.value)}
                     />
+                    <label htmlFor="email" className="pointer-events-none absolute mt-[-2.55rem] ms-5 text-sm text-slate-400 transition-opacity peer-focus:opacity-0 peer-[:not(:placeholder-shown)]:opacity-0">Correo electronico</label>
 
                     <InputError message={errors.email} className="mt-2" />
                 </div>
 
-                <div className="mt-4">
-                    <InputLabel htmlFor="password" value="Contrasena" />
-
+                <div className="relative">
                     <TextInput
                         id="password"
                         type="password"
                         name="password"
                         value={data.password}
-                        className="mt-1 block w-full"
+                        className="peer block w-full placeholder:text-transparent"
+                        placeholder=" "
+                        aria-label="Contrasena"
                         autoComplete="current-password"
                         onChange={(e) => setData('password', e.target.value)}
                     />
+                    <label htmlFor="password" className="pointer-events-none absolute mt-[-2.55rem] ms-5 text-sm text-slate-400 transition-opacity peer-focus:opacity-0 peer-[:not(:placeholder-shown)]:opacity-0">Contrasena</label>
 
                     <InputError message={errors.password} className="mt-2" />
                 </div>
 
-                <div className="mt-4 block">
+                <div className="block">
                     <label className="flex items-center">
                         <Checkbox
                             name="remember"
@@ -90,21 +92,22 @@ export default function Login({
                     </label>
                 </div>
 
-                <div className="mt-4 flex items-center justify-end">
+                <div className="flex flex-col-reverse items-stretch gap-4 sm:flex-row sm:items-center sm:justify-end">
                     {canResetPassword && (
                         <Link
                             href={route('password.request')}
-                            className="rounded-md text-sm text-gray-600 underline hover:text-blue-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                            className="rounded-full px-3 py-2 text-center text-sm font-medium text-slate-600 transition hover:bg-blue-50 hover:text-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-300 focus:ring-offset-2"
                         >
                             Olvidaste tu contrasena?
                         </Link>
                     )}
 
-                    <PrimaryButton className="ms-4" disabled={processing}>
+                        <PrimaryButton className="justify-center sm:ms-0" disabled={processing}>
                         Ingresar
                     </PrimaryButton>
                 </div>
-            </form>
+                </form>
+            </div>
         </GuestLayout>
     );
 }

@@ -21,17 +21,17 @@ class AppointmentController extends Controller
     {
         Gate::authorize('viewAny', Appointment::class);
         $date = $request->string('date')->trim()->toString();
-
-        $appointments = Appointment::query()
-            ->with(['patient:id,first_name,last_name', 'dentist:id,name'])
-            ->when($date !== '', fn ($query) => $query->whereDate('scheduled_at', $date))
-            ->orderBy('scheduled_at')
-            ->orderBy('id')
-            ->paginate(15)
-            ->withQueryString();
+        $user = $request->user();
 
         return Inertia::render('Appointments/Index', [
-            'appointments' => $appointments,
+            'appointments' => Inertia::defer(fn () => Appointment::query()
+                ->with(['patient:id,first_name,last_name', 'dentist:id,name'])
+                ->when(! $user->can('patients.view_all'), fn ($query) => $query->whereHas('patient.dentists', fn ($dentists) => $dentists->whereKey($user->id)))
+                ->when($date !== '', fn ($query) => $query->whereDate('scheduled_at', $date))
+                ->orderBy('scheduled_at')
+                ->orderBy('id')
+                ->paginate(15)
+                ->withQueryString()),
             'filters' => ['date' => $date],
         ]);
     }
@@ -40,12 +40,21 @@ class AppointmentController extends Controller
     {
         Gate::authorize('create', Appointment::class);
 
-        return Inertia::render('Appointments/Create', $this->formOptions());
+        return Inertia::render('Appointments/Create', [
+            'formOptions' => Inertia::defer(fn (): array => $this->formOptions(request()->user())),
+            'isDentist' => request()->user()->hasRole('DENTIST'),
+        ]);
     }
 
     public function store(StoreAppointmentRequest $request): RedirectResponse
     {
-        $appointment = Appointment::create($request->validated());
+        $data = $request->validated();
+
+        if ($request->user()->hasRole('DENTIST')) {
+            $data['dentist_id'] = $request->user()->id;
+        }
+
+        $appointment = Appointment::create($data);
 
         return redirect()->route('appointments.show', $appointment);
     }
@@ -64,13 +73,20 @@ class AppointmentController extends Controller
 
         return Inertia::render('Appointments/Edit', [
             'appointment' => $appointment,
-            ...$this->formOptions(),
+            'formOptions' => Inertia::defer(fn (): array => $this->formOptions(request()->user())),
+            'isDentist' => request()->user()->hasRole('DENTIST'),
         ]);
     }
 
     public function update(UpdateAppointmentRequest $request, Appointment $appointment): RedirectResponse
     {
-        $appointment->update($request->validated());
+        $data = $request->validated();
+
+        if ($request->user()->hasRole('DENTIST')) {
+            $data['dentist_id'] = $appointment->dentist_id;
+        }
+
+        $appointment->update($data);
 
         return redirect()->route('appointments.show', $appointment);
     }
@@ -84,10 +100,16 @@ class AppointmentController extends Controller
     }
 
     /** @return array{patients: Collection, dentists: Collection} */
-    private function formOptions(): array
+    private function formOptions(User $user): array
     {
+        $patients = Patient::query()
+            ->when(! $user->can('patients.view_all'), fn ($query) => $query->whereHas('dentists', fn ($dentists) => $dentists->whereKey($user->id)))
+            ->orderBy('last_name')
+            ->orderBy('first_name')
+            ->get(['id', 'first_name', 'last_name']);
+
         return [
-            'patients' => Patient::query()->orderBy('last_name')->orderBy('first_name')->get(['id', 'first_name', 'last_name']),
+            'patients' => $patients,
             'dentists' => User::role('DENTIST')->orderBy('name')->get(['id', 'name']),
         ];
     }

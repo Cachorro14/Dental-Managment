@@ -33,4 +33,16 @@ class AuthenticationRoutesTest extends TestCase
             ->get(route('dashboard'))
             ->assertOk();
     }
+
+    public function test_login_errors_are_returned_in_spanish(): void
+    {
+        $this->from(route('login'))
+            ->post(route('login'), [
+                'email' => 'no-existe@example.com',
+                'password' => 'incorrecta',
+            ])
+            ->assertSessionHasErrors([
+                'email' => 'Las credenciales proporcionadas no coinciden con nuestros registros.',
+            ]);
+    }
 }

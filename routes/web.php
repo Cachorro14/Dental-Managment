@@ -7,7 +7,11 @@ use App\Http\Controllers\Admin\UserManagementController;
 use App\Http\Controllers\AuditLogController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Modules\Appointments\AppointmentController;
+use App\Http\Controllers\Modules\ClinicalHistory\ClinicalHistoryController;
+use App\Http\Controllers\Modules\ClinicStaff\ClinicStaffController;
+use App\Http\Controllers\Modules\Odontogram\OdontogramController;
 use App\Http\Controllers\Modules\Patients\PatientController;
+use App\Http\Controllers\Modules\Patients\PatientDentistAssignmentController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -55,11 +59,26 @@ Route::middleware(['auth', 'module:USER_MANAGEMENT', 'role:SUPER_ADMIN', 'permis
     Route::delete('/{role}', [RoleManagementController::class, 'destroy'])->middleware('permission:roles.delete')->name('destroy');
 });
 
+Route::middleware(['auth', 'module:CLINIC_STAFF', 'role:CLINIC_ADMIN', 'permission:clinic_staff.view'])
+    ->prefix('clinic/staff')
+    ->name('clinic-staff.')
+    ->group(function () {
+        Route::get('/', [ClinicStaffController::class, 'index'])->name('index');
+        Route::get('/create', [ClinicStaffController::class, 'create'])->middleware('permission:clinic_staff.create')->name('create');
+        Route::post('/', [ClinicStaffController::class, 'store'])->middleware('permission:clinic_staff.create')->name('store');
+        Route::get('/{user}/edit', [ClinicStaffController::class, 'edit'])->middleware('permission:clinic_staff.update')->name('edit');
+        Route::patch('/{user}', [ClinicStaffController::class, 'update'])->middleware('permission:clinic_staff.update')->name('update');
+    });
+
 Route::middleware(['auth', 'module:PATIENTS'])->prefix('patients')->name('patients.')->group(function () {
     Route::get('/', [PatientController::class, 'index'])
         ->middleware('permission:patients.view')->name('index');
     Route::get('/create', [PatientController::class, 'create'])
         ->middleware('permission:patients.create')->name('create');
+    Route::get('/{patient}/dentists', [PatientDentistAssignmentController::class, 'edit'])
+        ->middleware('permission:patients.assign_dentists')->name('dentists.edit');
+    Route::put('/{patient}/dentists', [PatientDentistAssignmentController::class, 'update'])
+        ->middleware('permission:patients.assign_dentists')->name('dentists.update');
     Route::post('/', [PatientController::class, 'store'])
         ->middleware('permission:patients.create')->name('store');
     Route::get('/{patient}', [PatientController::class, 'show'])
@@ -81,5 +100,31 @@ Route::middleware(['auth', 'module:APPOINTMENTS'])->prefix('appointments')->name
     Route::patch('/{appointment}', [AppointmentController::class, 'update'])->middleware('permission:appointments.update')->name('update');
     Route::delete('/{appointment}', [AppointmentController::class, 'destroy'])->middleware('permission:appointments.delete')->name('destroy');
 });
+
+Route::middleware(['auth', 'module:CLINICAL_HISTORY'])
+    ->prefix('patients/{patient}/clinical-history')
+    ->name('clinical-history.')
+    ->scopeBindings()
+    ->group(function () {
+        Route::get('/', [ClinicalHistoryController::class, 'edit'])
+            ->middleware('permission:clinical_history.view')->name('edit');
+        Route::patch('/', [ClinicalHistoryController::class, 'update'])
+            ->middleware('permission:clinical_history.update')->name('update');
+    });
+
+Route::middleware(['auth', 'module:ODONTOGRAM'])
+    ->prefix('patients/{patient}/odontogram')
+    ->name('odontogram.')
+    ->scopeBindings()
+    ->group(function () {
+        Route::get('/', [OdontogramController::class, 'edit'])
+            ->middleware('permission:odontogram.view')->name('edit');
+        Route::post('/', [OdontogramController::class, 'store'])
+            ->middleware('permission:odontogram.update')->name('assessments.store');
+        Route::get('/assessments/{odontogramAssessment}', [OdontogramController::class, 'show'])
+            ->middleware('permission:odontogram.view')->name('assessments.show');
+        Route::patch('/', [OdontogramController::class, 'update'])
+            ->middleware('permission:odontogram.update')->name('update');
+    });
 
 require __DIR__.'/auth.php';

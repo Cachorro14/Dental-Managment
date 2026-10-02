@@ -6,11 +6,13 @@ export default function InputLabel({
     children,
     ...props
 }: LabelHTMLAttributes<HTMLLabelElement> & { value?: string }) {
+    const isFieldLabel = Boolean(props.htmlFor);
+
     return (
         <label
             {...props}
             className={
-                `block text-sm font-semibold text-slate-700 ` +
+                `${isFieldLabel ? 'floating-input-label ' : ''}block text-sm font-semibold tracking-tight text-slate-700 ` +
                 className
             }
         >

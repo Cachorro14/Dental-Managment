@@ -19,7 +19,7 @@ class ClinicSettingsTest extends TestCase
 
         $this->assertSame('Clinica Dental', $settings->get('clinic.name'));
         $this->assertSame('UTC', $settings->get('clinic.timezone'));
-        $this->assertSame('en', $settings->get('clinic.locale'));
+        $this->assertSame('es', $settings->get('clinic.locale'));
         $this->assertSame('USD', $settings->get('clinic.currency'));
     }
 

@@ -12,7 +12,8 @@ class AppointmentPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->can('appointments.view');
+        return $user->can('appointments.view')
+            && ($user->can('patients.view_all') || $user->hasRole('DENTIST'));
     }
 
     /**
@@ -20,7 +21,7 @@ class AppointmentPolicy
      */
     public function view(User $user, Appointment $appointment): bool
     {
-        return $user->can('appointments.view');
+        return $user->can('appointments.view') && $this->canAccessAppointment($user, $appointment);
     }
 
     /**
@@ -28,7 +29,8 @@ class AppointmentPolicy
      */
     public function create(User $user): bool
     {
-        return $user->can('appointments.create');
+        return $user->can('appointments.create')
+            && ($user->can('patients.view_all') || $user->hasRole('DENTIST'));
     }
 
     /**
@@ -36,7 +38,7 @@ class AppointmentPolicy
      */
     public function update(User $user, Appointment $appointment): bool
     {
-        return $user->can('appointments.update');
+        return $user->can('appointments.update') && $this->canAccessAppointment($user, $appointment);
     }
 
     /**
@@ -44,7 +46,7 @@ class AppointmentPolicy
      */
     public function delete(User $user, Appointment $appointment): bool
     {
-        return $user->can('appointments.delete');
+        return $user->can('appointments.delete') && $this->canAccessAppointment($user, $appointment);
     }
 
     /**
@@ -61,5 +63,11 @@ class AppointmentPolicy
     public function forceDelete(User $user, Appointment $appointment): bool
     {
         return false;
+    }
+
+    private function canAccessAppointment(User $user, Appointment $appointment): bool
+    {
+        return $user->can('patients.view_all')
+            || ($appointment->patient?->isAssignedToDentist($user) ?? false);
     }
 }

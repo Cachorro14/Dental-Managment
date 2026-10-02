@@ -1,15 +1,56 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Module, PageProps, RoleSummary } from '@/types';
-import { Head, router, useForm } from '@inertiajs/react';
+import { Head, router, useForm, usePage } from '@inertiajs/react';
 import { useState } from 'react';
 
 type Props = PageProps<{ modules: Module[]; roles: RoleSummary[]; assignments: Record<string, string[]> }>;
 
 export default function Index({ modules, roles, assignments }: Props) {
+    const canUpdate = usePage<PageProps>().props.auth.permissions.includes('modules.update');
     const [selectedRole, setSelectedRole] = useState(roles[0]?.id.toString() ?? '');
     const form = useForm({ role_id: selectedRole, modules: assignments[selectedRole] ?? [] });
-    const selectRole = (roleId: string) => { setSelectedRole(roleId); form.setData({ role_id: roleId, modules: assignments[roleId] ?? [] }); };
+    const selectRole = (roleId: string) => {
+        setSelectedRole(roleId);
+        form.setData({ role_id: roleId, modules: assignments[roleId] ?? [] });
+    };
     const toggleRoleModule = (code: string) => form.setData('modules', form.data.modules.includes(code) ? form.data.modules.filter((module) => module !== code) : [...form.data.modules, code]);
+    const saveRoleModules = () => form.put(route('admin.modules.roles.update'), { preserveScroll: true });
 
-    return <AuthenticatedLayout header={<div><p className="text-sm font-medium text-teal-600">Configuracion del sistema</p><h1 className="mt-1 text-2xl font-semibold tracking-tight text-slate-900">Modulos y acceso</h1></div>}><Head title="Modulos y acceso" /><div className="min-h-[calc(100vh-5rem)] bg-slate-50 px-4 py-8 sm:px-6 lg:px-8"><div className="mx-auto grid max-w-7xl gap-6 lg:grid-cols-[1.1fr_0.9fr]"><section className="space-y-4"><div><p className="text-sm text-slate-500">Capacidades de la instalacion</p><h2 className="text-xl font-semibold text-slate-900">Modulos disponibles</h2></div><div className="grid gap-4 sm:grid-cols-2">{modules.map((module) => <article key={module.code} className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm"><div className="flex items-start justify-between gap-4"><div><span className="inline-flex rounded-lg bg-teal-50 px-2 py-1 text-xs font-semibold tracking-wide text-teal-700">{module.code}</span><h3 className="mt-3 font-semibold text-slate-900">{module.label}</h3><p className="mt-1 text-sm text-slate-500">{module.dependencies.length ? `Requiere ${module.dependencies.join(', ')}` : 'Sin dependencias'}</p></div><button type="button" onClick={() => router.patch(route('admin.modules.update', module.code), { enabled: !module.enabled }, { preserveScroll: true })} className={`relative h-7 w-12 rounded-full transition ${module.enabled ? 'bg-teal-600' : 'bg-slate-200'}`} aria-label={`Cambiar ${module.label}`}><span className={`absolute top-1 h-5 w-5 rounded-full bg-white shadow transition ${module.enabled ? 'left-6' : 'left-1'}`} /></button></div><p className={`mt-5 text-xs font-semibold uppercase tracking-wider ${module.enabled ? 'text-emerald-600' : 'text-slate-400'}`}>{module.enabled ? 'Habilitado' : 'Deshabilitado'}</p></article>)}</div></section><section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm"><p className="text-sm text-slate-500">Acceso por rol</p><h2 className="mt-1 text-xl font-semibold text-slate-900">Asignar modulos a roles</h2><p className="mt-2 text-sm leading-6 text-slate-500">Un rol necesita acceso al modulo y los permisos correspondientes para entrar.</p><label className="mt-6 block text-sm font-medium text-slate-700">Rol<select value={selectedRole} onChange={(event) => selectRole(event.target.value)} className="mt-2 block w-full rounded-xl border-slate-300 bg-white shadow-sm">{roles.map((role) => <option key={role.id} value={role.id}>{role.name}</option>)}</select></label><div className="mt-5 space-y-2">{modules.map((module) => <label key={module.code} className="flex items-center gap-3 rounded-xl border border-slate-200 px-4 py-3 transition hover:border-teal-300"><input type="checkbox" checked={form.data.modules.includes(module.code)} onChange={() => toggleRoleModule(module.code)} className="rounded border-slate-300 text-teal-600 focus:ring-teal-500" /><span className="text-sm font-medium text-slate-700">{module.label}</span></label>)}</div><button type="button" onClick={() => form.put(route('admin.modules.roles.update'), { preserveScroll: true })} disabled={form.processing || !selectedRole} className="mt-6 w-full rounded-xl bg-slate-900 px-4 py-3 text-sm font-semibold text-white transition hover:bg-teal-700 disabled:opacity-50">Guardar acceso del rol</button></section></div></div></AuthenticatedLayout>;
+    return (
+        <AuthenticatedLayout header={<div><p className="text-sm font-medium text-teal-600">Configuración del sistema</p><h1 className="mt-1 text-2xl font-semibold tracking-tight text-slate-900">Módulos y acceso</h1></div>}>
+            <Head title="Módulos y acceso" />
+            <div className="min-h-[calc(100vh-5rem)] bg-slate-50 px-4 py-8 sm:px-6 lg:px-8">
+                <div className="mx-auto grid max-w-7xl gap-6 lg:grid-cols-[1.1fr_0.9fr]">
+                    <section className="space-y-4">
+                        <div><p className="text-sm text-slate-500">Capacidades de la instalación</p><h2 className="text-xl font-semibold text-slate-900">Módulos disponibles</h2></div>
+                        <div className="grid gap-4 sm:grid-cols-2">
+                            {modules.map((module) => <article key={module.code} className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+                                <div className="flex items-start justify-between gap-4">
+                                    <div><span className="inline-flex rounded-lg bg-teal-50 px-2 py-1 text-xs font-semibold tracking-wide text-teal-700">{module.code}</span><h3 className="mt-3 font-semibold text-slate-900">{module.label}</h3><p className="mt-1 text-sm text-slate-500">{module.dependencies.length ? `Requiere ${module.dependencies.join(', ')}` : 'Sin dependencias'}</p></div>
+                                    {canUpdate && <button type="button" onClick={() => router.patch(route('admin.modules.update', module.code), { enabled: !module.enabled }, { preserveScroll: true })} className={`relative h-7 w-12 shrink-0 rounded-full transition ${module.enabled ? 'bg-teal-600' : 'bg-slate-200'}`} aria-label={`Cambiar ${module.label}`} aria-pressed={module.enabled}><span className={`absolute top-1 h-5 w-5 rounded-full bg-white shadow transition ${module.enabled ? 'left-6' : 'left-1'}`} /></button>}
+                                </div>
+                                <p className={`mt-5 text-xs font-semibold uppercase tracking-wider ${module.enabled ? 'text-emerald-600' : 'text-slate-400'}`}>{module.enabled ? 'Habilitado' : 'Deshabilitado'}</p>
+                            </article>)}
+                        </div>
+                    </section>
+
+                    <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+                        <p className="text-sm text-slate-500">Acceso por rol</p>
+                        <h2 className="mt-1 text-xl font-semibold text-slate-900">Módulos asignados</h2>
+                        <label htmlFor="role_id" className="mt-5 block text-sm font-medium text-slate-700">Rol</label>
+                        <select id="role_id" value={selectedRole} disabled={!canUpdate} onChange={(event) => selectRole(event.target.value)} className="mt-1 block w-full rounded-xl border-slate-300 disabled:bg-slate-50">
+                            {roles.map((role) => <option key={role.id} value={role.id}>{role.name}</option>)}
+                        </select>
+                        <div className="mt-5 space-y-3">
+                            {modules.map((module) => <label key={module.code} className="flex min-h-12 items-center gap-3 rounded-xl border border-slate-200 px-4 py-3 text-sm text-slate-700">
+                                <input type="checkbox" checked={form.data.modules.includes(module.code)} disabled={!canUpdate} onChange={() => toggleRoleModule(module.code)} className="rounded border-slate-300 text-teal-600 focus:ring-teal-500 disabled:opacity-60" />
+                                <span>{module.label}</span>
+                            </label>)}
+                        </div>
+                        {canUpdate && <button type="button" onClick={saveRoleModules} disabled={form.processing || !selectedRole} className="mt-6 inline-flex min-h-11 w-full items-center justify-center rounded-xl bg-teal-700 px-4 py-2 text-sm font-semibold text-white transition hover:bg-teal-800 disabled:opacity-50">Guardar acceso del rol</button>}
+                    </section>
+                </div>
+            </div>
+        </AuthenticatedLayout>
+    );
 }

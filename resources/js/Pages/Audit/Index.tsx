@@ -1,14 +1,15 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import ToothLoader from '@/Components/ToothLoader';
 import { AuditLog, PageProps, Paginated } from '@/types';
 import { Head, Link } from '@inertiajs/react';
 
-export default function Index({ auditLogs }: PageProps<{ auditLogs: Paginated<AuditLog> }>) {
+export default function Index({ auditLogs }: PageProps<{ auditLogs?: Paginated<AuditLog> }>) {
     return (
         <AuthenticatedLayout header={<h2 className="text-xl font-semibold leading-tight text-gray-800">Registro de auditoria</h2>}>
             <Head title="Registro de auditoria" />
             <div className="py-12">
                 <div className="mx-auto max-w-7xl space-y-6 sm:px-6 lg:px-8">
-                    <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg">
+                    {auditLogs ? <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg">
                         <div className="overflow-x-auto">
                             <table className="min-w-full divide-y divide-gray-200">
                                 <thead className="bg-gray-50">
@@ -32,7 +33,7 @@ export default function Index({ auditLogs }: PageProps<{ auditLogs: Paginated<Au
                             </table>
                         </div>
                         {auditLogs.links.length > 3 && <nav className="flex gap-2 border-t border-gray-200 p-4">{auditLogs.links.map((link, index) => link.url ? <Link key={index} href={link.url} className={'rounded px-3 py-1 text-sm ' + (link.active ? 'bg-indigo-600 text-white' : 'text-gray-600 hover:bg-gray-100')} dangerouslySetInnerHTML={{ __html: link.label }} /> : <span key={index} className="px-3 py-1 text-sm text-gray-400" dangerouslySetInnerHTML={{ __html: link.label }} />)}</nav>}
-                    </div>
+                    </div> : <div className="rounded-2xl border border-slate-200 bg-white shadow-sm"><ToothLoader label="Cargando auditoría" compact /></div>}
                 </div>
             </div>
         </AuthenticatedLayout>

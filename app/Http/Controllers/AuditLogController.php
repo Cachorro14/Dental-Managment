@@ -13,15 +13,13 @@ class AuditLogController extends Controller
     {
         $event = $request->string('event')->trim()->toString();
 
-        $auditLogs = AuditLog::query()
-            ->with('user:id,name')
-            ->when($event !== '', fn ($query) => $query->where('event', $event))
-            ->latest()
-            ->paginate(25)
-            ->withQueryString();
-
         return Inertia::render('Audit/Index', [
-            'auditLogs' => $auditLogs,
+            'auditLogs' => Inertia::defer(fn () => AuditLog::query()
+                ->with('user:id,name')
+                ->when($event !== '', fn ($query) => $query->where('event', $event))
+                ->latest()
+                ->paginate(25)
+                ->withQueryString()),
             'filters' => ['event' => $event],
         ]);
     }

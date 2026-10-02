@@ -8,6 +8,7 @@ use App\Http\Requests\Modules\Patients\UpdatePatientRequest;
 use App\Models\Modules\Patients\Patient;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -23,19 +24,20 @@ class PatientController extends Controller
 
         $search = $request->string('search')->trim()->toString();
 
-        $patients = Patient::query()
-            ->when($search !== '', fn ($query) => $query->where(function ($query) use ($search): void {
-                $query->where('first_name', 'like', "%{$search}%")
-                    ->orWhere('last_name', 'like', "%{$search}%")
-                    ->orWhere('email', 'like', "%{$search}%");
-            }))
-            ->orderBy('last_name')
-            ->orderBy('first_name')
-            ->paginate(15)
-            ->withQueryString();
+        $user = $request->user();
 
         return Inertia::render('Patients/Index', [
-            'patients' => $patients,
+            'patients' => Inertia::defer(fn () => Patient::query()
+                ->when(! $user->can('patients.view_all'), fn ($query) => $query->whereHas('dentists', fn ($dentists) => $dentists->whereKey($user->id)))
+                ->when($search !== '', fn ($query) => $query->where(function ($query) use ($search): void {
+                    $query->where('first_name', 'like', "%{$search}%")
+                        ->orWhere('last_name', 'like', "%{$search}%")
+                        ->orWhere('email', 'like', "%{$search}%");
+                }))
+                ->orderBy('last_name')
+                ->orderBy('first_name')
+                ->paginate(15)
+                ->withQueryString()),
             'filters' => ['search' => $search],
         ]);
     }
@@ -55,7 +57,16 @@ class PatientController extends Controller
      */
     public function store(StorePatientRequest $request): RedirectResponse
     {
-        $patient = Patient::create($request->validated());
+        $patient = DB::transaction(function () use ($request): Patient {
+            $patient = Patient::create($request->validated());
+            $user = $request->user();
+
+            if ($user->hasRole('DENTIST')) {
+                $patient->dentists()->attach($user->id);
+            }
+
+            return $patient;
+        });
 
         return redirect()->route('patients.show', $patient);
     }

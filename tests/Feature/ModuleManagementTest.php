@@ -5,7 +5,9 @@ namespace Tests\Feature;
 use App\Core\Modules\ModuleCatalog;
 use App\Core\Modules\ModuleManager;
 use App\Core\Modules\ModuleState;
+use App\Models\User;
 use Database\Seeders\ModuleCatalogSeeder;
+use Database\Seeders\RolesAndPermissionsSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Route;
 use Tests\TestCase;
@@ -28,6 +30,7 @@ class ModuleManagementTest extends TestCase
         $this->seed(ModuleCatalogSeeder::class);
 
         $manager = app(ModuleManager::class);
+        ModuleState::query()->where('code', 'APPOINTMENTS')->update(['enabled' => false]);
         $manager->disable('PATIENTS');
 
         $this->expectException(\LogicException::class);
@@ -39,8 +42,6 @@ class ModuleManagementTest extends TestCase
         $this->seed(ModuleCatalogSeeder::class);
 
         $manager = app(ModuleManager::class);
-        $manager->enable('APPOINTMENTS');
-
         $this->expectException(\LogicException::class);
         $manager->disable('PATIENTS');
     }
@@ -67,6 +68,27 @@ class ModuleManagementTest extends TestCase
         $this->seed(ModuleCatalogSeeder::class);
 
         $this->assertTrue(app(ModuleManager::class)->isEnabled('PATIENTS'));
-        $this->assertFalse(app(ModuleManager::class)->isEnabled('APPOINTMENTS'));
+        $this->assertTrue(app(ModuleManager::class)->isEnabled('APPOINTMENTS'));
+    }
+
+    public function test_super_admin_can_toggle_the_clinic_staff_module(): void
+    {
+        $this->seed([RolesAndPermissionsSeeder::class, ModuleCatalogSeeder::class]);
+        $superAdmin = User::factory()->create();
+        $superAdmin->assignRole('SUPER_ADMIN');
+
+        $this->actingAs($superAdmin)
+            ->from(route('admin.modules.index'))
+            ->patch(route('admin.modules.update', 'CLINIC_STAFF'), ['enabled' => false])
+            ->assertRedirect(route('admin.modules.index'));
+
+        $this->assertDatabaseHas('module_states', ['code' => 'CLINIC_STAFF', 'enabled' => false]);
+
+        $this->actingAs($superAdmin)
+            ->from(route('admin.modules.index'))
+            ->patch(route('admin.modules.update', 'CLINIC_STAFF'), ['enabled' => true])
+            ->assertRedirect(route('admin.modules.index'));
+
+        $this->assertDatabaseHas('module_states', ['code' => 'CLINIC_STAFF', 'enabled' => true]);
     }
 }

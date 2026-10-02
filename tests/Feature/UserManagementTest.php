@@ -6,6 +6,7 @@ use App\Models\User;
 use Database\Seeders\ModuleCatalogSeeder;
 use Database\Seeders\RolesAndPermissionsSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Inertia\Testing\AssertableInertia as Assert;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 use Tests\TestCase;
@@ -36,7 +37,9 @@ class UserManagementTest extends TestCase
 
         $this->actingAs($admin)
             ->get(route('admin.users.index'))
-            ->assertOk();
+            ->assertInertia(fn (Assert $page) => $page
+                ->missing('users')
+                ->loadDeferredProps(fn (Assert $deferred) => $deferred->has('users.data', 1)));
 
         $this->actingAs($admin)
             ->get(route('admin.roles.index'))

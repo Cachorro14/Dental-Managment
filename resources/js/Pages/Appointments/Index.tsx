@@ -1,12 +1,14 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import ToothLoader from '@/Components/ToothLoader';
 import { Appointment, PageProps, Paginated } from '@/types';
-import { Head, Link, router } from '@inertiajs/react';
+import { Head, Link, router, usePage } from '@inertiajs/react';
 import { FormEvent, useState } from 'react';
 
 const statusLabels: Record<Appointment['status'], string> = { scheduled: 'Programada', confirmed: 'Confirmada', completed: 'Completada', cancelled: 'Cancelada' };
 const statusStyles: Record<Appointment['status'], string> = { scheduled: 'bg-amber-50 text-amber-700', confirmed: 'bg-blue-50 text-blue-700', completed: 'bg-emerald-50 text-emerald-700', cancelled: 'bg-slate-100 text-slate-500' };
 
-export default function Index({ appointments, filters }: PageProps<{ appointments: Paginated<Appointment>; filters: { date: string } }>) {
+export default function Index({ appointments, filters }: PageProps<{ appointments?: Paginated<Appointment>; filters: { date: string } }>) {
+    const canCreateAppointments = usePage<PageProps>().props.auth.permissions.includes('appointments.create');
     const [date, setDate] = useState(filters.date);
     const submit = (event: FormEvent) => {
         event.preventDefault();
@@ -23,16 +25,16 @@ export default function Index({ appointments, filters }: PageProps<{ appointment
                             <input type="date" value={date} onChange={(event) => setDate(event.target.value)} className="min-w-0 rounded-xl border-slate-300 shadow-sm focus:border-blue-600 focus:ring-blue-500" />
                             <button className="rounded-xl bg-slate-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-300 focus:ring-offset-2">Filtrar</button>
                         </form>
-                        <Link href={route('appointments.create')} className="inline-flex min-h-11 items-center justify-center rounded-xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-blue-300 focus:ring-offset-2">Nueva cita</Link>
+                        {canCreateAppointments && <Link href={route('appointments.create')} className="inline-flex min-h-11 items-center justify-center rounded-xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-blue-300 focus:ring-offset-2">Nueva cita</Link>}
                     </div>
 
-                    <section className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+                    {appointments ? <section className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
                         {appointments.data.length === 0 ? (
                             <div className="px-6 py-16 text-center">
                                 <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-50 text-2xl text-blue-700">+</div>
                                 <h3 className="mt-5 text-lg font-semibold text-slate-900">No hay citas para esta fecha</h3>
                                 <p className="mt-2 text-sm text-slate-500">Programa una cita nueva o selecciona otra fecha para consultar la agenda.</p>
-                                <Link href={route('appointments.create')} className="mt-6 inline-flex min-h-11 items-center rounded-xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-300 focus:ring-offset-2">Programar cita</Link>
+                                {canCreateAppointments && <Link href={route('appointments.create')} className="mt-6 inline-flex min-h-11 items-center rounded-xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-300 focus:ring-offset-2">Programar cita</Link>}
                             </div>
                         ) : (
                             <>
@@ -45,7 +47,7 @@ export default function Index({ appointments, filters }: PageProps<{ appointment
                                 <Pagination links={appointments.links} />
                             </>
                         )}
-                    </section>
+                    </section> : <section className="rounded-2xl border border-slate-200 bg-white shadow-sm"><ToothLoader label="Cargando citas" compact /></section>}
                 </div>
             </div>
         </AuthenticatedLayout>
