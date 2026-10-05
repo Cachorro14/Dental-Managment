@@ -6,8 +6,8 @@ Este archivo conserva el avance del proyecto entre conversaciones. El todo list 
 
 - Fase actual: Fase 8
 - Estado: En progreso
-- Siguiente objetivo: iniciar Treatments.
-- Última actualización: 2026-09-30
+- Siguiente objetivo: investigación de recordatorios de citas por WhatsApp; completar Inventory y Reports sigue pendiente.
+- Última actualización: 2026-10-05
 
 ## Fases
 
@@ -20,7 +20,7 @@ Este archivo conserva el avance del proyecto entre conversaciones. El todo list 
 | 5 | Settings, branding y props globales de Inertia | Completada |
 | 6 | Módulo Patients | Completada |
 | 7 | Audit log | Completada |
-| 8 | Módulos posteriores: appointments, clinical history, odontogram, treatments, inventory, billing y reports | Pendiente |
+| 8 | Módulos posteriores: appointments, clinical history, odontogram, treatments, inventory, billing y reports | En progreso |
 
 ## Fase 3: Avance
 
@@ -65,7 +65,13 @@ Este archivo conserva el avance del proyecto entre conversaciones. El todo list 
 - Acceso de `SUPER_ADMIN` a todos los módulos: completado.
 - Clinical History: ficha clínica por paciente, permisos, migración, preservación de notas médicas, interfaz Inertia y pruebas completados.
 - Odontogram: registro de estado y notas para las 32 piezas permanentes, permisos, migración, interfaz Inertia y pruebas completados.
-- Módulos clínicos posteriores: pendiente, comenzando por Treatments.
+- Treatments: registro, edición, seguimiento de estado y auditoría completados. No se ofrecerá eliminación para preservar el historial clínico de lo realizado al paciente.
+- Billing: estado de cuenta por paciente implementado con cargos, pagos parciales, métodos de pago, saldo calculado, auditoría y anulación administrativa conservando el historial. La aplicación no procesa transacciones.
+- El dashboard muestra hasta los 10 adeudos más altos en rojo y negritas a usuarios con acceso financiero.
+- Inventory solo existe en el catálogo; Reports aún no está registrado ni implementado.
+- Recordatorios de citas por WhatsApp: pendiente investigar alternativas de integración, requisitos, costos, consentimiento, plantillas y flujo operativo antes de definir la solución.
+- Odontogram: pendiente revisar si se retira o se completa el flujo legado de entradas individuales que coexiste con las evaluaciones actuales.
+- Datos iniciales de Clinical History y Odontogram: pendientes de definir; no son bloqueantes para el flujo funcional actual.
 
 ## Historial
 
@@ -103,3 +109,13 @@ Este archivo conserva el avance del proyecto entre conversaciones. El todo list 
 - Verificación de Clinical History: 37 pruebas, 88 assertions, TypeScript, build de producción y Pint pasaron.
 - Se implementó Odontogram con 32 piezas FDI, estados dentales, notas por pieza, permisos diferenciados y vista de consulta para recepción.
 - Verificación de Odontogram: 42 pruebas, 99 assertions, TypeScript, build de producción y Pint pasaron.
+- Se implementó Treatments con registro y edición de tratamientos, seguimiento de estado, permisos, auditoría, pruebas y datos iniciales.
+
+### 2026-10-05
+
+- Se confirmó que Treatments no debe permitir eliminación para conservar el historial de lo realizado a cada paciente.
+- Se definió Billing como registro histórico de pagos y adeudos del paciente, incluyendo el método de pago; no procesará transacciones.
+- Se priorizó Billing como siguiente módulo funcional.
+- Se añadió a pendientes investigar recordatorios de citas mediante WhatsApp antes de seleccionar proveedor o implementar la integración.
+- Se implementó Billing como historial de cargos y pagos por paciente, con cargo opcional desde Treatments, saldo general sin sobrepagos, anulación auditada para administradores y lista de deudores en el dashboard.
+- Verificación de Billing: 89 pruebas, 627 assertions, TypeScript, Pint y build de producción completados.

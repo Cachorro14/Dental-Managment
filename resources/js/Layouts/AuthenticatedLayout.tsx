@@ -18,6 +18,7 @@ export default function Authenticated({ header, children }: PropsWithChildren<{ 
     const canViewPatients = auth.permissions.includes('patients.view') && canViewPatientRecords && system.modules.some((module) => module.code === 'PATIENTS' && module.enabled);
     const canViewAuditLog = auth.permissions.includes('audit.view');
     const canViewAppointments = auth.permissions.includes('appointments.view') && canViewPatientRecords && system.modules.some((module) => module.code === 'APPOINTMENTS' && module.enabled);
+    const canViewBilling = auth.permissions.includes('billing.view') && system.modules.some((module) => module.code === 'BILLING' && module.enabled);
     const canManageModules = auth.permissions.includes('modules.view');
     const canManageBranding = auth.permissions.includes('branding.view');
     const canManageClinicStaff = auth.roles.includes('CLINIC_ADMIN')
@@ -30,6 +31,7 @@ export default function Authenticated({ header, children }: PropsWithChildren<{ 
         { label: 'Panel principal', href: route('dashboard'), active: route().current('dashboard'), icon: 'dashboard' as const },
         ...(canViewPatients ? [{ label: 'Pacientes', href: route('patients.index'), active: route().current('patients.*'), icon: 'patients' as const }] : []),
         ...(canViewAppointments ? [{ label: 'Citas', href: route('appointments.index'), active: route().current('appointments.*'), icon: 'appointments' as const }] : []),
+        ...(canViewBilling ? [{ label: 'Finanzas', href: route('billing.index'), active: route().current('billing.*'), icon: 'audit' as const }] : []),
         ...(canViewAuditLog ? [{ label: 'Auditoria', href: route('audit.index'), active: route().current('audit.*'), icon: 'audit' as const }] : []),
         ...(canManageModules ? [{ label: 'Modulos', href: route('admin.modules.index'), active: route().current('admin.modules.*'), icon: 'modules' as const }] : []),
         ...(canManageBranding ? [{ label: 'Apariencia', href: route('admin.branding.edit'), active: route().current('admin.branding.*'), icon: 'branding' as const }] : []),

@@ -36,5 +36,6 @@ class DatabaseSeeder extends Seeder
         $user->assignRole('SUPER_ADMIN');
 
         $this->call(TreatmentSeeder::class);
+        $this->call(BillingEntrySeeder::class);
     }
 }

@@ -54,6 +54,10 @@ class RolesAndPermissionsSeeder extends Seeder
             'treatments.create',
             'treatments.update',
             'treatments.delete',
+            'billing.view',
+            'billing.charge',
+            'billing.payment',
+            'billing.void',
         ];
 
         foreach ($permissions as $permission) {
@@ -109,6 +113,10 @@ class RolesAndPermissionsSeeder extends Seeder
             'treatments.view',
             'treatments.create',
             'treatments.update',
+            'billing.view',
+            'billing.charge',
+            'billing.payment',
+            'billing.void',
         ]);
 
         $receptionist->syncPermissions([
@@ -122,6 +130,9 @@ class RolesAndPermissionsSeeder extends Seeder
             'clinical_history.view',
             'odontogram.view',
             'treatments.view',
+            'billing.view',
+            'billing.charge',
+            'billing.payment',
         ]);
 
         $dentist->syncPermissions([
@@ -138,6 +149,9 @@ class RolesAndPermissionsSeeder extends Seeder
             'treatments.view',
             'treatments.create',
             'treatments.update',
+            'billing.view',
+            'billing.charge',
+            'billing.payment',
         ]);
     }
 }

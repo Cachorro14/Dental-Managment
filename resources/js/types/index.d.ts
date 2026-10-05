@@ -65,6 +65,12 @@ export interface DashboardData {
     patients: number | null;
     appointmentsToday: number | null;
     pendingAppointments: number | null;
+    debtors: Array<{
+        id: number;
+        first_name: string;
+        last_name: string;
+        balance: string;
+    }> | null;
     upcoming: Array<{
         id: number;
         scheduled_at: string;

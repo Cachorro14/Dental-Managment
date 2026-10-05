@@ -2,6 +2,7 @@
 
 namespace App\Models\Modules\Patients;
 
+use App\Models\Modules\Billing\BillingEntry;
 use App\Models\Modules\ClinicalHistory\ClinicalHistory;
 use App\Models\Modules\Odontogram\OdontogramAssessment;
 use App\Models\Modules\Odontogram\OdontogramEntry;
@@ -56,6 +57,11 @@ class Patient extends Model
     public function treatments(): HasMany
     {
         return $this->hasMany(Treatment::class);
+    }
+
+    public function billingEntries(): HasMany
+    {
+        return $this->hasMany(BillingEntry::class);
     }
 
     public function dentists(): BelongsToMany

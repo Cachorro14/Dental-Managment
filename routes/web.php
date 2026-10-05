@@ -7,6 +7,8 @@ use App\Http\Controllers\Admin\UserManagementController;
 use App\Http\Controllers\AuditLogController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Modules\Appointments\AppointmentController;
+use App\Http\Controllers\Modules\Billing\BillingController;
+use App\Http\Controllers\Modules\Billing\TreatmentChargeController;
 use App\Http\Controllers\Modules\ClinicalHistory\ClinicalHistoryController;
 use App\Http\Controllers\Modules\ClinicStaff\ClinicStaffController;
 use App\Http\Controllers\Modules\Odontogram\OdontogramController;
@@ -143,6 +145,25 @@ Route::middleware(['auth', 'module:TREATMENTS'])
             ->middleware('permission:treatments.view')->name('edit');
         Route::patch('/{treatment}', [TreatmentController::class, 'update'])
             ->middleware('permission:treatments.update')->name('update');
+    });
+
+Route::middleware(['auth', 'module:BILLING'])
+    ->prefix('billing')
+    ->name('billing.')
+    ->group(function () {
+        Route::get('/', [BillingController::class, 'index'])
+            ->middleware('permission:billing.view')->name('index');
+        Route::get('/patients/{patient}', [BillingController::class, 'show'])
+            ->middleware('permission:billing.view')->name('show');
+        Route::post('/patients/{patient}/charges', [BillingController::class, 'storeCharge'])
+            ->middleware('permission:billing.charge')->name('charges.store');
+        Route::post('/patients/{patient}/payments', [BillingController::class, 'storePayment'])
+            ->middleware('permission:billing.payment')->name('payments.store');
+        Route::post('/entries/{billingEntry}/void', [BillingController::class, 'void'])
+            ->middleware('permission:billing.void')->name('entries.void');
+        Route::post('/patients/{patient}/treatments/{treatment}/charge', [TreatmentChargeController::class, 'store'])
+            ->middleware(['permission:billing.charge', 'module:TREATMENTS'])
+            ->name('treatments.charge');
     });
 
 require __DIR__.'/auth.php';

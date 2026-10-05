@@ -2,12 +2,14 @@
 
 namespace App\Models\Modules\Treatments;
 
+use App\Models\Modules\Billing\BillingEntry;
 use App\Models\Modules\Patients\Patient;
 use App\Models\User;
 use Database\Factories\Modules\Treatments\TreatmentFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Treatment extends Model
 {
@@ -49,5 +51,10 @@ class Treatment extends Model
     public function creator(): BelongsTo
     {
         return $this->belongsTo(User::class, 'created_by');
+    }
+
+    public function billingEntry(): HasOne
+    {
+        return $this->hasOne(BillingEntry::class);
     }
 }
