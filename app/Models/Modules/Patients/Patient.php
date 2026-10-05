@@ -5,6 +5,7 @@ namespace App\Models\Modules\Patients;
 use App\Models\Modules\ClinicalHistory\ClinicalHistory;
 use App\Models\Modules\Odontogram\OdontogramAssessment;
 use App\Models\Modules\Odontogram\OdontogramEntry;
+use App\Models\Modules\Treatments\Treatment;
 use App\Models\User;
 use Database\Factories\Modules\Patients\PatientFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -50,6 +51,11 @@ class Patient extends Model
     public function odontogramAssessments(): HasMany
     {
         return $this->hasMany(OdontogramAssessment::class);
+    }
+
+    public function treatments(): HasMany
+    {
+        return $this->hasMany(Treatment::class);
     }
 
     public function dentists(): BelongsToMany

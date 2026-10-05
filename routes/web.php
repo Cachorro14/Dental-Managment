@@ -12,6 +12,7 @@ use App\Http\Controllers\Modules\ClinicStaff\ClinicStaffController;
 use App\Http\Controllers\Modules\Odontogram\OdontogramController;
 use App\Http\Controllers\Modules\Patients\PatientController;
 use App\Http\Controllers\Modules\Patients\PatientDentistAssignmentController;
+use App\Http\Controllers\Modules\Treatments\TreatmentController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -125,6 +126,23 @@ Route::middleware(['auth', 'module:ODONTOGRAM'])
             ->middleware('permission:odontogram.view')->name('assessments.show');
         Route::patch('/', [OdontogramController::class, 'update'])
             ->middleware('permission:odontogram.update')->name('update');
+    });
+
+Route::middleware(['auth', 'module:TREATMENTS'])
+    ->prefix('patients/{patient}/treatments')
+    ->name('treatments.')
+    ->scopeBindings()
+    ->group(function () {
+        Route::get('/', [TreatmentController::class, 'index'])
+            ->middleware('permission:treatments.view')->name('index');
+        Route::get('/create', [TreatmentController::class, 'create'])
+            ->middleware('permission:treatments.create')->name('create');
+        Route::post('/', [TreatmentController::class, 'store'])
+            ->middleware('permission:treatments.create')->name('store');
+        Route::get('/{treatment}/edit', [TreatmentController::class, 'edit'])
+            ->middleware('permission:treatments.view')->name('edit');
+        Route::patch('/{treatment}', [TreatmentController::class, 'update'])
+            ->middleware('permission:treatments.update')->name('update');
     });
 
 require __DIR__.'/auth.php';

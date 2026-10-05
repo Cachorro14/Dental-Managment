@@ -37,9 +37,9 @@ class ModuleCatalogSeeder extends Seeder
 
         $moduleRoles = [
             'SUPER_ADMIN' => array_values(array_diff(array_keys($catalog->modules()), ['CLINIC_STAFF'])),
-            'CLINIC_ADMIN' => ['APPOINTMENTS', 'CLINIC_STAFF', 'CLINICAL_HISTORY', 'ODONTOGRAM', 'PATIENTS'],
-            'RECEPTIONIST' => ['PATIENTS', 'APPOINTMENTS', 'CLINICAL_HISTORY', 'ODONTOGRAM'],
-            'DENTIST' => ['PATIENTS', 'APPOINTMENTS', 'CLINICAL_HISTORY', 'ODONTOGRAM'],
+            'CLINIC_ADMIN' => ['APPOINTMENTS', 'CLINIC_STAFF', 'CLINICAL_HISTORY', 'ODONTOGRAM', 'PATIENTS', 'TREATMENTS'],
+            'RECEPTIONIST' => ['PATIENTS', 'APPOINTMENTS', 'CLINICAL_HISTORY', 'ODONTOGRAM', 'TREATMENTS'],
+            'DENTIST' => ['PATIENTS', 'APPOINTMENTS', 'CLINICAL_HISTORY', 'ODONTOGRAM', 'TREATMENTS'],
         ];
 
         foreach ($moduleRoles as $roleName => $modules) {

@@ -10,6 +10,7 @@ export default function Show({ patient }: { patient: Patient }) {
     const canAssignDentists = auth.permissions.includes('patients.assign_dentists');
     const canViewClinicalHistory = auth.permissions.includes('clinical_history.view') && system.modules.some((module) => module.code === 'CLINICAL_HISTORY' && module.enabled);
     const canViewOdontogram = auth.permissions.includes('odontogram.view') && system.modules.some((module) => module.code === 'ODONTOGRAM' && module.enabled);
+    const canViewTreatments = auth.permissions.includes('treatments.view') && system.modules.some((module) => module.code === 'TREATMENTS' && module.enabled);
     const remove = () => {
         if (window.confirm('Archivar este paciente?')) {
             destroy(route('patients.destroy', patient.id));
@@ -43,6 +44,7 @@ export default function Show({ patient }: { patient: Patient }) {
                             {canAssignDentists && <Link href={route('patients.dentists.edit', patient.id)} className="inline-flex min-h-11 items-center justify-center rounded-xl border border-blue-200 px-4 py-2 text-sm font-semibold text-blue-800">Asignar doctores</Link>}
                             {canViewClinicalHistory && <Link href={route('clinical-history.edit', patient.id)} className="inline-flex min-h-11 items-center justify-center rounded-xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white">Historia clínica</Link>}
                             {canViewOdontogram && <Link href={route('odontogram.edit', patient.id)} className="inline-flex min-h-11 items-center justify-center rounded-xl bg-teal-600 px-4 py-2 text-sm font-semibold text-white">Odontograma</Link>}
+                            {canViewTreatments && <Link href={route('treatments.index', patient.id)} className="inline-flex min-h-11 items-center justify-center rounded-xl bg-violet-600 px-4 py-2 text-sm font-semibold text-white">Tratamientos</Link>}
                             {canDelete && <button type="button" onClick={remove} disabled={processing} className="inline-flex min-h-11 items-center justify-center rounded-xl bg-red-600 px-4 py-2 text-sm font-semibold text-white disabled:opacity-50">Archivar</button>}
                         </div>
                     </section>
