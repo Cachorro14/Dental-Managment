@@ -27,9 +27,10 @@ type PatientFormData = {
     insurance_holder: string;
     workplace: string;
     job_title: string;
+    whatsapp_reminder_consent: boolean;
 };
 
-export default function PatientForm({ patient }: { patient?: Patient }) {
+export default function PatientForm({ patient, canManageWhatsAppConsent = false, whatsappConsentRecordedBy }: { patient?: Patient; canManageWhatsAppConsent?: boolean; whatsappConsentRecordedBy?: string | null }) {
     const editing = Boolean(patient);
     const { data, setData, post, patch, processing, errors } = useForm<PatientFormData>({
         first_name: patient?.first_name ?? '',
@@ -52,6 +53,7 @@ export default function PatientForm({ patient }: { patient?: Patient }) {
         insurance_holder: patient?.insurance_holder ?? '',
         workplace: patient?.workplace ?? '',
         job_title: patient?.job_title ?? '',
+        whatsapp_reminder_consent: patient?.whatsapp_reminder_consent ?? false,
     });
 
     const submit: FormEventHandler = (event) => {
@@ -65,7 +67,7 @@ export default function PatientForm({ patient }: { patient?: Patient }) {
         post(route('patients.store'));
     };
 
-    const field = (name: keyof PatientFormData) => ({
+    const field = (name: Exclude<keyof PatientFormData, 'whatsapp_reminder_consent'>) => ({
         value: data[name],
         onChange: (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) =>
             setData(name, event.target.value),
@@ -91,7 +93,7 @@ export default function PatientForm({ patient }: { patient?: Patient }) {
                 </div>
                 <div>
                     <InputLabel htmlFor="gender" value="Sexo" />
-                    <select id="gender" className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-600 focus:ring-blue-500" {...field('gender')}>
+                    <select id="gender" className="mt-1 block w-full rounded-md border-outline-strong shadow-sm focus:border-accent focus:ring-accent" {...field('gender')}>
                         <option value="">No especificado</option>
                         <option value="female">Femenino</option>
                         <option value="male">Masculino</option>
@@ -113,12 +115,12 @@ export default function PatientForm({ patient }: { patient?: Patient }) {
 
             <div>
                     <InputLabel htmlFor="address" value="Direccion" />
-                <textarea id="address" className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-600 focus:ring-blue-500" rows={3} {...field('address')} />
+                <textarea id="address" className="mt-1 block w-full rounded-md border-outline-strong shadow-sm focus:border-accent focus:ring-accent" rows={3} {...field('address')} />
                 <InputError message={errors.address} className="mt-2" />
             </div>
 
-            <fieldset className="space-y-5 rounded-2xl border border-slate-200 p-5">
-                <legend className="px-2 text-sm font-semibold text-slate-800">Datos complementarios de la historia clínica</legend>
+            <fieldset className="space-y-5 rounded-2xl border theme-outline p-5">
+                <legend className="px-2 text-sm font-semibold theme-content-secondary">Datos complementarios de la historia clínica</legend>
                 <div className="grid gap-5 sm:grid-cols-2">
                     {([
                         ['document_type', 'Tipo de documento'], ['document_number', 'Número de documento'],
@@ -126,7 +128,7 @@ export default function PatientForm({ patient }: { patient?: Patient }) {
                         ['nationality', 'Nacionalidad'], ['occupation', 'Profesión o actividad'],
                         ['insurance_provider', 'Obra social o aseguradora'], ['insurance_member_number', 'Número de afiliación'],
                         ['insurance_holder', 'Titular de la cobertura'], ['workplace', 'Lugar de trabajo'], ['job_title', 'Jerarquía o puesto'],
-                    ] as Array<[keyof PatientFormData, string]>).map(([name, label]) => (
+                    ] as Array<[Exclude<keyof PatientFormData, 'whatsapp_reminder_consent'>, string]>).map(([name, label]) => (
                         <div key={name}><InputLabel htmlFor={name} value={label} /><TextInput id={name} className="mt-1 block w-full" {...field(name)} /><InputError message={errors[name]} className="mt-2" /></div>
                     ))}
                 </div>
@@ -144,6 +146,17 @@ export default function PatientForm({ patient }: { patient?: Patient }) {
                     <InputError message={errors.emergency_contact_phone} className="mt-2" />
                 </div>
             </div>
+
+            {canManageWhatsAppConsent && <fieldset className="theme-success rounded-2xl border p-5">
+                <legend className="px-2 text-sm font-semibold theme-content">Recordatorios por WhatsApp</legend>
+                <label className="flex min-h-12 items-start gap-3 text-sm theme-content">
+                    <input type="checkbox" checked={data.whatsapp_reminder_consent} onChange={(event) => setData('whatsapp_reminder_consent', event.target.checked)} className="mt-1 rounded border-emerald-400 theme-content focus:ring-emerald-500" />
+                    <span>La persona paciente cuenta con consentimiento físico para recibir recordatorios de citas por WhatsApp.</span>
+                </label>
+                <InputError message={errors.whatsapp_reminder_consent as string | undefined} className="mt-2" />
+                <p className="mt-2 text-xs theme-content">Solo se utilizará para comunicaciones operativas sobre citas. Desmarca la casilla si el consentimiento fue revocado.</p>
+                {patient?.whatsapp_reminder_consent_recorded_at && <p className="mt-2 text-xs theme-content">Registrado el {new Date(patient.whatsapp_reminder_consent_recorded_at).toLocaleString('es-MX')}{whatsappConsentRecordedBy ? ` por ${whatsappConsentRecordedBy}` : ''}.</p>}
+            </fieldset>}
 
             <PrimaryButton disabled={processing}>{editing ? 'Guardar paciente' : 'Crear paciente'}</PrimaryButton>
         </form>

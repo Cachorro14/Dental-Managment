@@ -18,6 +18,8 @@ class UpdateClinicStaffRequest extends FormRequest
     {
         return [
             'name' => ['required', 'string', 'max:255'],
+            'phone' => ['nullable', 'string', 'max:40'],
+            'whatsapp_appointment_consent' => ['sometimes', 'boolean'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', Rule::unique('users', 'email')->ignore($this->route('user'))],
             'license_number' => ['nullable', 'string', 'max:100'],
             'password' => ['nullable', 'string', 'confirmed', 'min:8'],

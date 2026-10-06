@@ -12,7 +12,7 @@ export default function InputLabel({
         <label
             {...props}
             className={
-                `${isFieldLabel ? 'floating-input-label ' : ''}block text-sm font-semibold tracking-tight text-slate-700 ` +
+                `${isFieldLabel ? 'floating-input-label ' : ''}theme-content-secondary block text-sm font-semibold tracking-tight ` +
                 className
             }
         >

@@ -31,7 +31,7 @@ final class ModuleCatalog
     {
         return [
             'APPOINTMENTS_REMINDERS' => [
-                'label' => 'Appointment reminders',
+                'label' => 'Recordatorios de citas por WhatsApp',
                 'module' => 'APPOINTMENTS',
             ],
         ];

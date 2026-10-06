@@ -20,22 +20,22 @@ export default function Index({ roles }: { roles: Role[] }) {
     };
 
     return (
-        <AuthenticatedLayout header={<div><p className="text-sm font-medium text-blue-600">Administración</p><h1 className="mt-1 text-2xl font-semibold tracking-tight text-slate-900">Roles del sistema</h1></div>}>
+        <AuthenticatedLayout header={<div><p className="theme-accent text-sm font-medium">Administración</p><h1 className="mt-1 text-2xl font-semibold tracking-tight theme-content">Roles del sistema</h1></div>}>
             <Head title="Roles del sistema" />
-            <div className="min-h-[calc(100vh-5rem)] bg-slate-50 px-4 py-8 sm:px-6 lg:px-8">
+            <div className="min-h-[calc(100vh-5rem)] theme-page px-4 py-8 sm:px-6 lg:px-8">
                 <div className="mx-auto max-w-6xl space-y-6">
                     <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                        <p className="max-w-2xl text-sm text-slate-500">Administra los roles y los permisos que se asignan a los usuarios.</p>
+                        <p className="max-w-2xl text-sm theme-content-muted">Administra los roles y los permisos que se asignan a los usuarios.</p>
                         <div className="flex gap-3">
-                            {canViewUsers && <Link href={route('admin.users.index')} className="inline-flex min-h-11 flex-1 items-center justify-center rounded-xl border border-blue-200 px-4 py-2 text-sm font-semibold text-blue-800 transition hover:bg-blue-50 sm:flex-none">Usuarios</Link>}
-                            {canCreate && <Link href={route('admin.roles.create')} className="inline-flex min-h-11 flex-1 items-center justify-center rounded-xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700 sm:flex-none">Nuevo rol</Link>}
+                            {canViewUsers && <Link href={route('admin.users.index')} className="theme-content-secondary inline-flex min-h-11 flex-1 items-center justify-center rounded-xl border theme-outline-strong bg-surface-raised px-4 py-2 text-sm font-semibold transition hover:bg-surface-sunken sm:flex-none">Usuarios</Link>}
+                            {canCreate && <Link href={route('admin.roles.create')} className="inline-flex min-h-11 flex-1 items-center justify-center rounded-xl theme-accent-button px-4 py-2 text-sm font-semibold theme-content-inverse shadow-sm transition hover:text-accent-button sm:flex-none">Nuevo rol</Link>}
                         </div>
                     </div>
                     <div className="grid gap-4 md:grid-cols-2">
-                        {roles.map((role) => <article key={role.id} className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-                            <div className="flex items-start justify-between gap-4"><div><h2 className="text-lg font-semibold text-slate-900">{role.name}</h2><p className="mt-1 text-sm text-slate-500">{role.users_count} usuario(s)</p></div>{canUpdate && <Link href={route('admin.roles.edit', role.id)} className="text-sm font-semibold text-blue-700 hover:text-blue-900">Editar</Link>}</div>
-                            <div className="mt-5 flex flex-wrap gap-2">{role.permissions.map((permission) => <span key={permission.id} className="rounded-full bg-slate-100 px-2.5 py-1 text-xs text-slate-600">{permission.name}</span>)}</div>
-                            {canDelete && !systemRoles.includes(role.name) && <button type="button" onClick={() => remove(role)} className="mt-5 text-sm font-semibold text-red-600 hover:text-red-800">Eliminar rol</button>}
+                        {roles.map((role) => <article key={role.id} className="rounded-2xl border theme-outline theme-card p-5 shadow-sm">
+                            <div className="flex items-start justify-between gap-4"><div><h2 className="text-lg font-semibold theme-content">{role.name}</h2><p className="mt-1 text-sm theme-content-muted">{role.users_count} usuario(s)</p></div>{canUpdate && <Link href={route('admin.roles.edit', role.id)} className="theme-accent text-sm font-semibold hover:underline">Editar</Link>}</div>
+                            <div className="mt-5 flex flex-wrap gap-2">{role.permissions.map((permission) => <span key={permission.id} className="rounded-full theme-muted-surface px-2.5 py-1 text-xs theme-content-secondary">{permission.name}</span>)}</div>
+                            {canDelete && !systemRoles.includes(role.name) && <button type="button" onClick={() => remove(role)} className="theme-danger-foreground mt-5 text-sm font-semibold hover:underline">Eliminar rol</button>}
                         </article>)}
                     </div>
                 </div>

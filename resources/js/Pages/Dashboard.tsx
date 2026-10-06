@@ -16,46 +16,46 @@ export default function Dashboard() {
     return (
         <AuthenticatedLayout>
             <Head title="Panel principal" />
-            <div className="min-h-[calc(100vh-5rem)] bg-slate-50 px-4 py-8 sm:px-6 lg:px-8">
+            <div className="min-h-[calc(100vh-5rem)] theme-page px-4 py-8 sm:px-6 lg:px-8">
                 <div className="mx-auto max-w-7xl space-y-8">
-                    <section className="relative overflow-hidden rounded-3xl bg-slate-900 px-6 py-8 text-white shadow-xl sm:px-10 sm:py-10">
+                    <section className="relative overflow-hidden rounded-3xl theme-accent-button px-6 py-8 shadow-xl sm:px-10 sm:py-10">
                         <div className="relative z-10 max-w-2xl">
-                            <p className="text-sm font-medium text-teal-300">Espacio de trabajo de {branding.name}</p>
+                            <p className="theme-content-inverse text-sm font-medium opacity-80">Espacio de trabajo de {branding.name}</p>
                             <h1 className="mt-3 text-3xl font-semibold tracking-tight sm:text-4xl">Hola, {auth.user?.name.split(' ')[0]}.</h1>
-                            <p className="mt-3 max-w-xl text-sm leading-6 text-slate-300">Mantén tu clínica organizada con una vista clara de pacientes, citas y actividad operativa.</p>
+                            <p className="theme-content-inverse mt-3 max-w-xl text-sm leading-6 opacity-90">Mantén tu clínica organizada con una vista clara de pacientes, citas y actividad operativa.</p>
                         </div>
-                        <div className="absolute -right-20 -top-24 h-80 w-80 rounded-full bg-teal-500/20 blur-3xl" />
-                        <div className="absolute -bottom-32 right-20 h-64 w-64 rounded-full bg-cyan-400/10 blur-3xl" />
+                        <div className="pointer-events-none absolute -right-20 -top-24 h-80 w-80 rounded-full bg-surface-raised/10 blur-3xl" />
+                        <div className="pointer-events-none absolute -bottom-32 right-20 h-64 w-64 rounded-full bg-surface-raised/5 blur-3xl" />
                     </section>
 
                     {dashboard ? (
                         <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-                            <Metric label="Citas de hoy" value={dashboard.appointmentsToday} hint="Programadas para hoy" accent="bg-teal-500" />
-                            <Metric label="Pacientes registrados" value={dashboard.patients} hint="Registros activos" accent="bg-blue-500" />
-                            <Metric label="Citas pendientes" value={dashboard.pendingAppointments} hint="Programadas o confirmadas" accent="bg-amber-500" />
-                            <Metric label="Actividad clínica" value="Activa" hint="Sistema operativo" accent="bg-violet-500" />
+                            <Metric label="Citas de hoy" value={dashboard.appointmentsToday} hint="Programadas para hoy" accent="bg-accent" />
+                            <Metric label="Pacientes registrados" value={dashboard.patients} hint="Registros activos" accent="bg-accent" />
+                            <Metric label="Citas pendientes" value={dashboard.pendingAppointments} hint="Programadas o confirmadas" accent="bg-warning-outline" />
+                            <Metric label="Actividad clínica" value="Activa" hint="Sistema operativo" accent="bg-success-outline" />
                         </section>
                     ) : (
-                        <section className="rounded-2xl border border-slate-200 bg-white shadow-sm"><ToothLoader label="Cargando resumen" compact /></section>
+                        <section className="rounded-2xl border theme-outline theme-card shadow-sm"><ToothLoader label="Cargando resumen" compact /></section>
                     )}
 
                     {canViewBilling && dashboard?.debtors !== null && dashboard?.debtors !== undefined && (
-                        <section className="rounded-2xl border border-red-200 bg-white p-6 shadow-sm">
+                        <section className="theme-card rounded-2xl border theme-danger p-6 shadow-sm">
                             <div className="flex flex-wrap items-start justify-between gap-4">
                                 <div>
-                                    <p className="text-sm font-semibold text-red-700">Seguimiento financiero</p>
-                                    <h2 className="mt-1 text-xl font-bold text-slate-900">Pacientes con adeudo</h2>
+                                    <p className="theme-danger-foreground text-sm font-semibold">Seguimiento financiero</p>
+                                    <h2 className="mt-1 text-xl font-bold theme-content">Pacientes con adeudo</h2>
                                 </div>
-                                <Link href={route('billing.index')} className="inline-flex min-h-11 items-center rounded-xl border border-red-200 px-4 py-2 text-sm font-semibold text-red-700 transition hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-red-300">Ver estado de cuenta</Link>
+                                <Link href={route('billing.index')} className="theme-danger inline-flex min-h-11 items-center rounded-xl border px-4 py-2 text-sm font-semibold transition hover:opacity-80 focus:outline-none focus:ring-2 focus:ring-accent">Ver estado de cuenta</Link>
                             </div>
                             {dashboard.debtors.length === 0 ? (
-                                <p className="mt-5 rounded-xl bg-emerald-50 p-4 text-sm font-medium text-emerald-800">No hay adeudos pendientes.</p>
+                                <p className="mt-5 rounded-xl theme-success rounded-xl border p-4 text-sm font-medium">No hay adeudos pendientes.</p>
                             ) : (
-                                <ul className="mt-5 divide-y divide-red-100">
+                                <ul className="mt-5 divide-y divide-outline">
                                     {dashboard.debtors.map((patient) => (
                                         <li key={patient.id} className="flex flex-wrap items-center justify-between gap-3 py-3 first:pt-0 last:pb-0">
-                                            <Link href={route('billing.show', patient.id)} className="font-bold text-red-700 underline decoration-red-300 underline-offset-4 hover:text-red-900 focus:outline-none focus:ring-2 focus:ring-red-300">{patient.first_name} {patient.last_name}</Link>
-                                            <span className="font-bold tabular-nums text-red-700">{new Intl.NumberFormat('es-MX', { style: 'currency', currency }).format(Number(patient.balance))}</span>
+                                            <Link href={route('billing.show', patient.id)} className="theme-danger-foreground rounded-md px-2 py-1 font-bold underline underline-offset-4 focus:outline-none focus:ring-2 focus:ring-accent">{patient.first_name} {patient.last_name}</Link>
+                                            <span className="theme-danger-foreground rounded-md px-2 py-1 font-bold tabular-nums">{new Intl.NumberFormat('es-MX', { style: 'currency', currency }).format(Number(patient.balance))}</span>
                                         </li>
                                     ))}
                                 </ul>
@@ -64,10 +64,10 @@ export default function Dashboard() {
                     )}
 
                     <section className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
-                        <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+                        <div className="rounded-2xl border theme-outline theme-card p-6 shadow-sm">
                             <div className="flex items-start justify-between gap-4">
-                                <div><p className="text-sm font-medium text-teal-600">Acciones rápidas</p><h2 className="mt-1 text-xl font-semibold text-slate-900">Empieza por lo importante</h2></div>
-                                <span className="rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700">Listo</span>
+                                <div><p className="theme-accent text-sm font-medium">Acciones rápidas</p><h2 className="mt-1 text-xl font-semibold theme-content">Empieza por lo importante</h2></div>
+                                <span className="rounded-full theme-success px-3 py-1 text-xs font-semibold theme-content">Listo</span>
                             </div>
                             <div className="mt-6 grid gap-3 sm:grid-cols-2">
                                 {canCreateAppointments && <Action href={route('appointments.create')} title="Programar una cita" description="Agrega una cita a la agenda" icon="+" />}
@@ -77,14 +77,14 @@ export default function Dashboard() {
                             </div>
                         </div>
 
-                        <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-                            <p className="text-sm font-medium text-blue-600">Agenda próxima</p>
-                            <h2 className="mt-1 text-xl font-semibold text-slate-900">Próximas citas</h2>
+                        <div className="rounded-2xl border theme-outline theme-card p-6 shadow-sm">
+                            <p className="theme-accent text-sm font-medium">Agenda próxima</p>
+                            <h2 className="mt-1 text-xl font-semibold theme-content">Próximas citas</h2>
                             {!dashboard ? <ToothLoader label="Cargando agenda" compact /> : dashboard.upcoming.length === 0 ? (
-                                <p className="mt-5 rounded-xl bg-slate-50 p-4 text-sm text-slate-500">No hay citas próximas para mostrar.</p>
+                                <p className="mt-5 rounded-xl theme-page p-4 text-sm theme-content-muted">No hay citas próximas para mostrar.</p>
                             ) : (
                                 <ul className="mt-5 space-y-3">
-                                    {dashboard.upcoming.map((appointment) => <li key={appointment.id} className="flex items-center justify-between gap-3 rounded-xl bg-slate-50 p-3"><div><p className="text-sm font-semibold text-slate-900">{appointment.patient.first_name} {appointment.patient.last_name}</p><p className="mt-1 text-xs text-slate-500">{new Date(appointment.scheduled_at).toLocaleString('es-MX')}</p></div><span className="rounded-full bg-blue-50 px-2.5 py-1 text-xs font-semibold text-blue-700">{appointment.status === 'confirmed' ? 'Confirmada' : 'Programada'}</span></li>)}
+                                    {dashboard.upcoming.map((appointment) => <li key={appointment.id} className="flex items-center justify-between gap-3 rounded-xl theme-page p-3"><div><p className="text-sm font-semibold theme-content">{appointment.patient.first_name} {appointment.patient.last_name}</p><p className="mt-1 text-xs theme-content-muted">{new Date(appointment.scheduled_at).toLocaleString('es-MX')}</p></div><span className="theme-info rounded-full border px-2.5 py-1 text-xs font-semibold">{appointment.status === 'confirmed' ? 'Confirmada' : 'Programada'}</span></li>)}
                                 </ul>
                             )}
                         </div>
@@ -96,9 +96,9 @@ export default function Dashboard() {
 }
 
 function Metric({ label, value, hint, accent }: { label: string; value: number | null | string; hint: string; accent: string }) {
-    return <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm"><div className={`h-2 w-10 rounded-full ${accent}`} /><p className="mt-5 text-sm text-slate-500">{label}</p><p className="mt-1 text-2xl font-semibold text-slate-900">{value ?? '—'}</p><p className="mt-1 text-xs text-slate-400">{hint}</p></div>;
+    return <div className="theme-card rounded-2xl border p-5 shadow-sm"><div className={`h-2 w-10 rounded-full ${accent}`} /><p className="theme-content-muted mt-5 text-sm">{label}</p><p className="theme-content mt-1 text-2xl font-semibold">{value ?? '—'}</p><p className="theme-content-muted mt-1 text-xs">{hint}</p></div>;
 }
 
 function Action({ href, title, description, icon }: { href: string; title: string; description: string; icon: string }) {
-    return <Link href={href} className="group flex items-center gap-4 rounded-xl border border-slate-200 p-4 transition hover:-translate-y-0.5 hover:border-teal-300 hover:shadow-sm"><span className="flex h-10 w-10 items-center justify-center rounded-xl bg-teal-50 text-lg font-semibold text-teal-700 transition group-hover:bg-teal-600 group-hover:text-white">{icon}</span><span><span className="block text-sm font-semibold text-slate-800">{title}</span><span className="mt-1 block text-xs text-slate-500">{description}</span></span></Link>;
+    return <Link href={href} className="theme-card group flex items-center gap-4 rounded-xl border p-4 transition hover:-translate-y-0.5 hover:border-accent hover:shadow-sm"><span className="theme-info flex h-10 w-10 items-center justify-center rounded-xl border text-lg font-semibold transition group-hover:opacity-80">{icon}</span><span><span className="block text-sm font-semibold theme-content-secondary">{title}</span><span className="theme-content-muted mt-1 block text-xs">{description}</span></span></Link>;
 }

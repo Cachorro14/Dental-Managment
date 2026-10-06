@@ -27,24 +27,24 @@ export default function AssignDentists({
     };
 
     return (
-        <AuthenticatedLayout header={<div><p className="text-sm font-medium text-blue-600">Asignación clínica</p><h1 className="mt-1 text-2xl font-semibold tracking-tight text-slate-900">{patient.first_name} {patient.last_name}</h1></div>}>
+        <AuthenticatedLayout header={<div><p className="theme-accent text-sm font-medium">Asignación clínica</p><h1 className="mt-1 text-2xl font-semibold tracking-tight theme-content">{patient.first_name} {patient.last_name}</h1></div>}>
             <Head title={`Doctores de ${patient.first_name} ${patient.last_name}`} />
-            <div className="min-h-[calc(100vh-5rem)] bg-slate-50 px-4 py-8 sm:px-6 lg:px-8">
+            <div className="min-h-[calc(100vh-5rem)] theme-page px-4 py-8 sm:px-6 lg:px-8">
                 <div className="mx-auto max-w-3xl space-y-6">
-                    <div className="rounded-2xl border border-blue-100 bg-blue-50 p-5 text-sm leading-6 text-blue-950">
+                    <div className="theme-info rounded-2xl border p-5 text-sm leading-6">
                         Selecciona los doctores que pueden consultar el expediente y agendar citas para este paciente. Puedes asignar varios.
                     </div>
-                    <form onSubmit={submit} className="space-y-5 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7">
+                    <form onSubmit={submit} className="space-y-5 rounded-2xl border theme-outline theme-card p-5 shadow-sm sm:p-7">
                         <div>
-                            <h2 className="text-lg font-semibold text-slate-900">Doctores asignados</h2>
-                            <p className="mt-1 text-sm text-slate-500">Sin asignación, los doctores no podrán acceder al expediente.</p>
+                            <h2 className="text-lg font-semibold theme-content">Doctores asignados</h2>
+                            <p className="mt-1 text-sm theme-content-muted">Sin asignación, los doctores no podrán acceder al expediente.</p>
                         </div>
                         {dentists.length === 0 ? (
-                            <p className="rounded-xl bg-slate-50 p-4 text-sm text-slate-600">No hay usuarios con el rol de dentista.</p>
+                            <p className="rounded-xl theme-page p-4 text-sm theme-content-secondary">No hay usuarios con el rol de dentista.</p>
                         ) : (
                             <div className="grid gap-3 sm:grid-cols-2">
-                                {dentists.map((dentist) => <label key={dentist.id} className="flex min-h-12 items-center gap-3 rounded-xl border border-slate-200 px-4 py-3 text-sm text-slate-700 transition hover:border-blue-300 hover:bg-blue-50">
-                                    <input type="checkbox" checked={form.data.dentists.includes(String(dentist.id))} onChange={() => toggleDentist(String(dentist.id))} className="rounded border-slate-300 text-blue-600 focus:ring-blue-500" />
+                                {dentists.map((dentist) => <label key={dentist.id} className="flex min-h-12 items-center gap-3 rounded-xl border theme-outline px-4 py-3 text-sm theme-content-secondary transition hover:border-accent hover:bg-surface-sunken">
+                                    <input type="checkbox" checked={form.data.dentists.includes(String(dentist.id))} onChange={() => toggleDentist(String(dentist.id))} className="rounded border-outline-strong text-accent focus:ring-accent" />
                                     <span>{dentist.name}</span>
                                 </label>)}
                             </div>
@@ -52,7 +52,7 @@ export default function AssignDentists({
                         <InputError message={form.errors.dentists} />
                         <div className="flex flex-col gap-3 sm:flex-row">
                             <PrimaryButton disabled={form.processing}>Guardar asignación</PrimaryButton>
-                            <Link href={route('patients.show', patient.id)} className="inline-flex min-h-11 items-center justify-center rounded-xl border border-blue-200 px-4 py-2 text-sm font-semibold text-blue-800 transition hover:bg-blue-50">Volver al paciente</Link>
+                            <Link href={route('patients.show', patient.id)} className="theme-content-secondary inline-flex min-h-11 items-center justify-center rounded-xl border theme-outline-strong bg-surface-raised px-4 py-2 text-sm font-semibold transition hover:bg-surface-sunken">Volver al paciente</Link>
                         </div>
                     </form>
                 </div>

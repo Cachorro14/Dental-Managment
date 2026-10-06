@@ -11,6 +11,7 @@ use App\Models\User;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -62,9 +63,33 @@ class AppointmentController extends Controller
     public function show(Appointment $appointment): Response
     {
         Gate::authorize('view', $appointment);
-        $appointment->load(['patient', 'dentist:id,name']);
+        $appointment->load([
+            'patient' => fn ($query) => $query->with('whatsappConsentRecorder:id,name'),
+            'dentist:id,name,phone,whatsapp_appointment_consent',
+            'reminders.triggeredBy:id,name',
+        ]);
 
-        return Inertia::render('Appointments/Show', ['appointment' => $appointment]);
+        return Inertia::render('Appointments/Show', [
+            'appointment' => $appointment->makeHidden([
+                'patient.whatsapp_reminder_consent_recorded_by',
+                'dentist.whatsapp_appointment_consent_recorded_by',
+            ]),
+            'canSendWhatsAppReminder' => request()->user()->can('sendReminder', $appointment)
+                && $appointment->status === 'scheduled'
+                && $appointment->scheduled_at->isFuture()
+                && (bool) $appointment->patient?->whatsapp_reminder_consent
+                && (bool) $appointment->patient?->phone
+                && (bool) config('services.whatsapp.enabled'),
+            'canManageWhatsAppConsent' => request()->user()->can('patients.whatsapp_consent'),
+            'canNotifyDentistWhatsApp' => request()->user()->can('users.whatsapp_consent'),
+            'patientConsentRecordedBy' => request()->user()->can('patients.whatsapp_consent')
+                ? $appointment->patient->whatsappConsentRecorder?->name
+                : null,
+            'patientConsentAudit' => request()->user()->can('patients.whatsapp_consent')
+                ? DB::table('whatsapp_consent_audits')->where('patient_id', $appointment->patient_id)->orderByDesc('recorded_at')->limit(5)->get(['consent_given', 'recorded_at', 'recorded_by'])
+                : [],
+            'whatsappAutomaticReminderEnabled' => (bool) config('services.whatsapp.automatic_reminders_enabled'),
+        ]);
     }
 
     public function edit(Appointment $appointment): Response

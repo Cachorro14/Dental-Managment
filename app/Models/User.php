@@ -13,8 +13,8 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
 
-#[Fillable(['name', 'email', 'password', 'license_number'])]
-#[Hidden(['password', 'remember_token', 'license_number'])]
+#[Fillable(['name', 'email', 'password', 'license_number', 'phone', 'whatsapp_appointment_consent', 'whatsapp_appointment_consent_recorded_by'])]
+#[Hidden(['password', 'remember_token', 'license_number', 'whatsapp_appointment_consent_recorded_by'])]
 class User extends Authenticatable implements MustVerifyEmail
 {
     /** @use HasFactory<UserFactory> */
@@ -30,6 +30,8 @@ class User extends Authenticatable implements MustVerifyEmail
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'whatsapp_appointment_consent' => 'boolean',
+            'whatsapp_appointment_consent_recorded_by' => 'integer',
         ];
     }
 

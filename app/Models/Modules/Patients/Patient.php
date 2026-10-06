@@ -11,6 +11,7 @@ use App\Models\User;
 use Database\Factories\Modules\Patients\PatientFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -43,16 +44,31 @@ class Patient extends Model
         'insurance_holder',
         'workplace',
         'job_title',
+        'whatsapp_reminder_consent',
+        'whatsapp_reminder_consent_recorded_by',
     ];
 
     protected function casts(): array
     {
-        return ['date_of_birth' => 'date'];
+        return [
+            'date_of_birth' => 'date',
+            'whatsapp_reminder_consent' => 'boolean',
+        ];
     }
 
     public function clinicalHistory(): HasOne
     {
         return $this->hasOne(ClinicalHistory::class);
+    }
+
+    public function whatsappConsentRecorder(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'whatsapp_reminder_consent_recorded_by');
+    }
+
+    public function getRouteKeyName(): string
+    {
+        return 'id';
     }
 
     public function odontogramEntries(): HasMany

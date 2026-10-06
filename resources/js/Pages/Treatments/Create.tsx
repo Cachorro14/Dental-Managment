@@ -9,11 +9,11 @@ export default function Create({ patient }: { patient: PatientSummary }) {
     const initialData: TreatmentData = { name: '', tooth_number: '', description: '', cost: '0.00', status: 'planned', scheduled_for: '', completed_at: '', notes: '' };
 
     return (
-        <AuthenticatedLayout header={<h2 className="text-xl font-semibold text-slate-800">Registrar tratamiento</h2>}>
+        <AuthenticatedLayout header={<h2 className="text-xl font-semibold theme-content-secondary">Registrar tratamiento</h2>}>
             <Head title="Nuevo tratamiento" />
             <div className="px-4 py-8 sm:px-6 lg:px-8">
                 <div className="mx-auto max-w-3xl space-y-5">
-                    <div><p className="text-sm text-slate-500">Paciente: {patientName}</p><Link href={route('treatments.index', patient.id)} className="text-sm font-semibold text-indigo-700">Volver a tratamientos</Link></div>
+                    <div><p className="text-sm theme-content-muted">Paciente: {patientName}</p><Link href={route('treatments.index', patient.id)} className="text-sm font-semibold theme-content">Volver a tratamientos</Link></div>
                     <TreatmentForm initialData={initialData} submitLabel="Guardar tratamiento" action={route('treatments.store', patient.id)} method="post" />
                 </div>
             </div>

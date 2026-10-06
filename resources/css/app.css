@@ -4,32 +4,114 @@
 @source '../../storage/framework/views/*.php';
 
 @theme {
-    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
-        'Segoe UI Symbol', 'Noto Color Emoji';
-    --color-teal-50: oklch(0.97 0.03 245);
-    --color-teal-100: oklch(0.93 0.06 245);
-    --color-teal-300: oklch(0.82 0.13 245);
-    --color-teal-400: oklch(0.72 0.17 250);
-    --color-teal-500: oklch(0.62 0.2 255);
-    --color-teal-600: oklch(0.54 0.22 255);
-    --color-teal-700: oklch(0.45 0.2 255);
+    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+    --color-surface: var(--surface);
+    --color-surface-raised: var(--surface-raised);
+    --color-surface-sunken: var(--surface-sunken);
+    --color-content: var(--content);
+    --color-content-secondary: var(--content-secondary);
+    --color-content-muted: var(--content-muted);
+    --color-outline: var(--outline);
+    --color-outline-strong: var(--outline-strong);
+    --color-accent: var(--accent);
+    --color-accent-content: var(--accent-content);
+    --color-info-surface: var(--info-surface);
+    --color-success-surface: var(--success-surface);
+    --color-warning-surface: var(--warning-surface);
+    --color-danger-surface: var(--danger-surface);
 }
 
-html { background: #f8fafc; }
+:root {
+    color-scheme: light;
+    --surface: #ffffff;
+    --surface-raised: #ffffff;
+    --surface-sunken: #f8fafc;
+    --content: #0f172a;
+    --content-secondary: #334155;
+    --content-muted: #64748b;
+    --outline: #e2e8f0;
+    --outline-strong: #cbd5e1;
+    --accent: #1d4ed8;
+    --accent-hover: #1e40af;
+    --accent-content: #ffffff;
+    --info-surface: #eff6ff;
+    --info-outline: #bfdbfe;
+    --info-content: #1e3a8a;
+    --success-surface: #ecfdf5;
+    --success-outline: #a7f3d0;
+    --success-content: #065f46;
+    --warning-surface: #fffbeb;
+    --warning-outline: #fde68a;
+    --warning-content: #92400e;
+    --danger-surface: #fef2f2;
+    --danger-outline: #fecaca;
+    --danger-content: #991b1b;
+}
 
-.bg-indigo-600 { background-color: #2563eb; }
-.hover\:bg-indigo-500:hover { background-color: #1d4ed8; }
-.text-indigo-600 { color: #1d4ed8; }
-.hover\:text-indigo-600:hover { color: #1e3a8a; }
-.focus\:border-indigo-500:focus { border-color: #2563eb; }
-.focus\:ring-indigo-500:focus { --tw-ring-color: #3b82f6; }
+[data-theme='dark'] {
+    color-scheme: dark;
+    --surface: #0f172a;
+    --surface-raised: #1e293b;
+    --surface-sunken: #020617;
+    --content: #f8fafc;
+    --content-secondary: #cbd5e1;
+    --content-muted: #94a3b8;
+    --outline: #334155;
+    --outline-strong: #475569;
+    --accent: #60a5fa;
+    --accent-hover: #93c5fd;
+    --accent-content: #0f172a;
+    --info-surface: #172554;
+    --info-outline: #1e40af;
+    --info-content: #bfdbfe;
+    --success-surface: #052e2b;
+    --success-outline: #047857;
+    --success-content: #a7f3d0;
+    --warning-surface: #422006;
+    --warning-outline: #a16207;
+    --warning-content: #fde68a;
+    --danger-surface: #450a0a;
+    --danger-outline: #b91c1c;
+    --danger-content: #fecaca;
+}
+
+@media (prefers-color-scheme: dark) {
+    [data-theme='system'] {
+        color-scheme: dark;
+        --surface: #0f172a;
+        --surface-raised: #1e293b;
+        --surface-sunken: #020617;
+        --content: #f8fafc;
+        --content-secondary: #cbd5e1;
+        --content-muted: #94a3b8;
+        --outline: #334155;
+        --outline-strong: #475569;
+        --accent: #60a5fa;
+        --accent-hover: #93c5fd;
+        --accent-content: #0f172a;
+        --info-surface: #172554;
+        --info-outline: #1e40af;
+        --info-content: #bfdbfe;
+        --success-surface: #052e2b;
+        --success-outline: #047857;
+        --success-content: #a7f3d0;
+        --warning-surface: #422006;
+        --warning-outline: #a16207;
+        --warning-content: #fde68a;
+        --danger-surface: #450a0a;
+        --danger-outline: #b91c1c;
+        --danger-content: #fecaca;
+    }
+}
+
+html { background-color: var(--surface-sunken); }
 
 input:not([type='checkbox']):not([type='radio']):not([type='file']),
 select,
 textarea {
-    border-color: #cbd5e1;
-    background-color: #ffffff;
-    color: #0f172a;
+    border-color: var(--outline-strong);
+    background-color: var(--surface-raised);
+    color: var(--content);
     transition: border-color 150ms ease, box-shadow 150ms ease, background-color 150ms ease;
 }
 
@@ -45,240 +127,86 @@ select {
     padding: 0.75rem 1.25rem;
 }
 
-textarea {
-    border-radius: 1rem !important;
-    padding: 0.75rem 1.25rem;
-}
-
-div:has(> .floating-input-label + input:not([type='checkbox']):not([type='radio']):not([type='file'])) {
-    position: relative;
-}
-
-div:has(> .floating-input-label + textarea) {
-    position: relative;
-}
-
-.floating-input-label {
-    position: absolute;
-    top: 1.5rem;
-    left: 1.25rem;
-    z-index: 1;
-    transform: translateY(-50%);
-    color: #94a3b8;
-    pointer-events: none;
-    transition: opacity 150ms ease;
-}
-
-div:has(> .floating-input-label + input:focus) > .floating-input-label,
-div:has(> .floating-input-label + input:not(:placeholder-shown)) > .floating-input-label,
-div:has(> .floating-input-label + textarea:focus) > .floating-input-label,
-div:has(> .floating-input-label + textarea:not(:placeholder-shown)) > .floating-input-label {
-    opacity: 0;
-}
-
-label:has(> input[type='checkbox']):hover {
-    color: #000000 !important;
-}
+textarea { border-radius: 1rem !important; padding: 0.75rem 1.25rem; }
 
 input:not([type='checkbox']):not([type='radio']):not([type='file']):hover,
 select:hover,
-textarea:hover {
-    border-color: #93c5fd;
-    background-color: #f8fbff;
-}
+textarea:hover { border-color: var(--accent); background-color: var(--surface-sunken); }
 
 input:not([type='checkbox']):not([type='radio']):not([type='file']):not(:disabled):focus,
 select:not(:disabled):focus,
 textarea:not(:disabled):focus {
-    border-color: #2563eb;
-    background-color: #f8fbff !important;
-    box-shadow: 0 0 0 3px rgb(147 197 253 / 0.45);
+    border-color: var(--accent);
+    background-color: var(--surface-raised) !important;
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 30%, transparent);
     outline: none;
 }
 
 input:not([type='checkbox']):not([type='radio']):not([type='file'])::placeholder,
-textarea::placeholder {
-    color: #94a3b8;
-}
+textarea::placeholder { color: var(--content-muted); }
 
 input:not([type='checkbox']):not([type='radio']):disabled,
 select:disabled,
-textarea:disabled {
-    cursor: not-allowed;
-    background-color: #f1f5f9;
-    color: #64748b;
-    opacity: 0.75;
-}
+textarea:disabled { cursor: not-allowed; background-color: var(--surface-sunken); color: var(--content-muted); opacity: 0.75; }
 
-input[type='file'] {
-    border: 1px solid #cbd5e1;
-    border-radius: 0.75rem;
-    background-color: #f8fafc;
-    padding: 0.55rem 0.7rem;
-    transition: border-color 150ms ease, background-color 150ms ease, box-shadow 150ms ease;
-}
+input[type='file'] { border: 1px solid var(--outline-strong); background-color: var(--surface-sunken); color: var(--content-secondary); padding: 0.55rem 0.7rem; }
+input[type='file']:hover { border-color: var(--accent); }
+input[type='file']:focus { border-color: var(--accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 30%, transparent); outline: none; }
 
-input[type='file']:hover {
-    border-color: #93c5fd;
-    background-color: #f8fbff;
-}
+.theme-root { background-color: var(--surface-sunken); color: var(--content); }
+.portal-header { border-color: var(--outline); background-color: color-mix(in srgb, var(--surface-raised) 95%, transparent); }
+.theme-page { background-color: var(--surface-sunken); color: var(--content); }
+.theme-card { border-color: var(--outline); background-color: var(--surface-raised); color: var(--content); }
+.theme-muted-surface { background-color: var(--surface-sunken); }
+.theme-content { color: var(--content); }
+.theme-content-secondary { color: var(--content-secondary); }
+.theme-content-muted { color: var(--content-muted); }
+.theme-content-inverse { color: var(--accent-content); }
+.theme-outline { border-color: var(--outline); }
+.theme-outline-strong { border-color: var(--outline-strong); }
+.theme-accent { color: var(--accent); }
+.theme-accent-button { background-color: var(--accent); color: var(--accent-content); }
+.theme-accent-button:hover { background-color: var(--accent-hover); }
+.theme-info, .theme-info-box { border-color: var(--info-outline); background-color: var(--info-surface); color: var(--info-content); }
+.theme-success { border-color: var(--success-outline); background-color: var(--success-surface); color: var(--success-content); }
+.theme-warning { border-color: var(--warning-outline); background-color: var(--warning-surface); color: var(--warning-content); }
+.theme-danger { border-color: var(--danger-outline); background-color: var(--danger-surface); color: var(--danger-content); }
+.theme-info-foreground { color: var(--info-content); }
+.theme-success-foreground { color: var(--success-content); }
+.theme-warning-foreground { color: var(--warning-content); }
+.theme-danger-foreground { color: var(--danger-content); }
+.theme-success-solid { border-color: var(--success-outline); background-color: var(--success-surface); color: var(--success-content); }
+.theme-danger-solid { border-color: var(--danger-outline); background-color: var(--danger-surface); color: var(--danger-content); }
+.theme-overlay { background-color: color-mix(in srgb, var(--surface-sunken) 82%, transparent); }
+.theme-divider { border-color: var(--outline); }
+.theme-selected { border-color: var(--accent); background-color: var(--info-surface); color: var(--info-content); }
 
-input[type='file']:focus {
-    border-color: #2563eb;
-    background-color: #f8fbff;
-    box-shadow: 0 0 0 3px rgb(147 197 253 / 0.45);
-    outline: none;
-}
+.portal-sidebar { border-color: var(--outline); background-color: var(--surface-raised); color: var(--content); }
+.portal-sidebar > div:first-child, .portal-sidebar-footer { border-color: var(--outline); }
+.portal-sidebar-brand { color: var(--content); }
+.portal-sidebar-heading { color: var(--accent); }
+.portal-sidebar-muted { color: var(--content-muted); }
+.portal-sidebar-user { background-color: var(--surface-sunken); }
+.portal-sidebar-avatar { background-color: var(--accent); color: var(--accent-content); }
+.portal-sidebar-link { color: var(--content-secondary); }
+.portal-sidebar-link:hover { background-color: var(--surface-sunken); color: var(--content); }
+.portal-sidebar-active { background-color: var(--accent); color: var(--accent-content); }
+.portal-sidebar-active:hover { background-color: var(--accent-hover); color: var(--accent-content); }
+.portal-sidebar-active-dot { background-color: var(--accent-content); }
 
-[data-variant='modern'] { --brand-accent: #2563eb; }
-[data-variant='minimal'] { --brand-accent: #475569; }
-[data-variant='clinical'] { --brand-accent: #1d4ed8; }
+.guest-portal { position: relative; isolation: isolate; background-color: var(--surface-sunken); color: var(--content); }
+.guest-portal::before { position: fixed; z-index: 0; background: linear-gradient(color-mix(in srgb, var(--surface-sunken) 55%, transparent), color-mix(in srgb, var(--surface-sunken) 55%, transparent)), url('/odontogram/Fondo%20dental%20minimalista%20en%20tonos%20aqua.png') center / cover no-repeat; content: ''; inset: 0; pointer-events: none; }
+.guest-portal > * { position: relative; z-index: 1; }
+.guest-card { background-color: var(--surface-raised); }
+.guest-form-surface { background-color: var(--surface-sunken); }
+.guest-brand-name { color: var(--content-muted); }
 
-.guest-portal {
-    position: relative;
-    isolation: isolate;
-    background-color: #0f172a;
-    color: #e2e8f0;
-}
+.color-scheme-page, .color-scheme-page :where(*, *::before, *::after) { color-scheme: inherit; }
+.color-scheme-page { background-color: var(--surface-sunken); color: var(--content); }
+.color-scheme-page select option { background-color: var(--surface-raised); color: var(--content); }
 
-.guest-portal::before {
-    position: fixed;
-    z-index: 0;
-    background: linear-gradient(rgb(248 250 252 / 0.18), rgb(248 250 252 / 0.18)), url('/odontogram/Fondo%20dental%20minimalista%20en%20tonos%20aqua.png') center / cover no-repeat;
-    content: '';
-    inset: 0;
-    pointer-events: none;
-}
+.theme-accent:focus-visible, .theme-accent-button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
-.guest-portal > * {
-    position: relative;
-    z-index: 1;
-}
-
-.guest-card {
-    background-color: #1e293b;
-}
-
-.guest-form-surface {
-    background-color: #334155;
-}
-
-.guest-brand-name {
-    color: #94a3b8;
-}
-
-[data-theme='light'] .guest-portal {
-    background-color: #f8fafc;
-    color: #0f172a;
-}
-
-[data-theme='light'] .guest-card {
-    background-color: #e2e8f0;
-}
-
-[data-theme='light'] .guest-form-surface {
-    background-color: #cbd5e1;
-}
-
-[data-theme='light'] .guest-brand-name {
-    color: #475569;
-}
-
-[data-theme='dark'] .guest-portal::before {
-    background-image: linear-gradient(rgb(15 23 42 / 0.72), rgb(15 23 42 / 0.72)), url('/odontogram/Fondo%20dental%20minimalista%20en%20tonos%20aqua.png');
-}
-
-[data-theme='light'] .guest-form-surface .text-slate-400,
-[data-theme='light'] .guest-form-surface .text-slate-600,
-[data-theme='light'] .guest-form-surface .text-gray-600 {
-    color: #475569;
-}
-
-[data-theme='dark'] .guest-form-surface .text-slate-600,
-[data-theme='dark'] .guest-form-surface .text-gray-600 {
-    color: #cbd5e1;
-}
-
-[data-theme='dark'] {
-    color-scheme: dark;
-    background: #0f172a;
-    color: #e2e8f0;
-}
-
-[data-theme='dark'] .bg-white { background-color: #1e293b; }
-[data-theme='dark'] .bg-slate-50 { background-color: #0f172a; }
-[data-theme='dark'] .text-slate-900 { color: #f8fafc; }
-[data-theme='dark'] .text-slate-800,
-[data-theme='dark'] .text-slate-700 { color: #cbd5e1; }
-[data-theme='dark'] .text-slate-500,
-[data-theme='dark'] .text-slate-400 { color: #94a3b8; }
-[data-theme='dark'] .border-slate-200 { border-color: #334155; }
-[data-theme='dark'] label:has(> input[type='checkbox']):hover { color: #000000 !important; }
-[data-theme='dark'] input:not([type='checkbox']):not([type='radio']):not([type='file']),
-[data-theme='dark'] select,
-[data-theme='dark'] textarea { border-color: #475569; background-color: #1e293b; color: #f8fafc; }
-[data-theme='dark'] input:not([type='checkbox']):not([type='radio']):not([type='file']):hover,
-[data-theme='dark'] select:hover,
-[data-theme='dark'] textarea:hover { border-color: #60a5fa; background-color: #263752; }
-[data-theme='dark'] input:not([type='checkbox']):not([type='radio']):not([type='file']):focus,
-[data-theme='dark'] select:focus,
-[data-theme='dark'] textarea:focus { border-color: #60a5fa; background-color: #334155 !important; box-shadow: 0 0 0 3px rgb(96 165 250 / 0.3); }
-[data-theme='dark'] input[type='file'] { border-color: #475569; background-color: #1e293b; color: #cbd5e1; }
-[data-theme='dark'] input[type='file']:focus { border-color: #60a5fa; background-color: #334155; }
-
-@media (prefers-color-scheme: dark) {
-    [data-theme='system'] {
-        color-scheme: dark;
-        background: #0f172a;
-        color: #e2e8f0;
-    }
-
-    [data-theme='system'] .guest-portal {
-        background-color: #0f172a;
-        color: #e2e8f0;
-    }
-
-    [data-theme='system'] .guest-card { background-color: #1e293b; }
-    [data-theme='system'] .guest-form-surface { background-color: #334155; }
-    [data-theme='system'] .guest-brand-name { color: #94a3b8; }
-    [data-theme='system'] .guest-form-surface .text-slate-600,
-    [data-theme='system'] .guest-form-surface .text-gray-600 { color: #cbd5e1; }
-    [data-theme='system'] .guest-portal::before {
-        background-image: linear-gradient(rgb(15 23 42 / 0.72), rgb(15 23 42 / 0.72)), url('/odontogram/Fondo%20dental%20minimalista%20en%20tonos%20aqua.png');
-    }
-
-    [data-theme='system'] .bg-white { background-color: #1e293b; }
-    [data-theme='system'] .bg-slate-50 { background-color: #0f172a; }
-    [data-theme='system'] .text-slate-900 { color: #f8fafc; }
-    [data-theme='system'] .text-slate-800,
-    [data-theme='system'] .text-slate-700 { color: #cbd5e1; }
-    [data-theme='system'] .text-slate-500,
-    [data-theme='system'] .text-slate-400 { color: #94a3b8; }
-    [data-theme='system'] .border-slate-200 { border-color: #334155; }
-    [data-theme='system'] label:has(> input[type='checkbox']):hover { color: #000000 !important; }
-    [data-theme='system'] input:not([type='checkbox']):not([type='radio']):not([type='file']),
-    [data-theme='system'] select,
-    [data-theme='system'] textarea { border-color: #475569; background-color: #1e293b; color: #f8fafc; }
-    [data-theme='system'] input:not([type='checkbox']):not([type='radio']):not([type='file']):hover,
-    [data-theme='system'] select:hover,
-    [data-theme='system'] textarea:hover { border-color: #60a5fa; background-color: #263752; }
-    [data-theme='system'] input:not([type='checkbox']):not([type='radio']):not([type='file']):focus,
-    [data-theme='system'] select:focus,
-    [data-theme='system'] textarea:focus { border-color: #60a5fa; background-color: #334155 !important; box-shadow: 0 0 0 3px rgb(96 165 250 / 0.3); }
-    [data-theme='system'] input[type='file'] { border-color: #475569; background-color: #1e293b; color: #cbd5e1; }
-    [data-theme='system'] input[type='file']:focus { border-color: #60a5fa; background-color: #334155; }
-}
-
-@media (prefers-color-scheme: light) {
-    [data-theme='system'] .guest-portal {
-        background-color: #f8fafc;
-        color: #0f172a;
-    }
-
-    [data-theme='system'] .guest-card { background-color: #e2e8f0; }
-    [data-theme='system'] .guest-form-surface { background-color: #cbd5e1; }
-    [data-theme='system'] .guest-brand-name { color: #475569; }
-    [data-theme='system'] .guest-form-surface .text-slate-400,
-    [data-theme='system'] .guest-form-surface .text-slate-600,
-    [data-theme='system'] .guest-form-surface .text-gray-600 { color: #475569; }
+@media print {
+    .print-page { background: #ffffff !important; color: #000000 !important; }
 }

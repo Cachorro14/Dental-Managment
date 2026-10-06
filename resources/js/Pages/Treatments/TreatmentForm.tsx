@@ -38,7 +38,7 @@ export default function TreatmentForm({
     };
 
     return (
-        <form onSubmit={submit} className="space-y-5 rounded-2xl bg-white p-5 shadow-sm sm:p-7">
+        <form onSubmit={submit} className="theme-card space-y-5 rounded-2xl border theme-outline p-5 shadow-sm sm:p-7">
             <div className="grid gap-5 sm:grid-cols-2">
                 <div className="sm:col-span-2">
                     <InputLabel htmlFor="name" value="Tratamiento" />
@@ -57,7 +57,7 @@ export default function TreatmentForm({
                 </div>
                 <div>
                     <InputLabel htmlFor="status" value="Estado" />
-                    <select id="status" value={form.data.status} onChange={(event) => form.setData('status', event.target.value as TreatmentData['status'])} className="mt-1 min-h-11 w-full rounded-md border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                    <select id="status" value={form.data.status} onChange={(event) => form.setData('status', event.target.value as TreatmentData['status'])} className="theme-content mt-1 min-h-11 w-full rounded-xl border-outline-strong bg-surface-raised shadow-sm focus:border-accent focus:ring-accent">
                         <option value="planned">Planeado</option><option value="in_progress">En curso</option><option value="completed">Completado</option><option value="cancelled">Cancelado</option>
                     </select>
                     <InputError message={form.errors.status} className="mt-2" />
@@ -74,12 +74,12 @@ export default function TreatmentForm({
                 </div>}
                 <div className="sm:col-span-2">
                     <InputLabel htmlFor="description" value="Descripción" />
-                    <textarea id="description" value={form.data.description} onChange={(event) => form.setData('description', event.target.value)} rows={3} className="mt-1 w-full rounded-md border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" />
+                    <textarea id="description" value={form.data.description} onChange={(event) => form.setData('description', event.target.value)} rows={3} className="theme-content mt-1 w-full rounded-xl border-outline-strong bg-surface-raised shadow-sm focus:border-accent focus:ring-accent" />
                     <InputError message={form.errors.description} className="mt-2" />
                 </div>
                 <div className="sm:col-span-2">
                     <InputLabel htmlFor="notes" value="Notas clínicas" />
-                    <textarea id="notes" value={form.data.notes} onChange={(event) => form.setData('notes', event.target.value)} rows={3} className="mt-1 w-full rounded-md border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" />
+                    <textarea id="notes" value={form.data.notes} onChange={(event) => form.setData('notes', event.target.value)} rows={3} className="theme-content mt-1 w-full rounded-xl border-outline-strong bg-surface-raised shadow-sm focus:border-accent focus:ring-accent" />
                     <InputError message={form.errors.notes} className="mt-2" />
                 </div>
             </div>

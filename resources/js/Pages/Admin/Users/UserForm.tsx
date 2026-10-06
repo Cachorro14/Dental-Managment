@@ -10,19 +10,28 @@ type AdminUser = {
     id: number;
     name: string;
     email: string;
+    phone: string | null;
+    whatsapp_appointment_consent: boolean;
+    whatsapp_appointment_consent_recorded_at?: string | null;
     roles: RoleSummary[];
 };
 
 export default function UserForm({
     user,
     roles,
+    canManageWhatsAppConsent = false,
+    whatsappConsentRecordedBy,
 }: {
     user?: AdminUser;
     roles: RoleSummary[];
+    canManageWhatsAppConsent?: boolean;
+    whatsappConsentRecordedBy?: string | null;
 }) {
     const form = useForm({
         name: user?.name ?? "",
         email: user?.email ?? "",
+        phone: user?.phone ?? "",
+        whatsapp_appointment_consent: user?.whatsapp_appointment_consent ?? false,
         password: "",
         password_confirmation: "",
         roles: user?.roles.map((role) => role.id) ?? [],
@@ -46,13 +55,13 @@ export default function UserForm({
     return (
         <form
             onSubmit={submit}
-            className="space-y-6 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7"
+            className="space-y-6 rounded-2xl border theme-outline theme-card p-5 shadow-sm sm:p-7"
         >
             <div>
-                <h2 className="text-lg font-semibold text-slate-900">
+                <h2 className="text-lg font-semibold theme-content">
                     Datos de acceso
                 </h2>
-                <p className="mt-1 text-sm text-slate-500">
+                <p className="mt-1 text-sm theme-content-muted">
                     Los roles determinan las capacidades administrativas y
                     clínicas del usuario.
                 </p>
@@ -86,6 +95,19 @@ export default function UserForm({
                     <InputError message={form.errors.email} className="mt-2" />
                 </div>
             </div>
+            <div>
+                <InputLabel htmlFor="whatsapp_phone" value="Teléfono para WhatsApp" />
+                <TextInput id="whatsapp_phone" type="tel" value={form.data.phone} onChange={(event) => form.setData("phone", event.target.value)} className="mt-1 block w-full" />
+                <InputError message={form.errors.phone} className="mt-2" />
+            </div>
+            {canManageWhatsAppConsent && <fieldset className="theme-success rounded-xl border p-4">
+                <label className="flex min-h-11 items-start gap-3 text-sm theme-content">
+                    <input type="checkbox" checked={form.data.whatsapp_appointment_consent} onChange={(event) => form.setData("whatsapp_appointment_consent", event.target.checked)} className="mt-1 rounded border-emerald-400 theme-content focus:ring-emerald-500" />
+                    <span>Este usuario cuenta con consentimiento físico para recibir avisos operativos de citas por WhatsApp.</span>
+                </label>
+                <InputError message={form.errors.whatsapp_appointment_consent as string | undefined} className="mt-2" />
+                {user?.whatsapp_appointment_consent_recorded_at && <p className="mt-2 text-xs theme-content">Última autorización registrada el {new Date(user.whatsapp_appointment_consent_recorded_at).toLocaleString('es-MX')}{whatsappConsentRecordedBy ? ` por ${whatsappConsentRecordedBy}` : ''}.</p>}
+            </fieldset>}
             <div className="grid gap-5 sm:grid-cols-2">
                 <div>
                     <InputLabel
@@ -135,13 +157,13 @@ export default function UserForm({
                     {roles.map((role) => (
                         <label
                             key={role.id}
-                            className="flex min-h-12 items-center gap-3 rounded-xl border border-slate-200 px-4 py-3 text-sm text-slate-700 transition hover:border-blue-300 hover:bg-blue-50"
+                            className="flex min-h-12 items-center gap-3 rounded-xl border theme-outline px-4 py-3 text-sm theme-content-secondary transition hover:border-accent hover:bg-surface-sunken"
                         >
                             <input
                                 type="checkbox"
                                 checked={form.data.roles.includes(role.id)}
                                 onChange={() => toggleRole(role.id)}
-                                className="rounded border-slate-300 text-blue-600 focus:ring-blue-500 hover:text-black"
+                                className="rounded border-outline-strong text-accent focus:ring-accent"
                             />
                             {role.name}
                         </label>
@@ -155,7 +177,7 @@ export default function UserForm({
                 </PrimaryButton>
                 <Link
                     href={route("admin.users.index")}
-                    className="inline-flex items-center justify-center rounded-md border border-blue-200 px-4 py-2 text-xs font-semibold uppercase tracking-widest text-blue-800 transition hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-blue-300"
+                    className="theme-content-secondary inline-flex items-center justify-center rounded-md border theme-outline-strong bg-surface-raised px-4 py-2 text-xs font-semibold uppercase tracking-widest transition hover:bg-surface-sunken focus:outline-none focus:ring-2 focus:ring-accent"
                 >
                     Cancelar
                 </Link>

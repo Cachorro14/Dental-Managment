@@ -29,6 +29,11 @@ class ClinicStaffPolicy
         return $user->can('clinic_staff.update') && $this->isManageableStaffMember($clinicStaffMember);
     }
 
+    public function manageWhatsAppConsent(User $user, User $clinicStaffMember): bool
+    {
+        return $user->can('users.whatsapp_consent') && $this->isManageableStaffMember($clinicStaffMember);
+    }
+
     private function isManageableStaffMember(User $user): bool
     {
         $roleNames = $user->getRoleNames();

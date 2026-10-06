@@ -1,5 +1,7 @@
 <?php
 
+use App\Core\Settings\ClinicSettings;
+use App\Core\WhatsApp\ManualAppointmentReminder;
 use App\Http\Controllers\Admin\BrandingController;
 use App\Http\Controllers\Admin\ModuleManagementController;
 use App\Http\Controllers\Admin\RoleManagementController;
@@ -7,6 +9,8 @@ use App\Http\Controllers\Admin\UserManagementController;
 use App\Http\Controllers\AuditLogController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Modules\Appointments\AppointmentController;
+use App\Http\Controllers\Modules\Appointments\AppointmentReminderConsentController;
+use App\Http\Controllers\Modules\Appointments\AppointmentReminderController;
 use App\Http\Controllers\Modules\Billing\BillingController;
 use App\Http\Controllers\Modules\Billing\TreatmentChargeController;
 use App\Http\Controllers\Modules\ClinicalHistory\ClinicalHistoryController;
@@ -16,12 +20,67 @@ use App\Http\Controllers\Modules\Patients\PatientController;
 use App\Http\Controllers\Modules\Patients\PatientDentistAssignmentController;
 use App\Http\Controllers\Modules\Treatments\TreatmentController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\WhatsApp\WhatsAppWebhookController;
+use App\Models\Modules\Appointments\Appointment;
+use App\Models\Modules\Appointments\AppointmentReminder;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 Route::get('/', function () {
     return Inertia::render('Welcome');
 });
+
+Route::get('/webhooks/whatsapp', [WhatsAppWebhookController::class, 'verify'])->name('whatsapp.webhook.verify');
+Route::post('/webhooks/whatsapp', [WhatsAppWebhookController::class, 'receive'])->name('whatsapp.webhook.receive');
+
+Route::get('/whatsapp/appointments/{token}', function (string $token) {
+    $reminder = AppointmentReminder::query()
+        ->with('appointment.patient')
+        ->where('confirmation_token', $token)
+        ->firstOrFail();
+
+    abort_unless($reminder->confirmation_token_expires_at?->isFuture(), 410);
+
+    return Inertia::render('Appointments/ConfirmWhatsApp', [
+        'token' => $token,
+        'patientName' => $reminder->appointment->patient->first_name,
+        'scheduledAt' => $reminder->appointment->scheduled_at,
+        'confirmed' => $reminder->appointment->status === 'confirmed',
+        'branding' => app(ClinicSettings::class)->branding(),
+    ]);
+})->name('whatsapp.appointments.reply');
+Route::post('/whatsapp/appointments/{token}/confirm', function (Request $request, string $token) {
+    $reminder = AppointmentReminder::query()
+        ->with('appointment')
+        ->where('confirmation_token', $token)
+        ->where('status', 'sent')
+        ->where('confirmation_token_expires_at', '>', now())
+        ->firstOrFail();
+    $appointment = $reminder->appointment;
+
+    DB::transaction(function () use ($reminder, $appointment): void {
+        $lockedReminder = AppointmentReminder::query()->whereKey($reminder->id)->lockForUpdate()->firstOrFail();
+        $lockedAppointment = Appointment::query()->whereKey($appointment->id)->lockForUpdate()->firstOrFail();
+
+        $notifyDentist = false;
+        if ($lockedAppointment->status === 'scheduled') {
+            $lockedReminder->forceFill(['reply_text' => 'CONFIRMAR', 'reply_received_at' => now()])->save();
+            $lockedAppointment->update(['status' => 'confirmed']);
+            $notifyDentist = true;
+        }
+
+        if ($notifyDentist) {
+            DB::afterCommit(function () use ($lockedAppointment): void {
+                $lockedAppointment->load('dentist', 'patient');
+                app(ManualAppointmentReminder::class)->sendDentistConfirmationNotice($lockedAppointment, null);
+            });
+        }
+    });
+
+    return redirect()->route('whatsapp.appointments.reply', $token);
+})->name('whatsapp.appointments.confirm');
 
 Route::get('/dashboard', DashboardController::class)->middleware('auth')->name('dashboard');
 
@@ -102,6 +161,12 @@ Route::middleware(['auth', 'module:APPOINTMENTS'])->prefix('appointments')->name
     Route::get('/{appointment}/edit', [AppointmentController::class, 'edit'])->middleware('permission:appointments.update')->name('edit');
     Route::patch('/{appointment}', [AppointmentController::class, 'update'])->middleware('permission:appointments.update')->name('update');
     Route::delete('/{appointment}', [AppointmentController::class, 'destroy'])->middleware('permission:appointments.delete')->name('destroy');
+    Route::post('/{appointment}/reminders/whatsapp', [AppointmentReminderController::class, 'store'])
+        ->middleware(['feature:APPOINTMENTS_REMINDERS', 'permission:appointments.reminders.send'])
+        ->name('reminders.whatsapp.store');
+    Route::patch('/{appointment}/reminders/whatsapp/consent', [AppointmentReminderConsentController::class, 'update'])
+        ->middleware('permission:patients.whatsapp_consent')
+        ->name('reminders.whatsapp.consent.update');
 });
 
 Route::middleware(['auth', 'module:CLINICAL_HISTORY'])

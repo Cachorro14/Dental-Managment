@@ -30,7 +30,7 @@ class ModuleCatalogSeeder extends Seeder
                 ['code' => $code],
                 [
                     'module_code' => $feature['module'],
-                    'enabled' => false,
+                    'enabled' => $code === 'APPOINTMENTS_REMINDERS' && (bool) config('services.whatsapp.enabled', false),
                 ],
             );
         }

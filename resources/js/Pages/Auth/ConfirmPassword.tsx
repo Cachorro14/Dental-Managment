@@ -23,7 +23,7 @@ export default function ConfirmPassword() {
         <GuestLayout>
             <Head title="Confirmar contrasena" />
 
-            <div className="mb-4 text-sm text-gray-600">
+            <div className="mb-4 text-sm theme-content-secondary">
                 Esta es un area segura. Confirma tu contrasena para continuar.
             </div>
 

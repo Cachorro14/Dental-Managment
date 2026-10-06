@@ -8,6 +8,7 @@ use Database\Factories\Modules\Appointments\AppointmentFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Appointment extends Model
 {
@@ -32,5 +33,10 @@ class Appointment extends Model
     public function dentist(): BelongsTo
     {
         return $this->belongsTo(User::class, 'dentist_id');
+    }
+
+    public function reminders(): HasMany
+    {
+        return $this->hasMany(AppointmentReminder::class);
     }
 }

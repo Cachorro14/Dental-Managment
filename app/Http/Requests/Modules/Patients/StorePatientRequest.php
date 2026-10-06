@@ -44,6 +44,7 @@ class StorePatientRequest extends FormRequest
             'insurance_holder' => ['nullable', 'string', 'max:255'],
             'workplace' => ['nullable', 'string', 'max:255'],
             'job_title' => ['nullable', 'string', 'max:255'],
+            'whatsapp_reminder_consent' => ['sometimes', 'boolean'],
         ];
     }
 }

@@ -20,6 +20,7 @@ class PatientObserver
         'document_type',
         'document_number',
         'date_of_birth',
+        'whatsapp_reminder_consent_recorded_by',
     ];
 
     public function __construct(private AuditLogger $auditLogger) {}

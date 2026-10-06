@@ -41,6 +41,16 @@ class AppointmentPolicy
         return $user->can('appointments.update') && $this->canAccessAppointment($user, $appointment);
     }
 
+    public function sendReminder(User $user, Appointment $appointment): bool
+    {
+        return $user->can('appointments.reminders.send') && $this->canAccessAppointment($user, $appointment);
+    }
+
+    public function managePatientWhatsAppConsent(User $user, Appointment $appointment): bool
+    {
+        return $user->can('patients.whatsapp_consent') && $this->canAccessAppointment($user, $appointment);
+    }
+
     /**
      * Determine whether the user can delete the model.
      */

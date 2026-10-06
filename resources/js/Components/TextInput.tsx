@@ -34,7 +34,7 @@ export default forwardRef(function TextInput(
             type={type}
             placeholder={placeholder ?? ' '}
             className={
-                'rounded-full border-slate-300 bg-white px-5 py-3 shadow-sm transition placeholder:text-slate-400 hover:border-blue-300 hover:bg-blue-50/30 focus:border-blue-600 focus:ring-blue-500 ' +
+                'theme-content rounded-full border-outline-strong bg-surface-raised px-5 py-3 shadow-sm transition placeholder:text-content-muted hover:border-accent focus:border-accent focus:ring-accent ' +
                 className
             }
             ref={localRef}

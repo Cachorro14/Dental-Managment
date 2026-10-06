@@ -20,7 +20,7 @@ export default function ForgotPassword({ status }: { status?: string }) {
         <GuestLayout>
             <Head title="Recuperar contrasena" />
 
-            <div className="mb-4 text-sm text-gray-600">
+            <div className="mb-4 text-sm theme-content-secondary">
                 Indicanos tu correo y te enviaremos un enlace para restablecer
                 tu contrasena.
             </div>

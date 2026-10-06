@@ -2,7 +2,7 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { PageProps, Patient } from '@/types';
 import { Head, Link, useForm, usePage } from '@inertiajs/react';
 
-export default function Show({ patient, patientActions }: { patient: Patient; patientActions: { update: boolean; assignDentists: boolean; questionnaire: boolean; clinicalHistory: boolean; odontogram: boolean } }) {
+export default function Show({ patient, patientActions, canManageWhatsAppConsent = false, whatsappConsentRecordedBy }: { patient: Patient; patientActions: { update: boolean; assignDentists: boolean; questionnaire: boolean; clinicalHistory: boolean; odontogram: boolean }; canManageWhatsAppConsent?: boolean; whatsappConsentRecordedBy?: string | null }) {
     const { auth, system } = usePage<PageProps>().props;
     const { delete: destroy, processing } = useForm();
     const canUpdate = patientActions.update;
@@ -42,30 +42,31 @@ export default function Show({ patient, patientActions }: { patient: Patient; pa
     ];
 
     return (
-        <AuthenticatedLayout header={<h2 className="text-xl font-semibold leading-tight text-slate-800">Datos del paciente</h2>}>
+        <AuthenticatedLayout header={<h2 className="text-xl font-semibold leading-tight theme-content-secondary">Datos del paciente</h2>}>
             <Head title={patientName} />
             <div className="py-12">
                 <div className="mx-auto max-w-4xl space-y-6 sm:px-6 lg:px-8">
-                    <section className="flex flex-col justify-between gap-5 rounded-2xl bg-white p-6 shadow-sm sm:flex-row sm:items-start">
+                    <section className="flex flex-col justify-between gap-5 rounded-2xl theme-card p-6 shadow-sm sm:flex-row sm:items-start">
                         <div>
-                            <h1 className="text-2xl font-semibold text-slate-900">{patientName}</h1>
-                            <p className="mt-1 text-sm text-slate-500">Paciente #{patient.id}</p>
+                            <h1 className="text-2xl font-semibold theme-content">{patientName}</h1>
+                            <p className="mt-1 text-sm theme-content-muted">Paciente #{patient.id}</p>
                         </div>
                         <div className="flex flex-wrap gap-3">
-                            {canUpdate && <Link href={route('patients.edit', patient.id)} className="inline-flex min-h-11 items-center justify-center rounded-xl bg-indigo-600 px-4 py-2 text-sm font-semibold text-white">Editar</Link>}
-                            {canAssignDentists && <Link href={route('patients.dentists.edit', patient.id)} className="inline-flex min-h-11 items-center justify-center rounded-xl border border-blue-200 px-4 py-2 text-sm font-semibold text-blue-800">Asignar doctores</Link>}
-                            {canViewQuestionnaire && <Link href={route('clinical-history.questionnaire', patient.id)} className="inline-flex min-h-11 items-center justify-center rounded-xl border border-blue-200 px-4 py-2 text-sm font-semibold text-blue-800">Cuestionario paciente</Link>}
-                            {canViewClinicalHistory && <Link href={route('clinical-history.edit', patient.id)} className="inline-flex min-h-11 items-center justify-center rounded-xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white">Historia clínica</Link>}
-                            {patientActions.odontogram && canViewOdontogram && <Link href={route('odontogram.edit', patient.id)} className="inline-flex min-h-11 items-center justify-center rounded-xl bg-teal-600 px-4 py-2 text-sm font-semibold text-white">Odontograma</Link>}
-                            {canViewTreatments && <Link href={route('treatments.index', patient.id)} className="inline-flex min-h-11 items-center justify-center rounded-xl bg-violet-600 px-4 py-2 text-sm font-semibold text-white">Tratamientos</Link>}
-                            {canViewBilling && <Link href={route('billing.show', patient.id)} className="inline-flex min-h-11 items-center justify-center rounded-xl bg-rose-700 px-4 py-2 text-sm font-semibold text-white">Estado de cuenta</Link>}
-                            {canDelete && <button type="button" onClick={remove} disabled={processing} className="inline-flex min-h-11 items-center justify-center rounded-xl bg-red-600 px-4 py-2 text-sm font-semibold text-white disabled:opacity-50">Archivar</button>}
+                            {canUpdate && <Link href={route('patients.edit', patient.id)} className="theme-accent-button inline-flex min-h-11 items-center justify-center rounded-xl px-4 py-2 text-sm font-semibold hover:opacity-90">Editar</Link>}
+                            {canAssignDentists && <Link href={route('patients.dentists.edit', patient.id)} className="theme-content-secondary inline-flex min-h-11 items-center justify-center rounded-xl border theme-outline-strong bg-surface-raised px-4 py-2 text-sm font-semibold">Asignar doctores</Link>}
+                            {canViewQuestionnaire && <Link href={route('clinical-history.questionnaire', patient.id)} className="theme-info inline-flex min-h-11 items-center justify-center rounded-xl border px-4 py-2 text-sm font-semibold">Cuestionario paciente</Link>}
+                            {canViewClinicalHistory && <Link href={route('clinical-history.edit', patient.id)} className="theme-accent-button inline-flex min-h-11 items-center justify-center rounded-xl px-4 py-2 text-sm font-semibold hover:opacity-90">Historia clínica</Link>}
+                            {patientActions.odontogram && canViewOdontogram && <Link href={route('odontogram.edit', patient.id)} className="theme-accent-button inline-flex min-h-11 items-center justify-center rounded-xl px-4 py-2 text-sm font-semibold hover:opacity-90">Odontograma</Link>}
+                            {canViewTreatments && <Link href={route('treatments.index', patient.id)} className="theme-accent-button inline-flex min-h-11 items-center justify-center rounded-xl px-4 py-2 text-sm font-semibold hover:opacity-90">Tratamientos</Link>}
+                            {canViewBilling && <Link href={route('billing.show', patient.id)} className="theme-danger inline-flex min-h-11 items-center justify-center rounded-xl border px-4 py-2 text-sm font-semibold">Estado de cuenta</Link>}
+                            {canDelete && <button type="button" onClick={remove} disabled={processing} className="theme-danger inline-flex min-h-11 items-center justify-center rounded-xl border px-4 py-2 text-sm font-semibold disabled:opacity-50">Archivar</button>}
                         </div>
                     </section>
 
-                    <dl className="grid gap-6 rounded-2xl bg-white p-6 shadow-sm sm:grid-cols-2">
-                        {details.map((detail) => <div key={detail.label}><dt className="text-sm text-slate-500">{detail.label}</dt><dd className="mt-1 whitespace-pre-wrap text-slate-900">{detail.value || '-'}</dd></div>)}
+                    <dl className="grid gap-6 rounded-2xl theme-card p-6 shadow-sm sm:grid-cols-2">
+                        {details.map((detail) => <div key={detail.label}><dt className="text-sm theme-content-muted">{detail.label}</dt><dd className="mt-1 whitespace-pre-wrap theme-content">{detail.value || '-'}</dd></div>)}
                     </dl>
+                    {canManageWhatsAppConsent && <section className="theme-success rounded-2xl border p-5"><h2 className="font-semibold">Recordatorios por WhatsApp</h2><p className="mt-1 text-sm">Teléfono: {patient.phone || 'No registrado'} · Consentimiento físico: {patient.whatsapp_reminder_consent ? 'Registrado' : 'No registrado'}</p>{patient.whatsapp_reminder_consent_recorded_at && <p className="mt-1 text-xs">Registrado el {new Date(patient.whatsapp_reminder_consent_recorded_at).toLocaleString('es-MX')}{whatsappConsentRecordedBy ? ` por ${whatsappConsentRecordedBy}` : ''}.</p>}</section>}
                 </div>
             </div>
         </AuthenticatedLayout>

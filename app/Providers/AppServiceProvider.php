@@ -2,6 +2,9 @@
 
 namespace App\Providers;
 
+use App\Core\WhatsApp\LogWhatsAppMessageSender;
+use App\Core\WhatsApp\MetaWhatsAppMessageSender;
+use App\Core\WhatsApp\WhatsAppMessageSender;
 use App\Models\Modules\Appointments\Appointment;
 use App\Models\Modules\Billing\BillingEntry;
 use App\Models\Modules\ClinicalHistory\ClinicalHistory;
@@ -40,6 +43,9 @@ class AppServiceProvider extends ServiceProvider
     {
         Vite::prefetch(concurrency: 3);
         Gate::policy(Patient::class, PatientPolicy::class);
+        $this->app->bind(WhatsAppMessageSender::class, fn (): WhatsAppMessageSender => config('services.whatsapp.mode') === 'meta'
+            ? app(MetaWhatsAppMessageSender::class)
+            : app(LogWhatsAppMessageSender::class));
         Gate::policy(User::class, ClinicStaffPolicy::class);
         Gate::policy(Appointment::class, AppointmentPolicy::class);
         Gate::policy(BillingEntry::class, BillingEntryPolicy::class);

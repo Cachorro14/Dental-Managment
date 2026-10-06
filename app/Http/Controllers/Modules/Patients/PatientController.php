@@ -59,7 +59,30 @@ class PatientController extends Controller
     public function store(StorePatientRequest $request): RedirectResponse
     {
         $patient = DB::transaction(function () use ($request): Patient {
-            $patient = Patient::create($request->validated());
+            $data = $request->validated();
+            $hasConsentInput = array_key_exists('whatsapp_reminder_consent', $data);
+            abort_unless(! $hasConsentInput || $request->user()->can('patients.whatsapp_consent'), 403);
+            $consentGiven = (bool) ($data['whatsapp_reminder_consent'] ?? false);
+            unset($data['whatsapp_reminder_consent']);
+
+            $patient = Patient::create($data);
+
+            if ($hasConsentInput) {
+                DB::transaction(function () use ($patient, $consentGiven, $request): void {
+                    $patient->forceFill([
+                        'whatsapp_reminder_consent' => $consentGiven,
+                        'whatsapp_reminder_consent_recorded_by' => $consentGiven ? $request->user()->id : null,
+                    ])->save();
+
+                    DB::table('whatsapp_consent_audits')->insert([
+                        'patient_id' => $patient->id,
+                        'recorded_by' => $request->user()->id,
+                        'consent_given' => $consentGiven,
+                        'recorded_at' => now(),
+                    ]);
+                });
+            }
+
             $user = $request->user();
 
             if ($user->hasRole('DENTIST')) {
@@ -80,7 +103,13 @@ class PatientController extends Controller
         Gate::authorize('view', $patient);
 
         return Inertia::render('Patients/Show', [
-            'patient' => $patient,
+            'patient' => $patient->makeHidden([
+                'whatsapp_reminder_consent_recorded_by',
+            ]),
+            'canManageWhatsAppConsent' => request()->user()->can('patients.whatsapp_consent'),
+            'whatsappConsentRecordedBy' => request()->user()->can('patients.whatsapp_consent')
+                ? $patient->whatsappConsentRecorder()->value('name')
+                : null,
             'patientActions' => [
                 'update' => request()->user()->can('update', $patient),
                 'assignDentists' => request()->user()->can('assignDentists', $patient),
@@ -98,7 +127,13 @@ class PatientController extends Controller
     {
         Gate::authorize('update', $patient);
 
-        return Inertia::render('Patients/Edit', ['patient' => $patient]);
+        return Inertia::render('Patients/Edit', [
+            'patient' => $patient->makeHidden(['whatsapp_reminder_consent_recorded_by']),
+            'canManageWhatsAppConsent' => request()->user()->can('patients.whatsapp_consent'),
+            'whatsappConsentRecordedBy' => request()->user()->can('patients.whatsapp_consent')
+                ? $patient->whatsappConsentRecorder()->value('name')
+                : null,
+        ]);
     }
 
     /**
@@ -106,7 +141,33 @@ class PatientController extends Controller
      */
     public function update(UpdatePatientRequest $request, Patient $patient): RedirectResponse
     {
-        $patient->update($request->validated());
+        $data = $request->validated();
+        $hasConsentInput = array_key_exists('whatsapp_reminder_consent', $data);
+        abort_unless(! $hasConsentInput || $request->user()->can('patients.whatsapp_consent'), 403);
+        $consentGiven = (bool) ($data['whatsapp_reminder_consent'] ?? false);
+        unset($data['whatsapp_reminder_consent']);
+
+        $patient->fill($data);
+
+        DB::transaction(function () use ($patient, $hasConsentInput, $consentGiven, $request): void {
+            if ($hasConsentInput) {
+                $patient->forceFill([
+                    'whatsapp_reminder_consent' => $consentGiven,
+                    'whatsapp_reminder_consent_recorded_by' => $consentGiven ? $request->user()->id : null,
+                ]);
+            }
+
+            $patient->save();
+
+            if ($hasConsentInput) {
+                DB::table('whatsapp_consent_audits')->insert([
+                    'patient_id' => $patient->id,
+                    'recorded_by' => $request->user()->id,
+                    'consent_given' => $consentGiven,
+                    'recorded_at' => now(),
+                ]);
+            }
+        });
 
         return redirect()->route('patients.show', $patient);
     }

@@ -33,7 +33,7 @@ export default function Login({
 
             <div className="guest-form-surface rounded-xl p-5 sm:p-6">
                 {status && (
-                    <div className="mb-4 text-sm font-medium text-green-600">
+                    <div className="theme-success mb-4 rounded-lg border px-3 py-2 text-sm font-medium">
                         {status}
                     </div>
                 )}
@@ -52,7 +52,7 @@ export default function Login({
                         isFocused={true}
                         onChange={(e) => setData('email', e.target.value)}
                     />
-                    <label htmlFor="email" className="pointer-events-none absolute mt-[-2.55rem] ms-5 text-sm text-slate-400 transition-opacity peer-focus:opacity-0 peer-[:not(:placeholder-shown)]:opacity-0">Correo electronico</label>
+                    <label htmlFor="email" className="theme-content-muted pointer-events-none absolute mt-[-2.55rem] ms-5 text-sm transition-opacity peer-focus:opacity-0 peer-[:not(:placeholder-shown)]:opacity-0">Correo electrónico</label>
 
                     <InputError message={errors.email} className="mt-2" />
                 </div>
@@ -69,7 +69,7 @@ export default function Login({
                         autoComplete="current-password"
                         onChange={(e) => setData('password', e.target.value)}
                     />
-                    <label htmlFor="password" className="pointer-events-none absolute mt-[-2.55rem] ms-5 text-sm text-slate-400 transition-opacity peer-focus:opacity-0 peer-[:not(:placeholder-shown)]:opacity-0">Contrasena</label>
+                    <label htmlFor="password" className="theme-content-muted pointer-events-none absolute mt-[-2.55rem] ms-5 text-sm transition-opacity peer-focus:opacity-0 peer-[:not(:placeholder-shown)]:opacity-0">Contraseña</label>
 
                     <InputError message={errors.password} className="mt-2" />
                 </div>
@@ -86,7 +86,7 @@ export default function Login({
                                 )
                             }
                         />
-                        <span className="ms-2 text-sm text-gray-600">
+                        <span className="theme-content-secondary ms-2 text-sm">
                             Recordarme
                         </span>
                     </label>
@@ -96,7 +96,7 @@ export default function Login({
                     {canResetPassword && (
                         <Link
                             href={route('password.request')}
-                            className="rounded-full px-3 py-2 text-center text-sm font-medium text-slate-600 transition hover:bg-blue-50 hover:text-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-300 focus:ring-offset-2"
+                            className="theme-content-secondary rounded-full px-3 py-2 text-center text-sm font-medium transition hover:bg-info-surface hover:text-info-content focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 focus:ring-offset-surface-raised"
                         >
                             Olvidaste tu contrasena?
                         </Link>

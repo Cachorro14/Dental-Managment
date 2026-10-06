@@ -19,6 +19,8 @@ class UpdateUserRequest extends FormRequest
     {
         return [
             'name' => ['required', 'string', 'max:255'],
+            'phone' => ['nullable', 'string', 'max:40'],
+            'whatsapp_appointment_consent' => ['sometimes', 'boolean'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', Rule::unique('users', 'email')->ignore($this->route('user'))],
             'password' => ['nullable', 'string', 'confirmed', 'min:8'],
             'roles' => ['required', 'array', 'min:1'],

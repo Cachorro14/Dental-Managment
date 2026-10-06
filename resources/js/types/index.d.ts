@@ -2,6 +2,8 @@ export interface User {
     id: number;
     name: string;
     email: string;
+    phone?: string | null;
+    whatsapp_appointment_consent?: boolean;
     license_number?: string | null;
     license_number?: string | null;
     email_verified_at?: string;
@@ -104,6 +106,8 @@ export interface Patient {
     insurance_holder: string | null;
     workplace: string | null;
     job_title: string | null;
+    whatsapp_reminder_consent: boolean;
+    whatsapp_reminder_consent_recorded_at: string | null;
     insurance_provider: string | null;
     insurance_member_number: string | null;
     marital_status: string | null;
@@ -187,8 +191,20 @@ export interface Appointment {
     status: 'scheduled' | 'confirmed' | 'completed' | 'cancelled';
     reason: string | null;
     notes: string | null;
-    patient?: Pick<Patient, 'id' | 'first_name' | 'last_name'>;
-    dentist?: { id: number; name: string } | null;
+    patient?: Pick<Patient, 'id' | 'first_name' | 'last_name' | 'phone' | 'whatsapp_reminder_consent'> & { whatsappConsentRecorder?: { id: number; name: string } | null };
+    dentist?: { id: number; name: string; phone?: string | null; whatsapp_appointment_consent?: boolean } | null;
+    reminders?: Array<{
+        id: number;
+        recipient_type: 'patient' | 'dentist';
+        recipient_phone: string;
+        status: 'queued' | 'sent' | 'failed';
+        sent_at: string | null;
+        reply_received_at: string | null;
+        reply_text: string | null;
+        failure_reason: string | null;
+        automatic: boolean;
+        triggered_by: { name: string } | null;
+    }>;
 }
 
 export interface AppointmentFormOptions {
