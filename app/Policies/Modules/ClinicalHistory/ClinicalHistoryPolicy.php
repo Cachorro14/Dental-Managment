@@ -12,7 +12,7 @@ class ClinicalHistoryPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->can('clinical_history.view');
+        return $user->can('clinical_history.view_intake') || $user->can('clinical_history.view_assessment');
     }
 
     /**
@@ -20,7 +20,12 @@ class ClinicalHistoryPolicy
      */
     public function view(User $user, ClinicalHistory $clinicalHistory): bool
     {
-        return $user->can('clinical_history.view');
+        return $user->can('clinical_history.view_intake') || $user->can('clinical_history.view_assessment');
+    }
+
+    public function view_intake(User $user, ClinicalHistory $clinicalHistory): bool
+    {
+        return $user->can('clinical_history.view_intake');
     }
 
     /**
@@ -28,7 +33,7 @@ class ClinicalHistoryPolicy
      */
     public function create(User $user): bool
     {
-        return $user->can('clinical_history.update');
+        return $user->can('clinical_history.update_assessment');
     }
 
     /**
@@ -36,7 +41,27 @@ class ClinicalHistoryPolicy
      */
     public function update(User $user, ClinicalHistory $clinicalHistory): bool
     {
-        return $user->can('clinical_history.update');
+        return $user->can('clinical_history.update_assessment');
+    }
+
+    public function update_intake(User $user, ClinicalHistory $clinicalHistory): bool
+    {
+        return $user->can('clinical_history.update_intake');
+    }
+
+    public function view_assessment(User $user, ClinicalHistory $clinicalHistory): bool
+    {
+        return $user->can('clinical_history.view_assessment');
+    }
+
+    public function update_assessment(User $user, ClinicalHistory $clinicalHistory): bool
+    {
+        return $user->can('clinical_history.update_assessment');
+    }
+
+    public function print(User $user, ClinicalHistory $clinicalHistory): bool
+    {
+        return $user->can('clinical_history.print');
     }
 
     /**

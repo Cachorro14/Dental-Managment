@@ -87,9 +87,9 @@ Route::middleware(['auth', 'module:PATIENTS'])->prefix('patients')->name('patien
     Route::get('/{patient}', [PatientController::class, 'show'])
         ->middleware('permission:patients.view')->name('show');
     Route::get('/{patient}/edit', [PatientController::class, 'edit'])
-        ->middleware('permission:patients.update')->name('edit');
+        ->middleware('permission:patients.update|patients.demographics.update')->name('edit');
     Route::patch('/{patient}', [PatientController::class, 'update'])
-        ->middleware('permission:patients.update')->name('update');
+        ->middleware('permission:patients.demographics.update|patients.update')->name('update');
     Route::delete('/{patient}', [PatientController::class, 'destroy'])
         ->middleware('permission:patients.delete')->name('destroy');
 });
@@ -109,10 +109,18 @@ Route::middleware(['auth', 'module:CLINICAL_HISTORY'])
     ->name('clinical-history.')
     ->scopeBindings()
     ->group(function () {
+        Route::get('/questionnaire', [ClinicalHistoryController::class, 'questionnaire'])
+            ->middleware('permission:clinical_history.view_intake')->name('questionnaire');
         Route::get('/', [ClinicalHistoryController::class, 'edit'])
-            ->middleware('permission:clinical_history.view')->name('edit');
+            ->middleware('permission:clinical_history.view_assessment')->name('edit');
         Route::patch('/', [ClinicalHistoryController::class, 'update'])
-            ->middleware('permission:clinical_history.update')->name('update');
+            ->middleware('permission:clinical_history.update_assessment')->name('update');
+        Route::patch('/intake', [ClinicalHistoryController::class, 'updateIntake'])
+            ->middleware('permission:clinical_history.update_intake')->name('intake.update');
+        Route::post('/review', [ClinicalHistoryController::class, 'review'])
+            ->middleware('permission:clinical_history.update_assessment')->name('review');
+        Route::get('/print', [ClinicalHistoryController::class, 'print'])
+            ->middleware('permission:clinical_history.print')->name('print');
     });
 
 Route::middleware(['auth', 'module:ODONTOGRAM'])

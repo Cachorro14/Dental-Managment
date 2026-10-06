@@ -2,11 +2,13 @@
 
 namespace Tests\Feature;
 
+use App\Models\AuditLog;
 use App\Models\Modules\Patients\Patient;
 use App\Models\User;
 use Database\Seeders\ModuleCatalogSeeder;
 use Database\Seeders\RolesAndPermissionsSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Inertia\Testing\AssertableInertia;
 use Inertia\Testing\AssertableInertia as Assert;
 use Tests\TestCase;
 
@@ -219,5 +221,73 @@ class PatientsTest extends TestCase
             'auditable_id' => $patient->id,
             'user_id' => $user->id,
         ]);
+    }
+
+    public function test_dentist_cannot_edit_patient_demographics(): void
+    {
+        $dentist = User::factory()->create();
+        $dentist->assignRole('DENTIST');
+        $patient = Patient::factory()->create();
+        $patient->dentists()->attach($dentist);
+
+        $this->actingAs($dentist)
+            ->patch(route('patients.update', $patient), [
+                'first_name' => 'Nuevo nombre',
+                'last_name' => $patient->last_name,
+            ])
+            ->assertForbidden();
+
+        $this->assertSame($patient->first_name, $patient->fresh()->first_name);
+    }
+
+    public function test_patient_profile_shows_only_actions_the_current_user_can_access(): void
+    {
+        $receptionist = User::factory()->create();
+        $receptionist->assignRole('RECEPTIONIST');
+        $patient = Patient::factory()->create();
+
+        $this->actingAs($receptionist)
+            ->get(route('patients.show', $patient))
+            ->assertInertia(fn (AssertableInertia $page) => $page
+                ->component('Patients/Show')
+                ->where('patientActions.questionnaire', true)
+                ->where('patientActions.clinicalHistory', false));
+    }
+
+    public function test_patient_profile_hides_questionnaire_and_technical_actions_without_permissions(): void
+    {
+        $user = User::factory()->create();
+        $patient = Patient::factory()->create();
+        $user->assignRole('DENTIST');
+        $patient->dentists()->attach($user);
+        $user->revokePermissionTo(['clinical_history.view_intake', 'clinical_history.view_assessment']);
+        $user->removeRole('DENTIST');
+        $user->givePermissionTo('patients.view');
+        $user->givePermissionTo('patients.view_all');
+
+        $this->actingAs($user)
+            ->get(route('patients.show', $patient))
+            ->assertInertia(fn (AssertableInertia $page) => $page
+                ->missing('patientActions.questionnaire')
+                ->missing('patientActions.clinicalHistory'));
+    }
+
+    public function test_receptionist_patient_audit_does_not_include_sensitive_contact_fields(): void
+    {
+        $receptionist = User::factory()->create();
+        $receptionist->assignRole('RECEPTIONIST');
+
+        $this->actingAs($receptionist)->post(route('patients.store'), [
+            'first_name' => 'Ana',
+            'last_name' => 'Lopez',
+            'email' => 'audit-test@example.com',
+            'phone' => '5551234567',
+            'insurance_provider' => 'Cobertura privada',
+        ]);
+
+        $audit = AuditLog::query()->where('auditable_type', Patient::class)->firstOrFail();
+        $this->assertArrayNotHasKey('phone', $audit->new_values);
+        $this->assertArrayNotHasKey('email', $audit->new_values);
+        $this->assertArrayNotHasKey('insurance_provider', $audit->new_values);
     }
 }

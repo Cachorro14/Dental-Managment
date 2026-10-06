@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Modules\Patients;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Modules\Patients\StorePatientRequest;
 use App\Http\Requests\Modules\Patients\UpdatePatientRequest;
+use App\Models\Modules\ClinicalHistory\ClinicalHistory;
 use App\Models\Modules\Patients\Patient;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -78,7 +79,16 @@ class PatientController extends Controller
     {
         Gate::authorize('view', $patient);
 
-        return Inertia::render('Patients/Show', ['patient' => $patient]);
+        return Inertia::render('Patients/Show', [
+            'patient' => $patient,
+            'patientActions' => [
+                'update' => request()->user()->can('update', $patient),
+                'assignDentists' => request()->user()->can('assignDentists', $patient),
+                'questionnaire' => request()->user()->can('view_intake', $patient->clinicalHistory ?? new ClinicalHistory(['patient_id' => $patient->id])),
+                'clinicalHistory' => request()->user()->can('view_assessment', $patient->clinicalHistory ?? new ClinicalHistory(['patient_id' => $patient->id])),
+                'odontogram' => request()->user()->can('odontogram.view'),
+            ],
+        ]);
     }
 
     /**

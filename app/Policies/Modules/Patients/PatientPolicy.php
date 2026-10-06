@@ -37,7 +37,13 @@ class PatientPolicy
      */
     public function update(User $user, Patient $patient): bool
     {
-        return $user->can('patients.update') && $this->canAccessPatient($user, $patient);
+        return ($user->can('patients.update') || ($user->can('patients.demographics.update') && ! $user->hasRole('DENTIST')))
+            && $this->canAccessPatient($user, $patient);
+    }
+
+    public function assignDentists(User $user, Patient $patient): bool
+    {
+        return $user->can('patients.assign_dentists') && $this->canAccessPatient($user, $patient);
     }
 
     /**

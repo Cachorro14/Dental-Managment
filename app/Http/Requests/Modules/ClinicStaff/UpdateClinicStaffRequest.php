@@ -19,6 +19,7 @@ class UpdateClinicStaffRequest extends FormRequest
         return [
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', Rule::unique('users', 'email')->ignore($this->route('user'))],
+            'license_number' => ['nullable', 'string', 'max:100'],
             'password' => ['nullable', 'string', 'confirmed', 'min:8'],
             'roles' => ['required', 'array', 'min:1', 'max:2'],
             'roles.*' => ['required', 'string', 'distinct', Rule::in(ClinicStaffPolicy::ASSIGNABLE_ROLES)],

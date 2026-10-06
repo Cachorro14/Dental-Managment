@@ -7,6 +7,21 @@ use App\Models\Modules\Patients\Patient;
 
 class PatientObserver
 {
+    private const SENSITIVE_ATTRIBUTES = [
+        'medical_notes',
+        'address',
+        'phone',
+        'mobile_phone',
+        'email',
+        'emergency_contact_name',
+        'emergency_contact_phone',
+        'insurance_provider',
+        'insurance_member_number',
+        'document_type',
+        'document_number',
+        'date_of_birth',
+    ];
+
     public function __construct(private AuditLogger $auditLogger) {}
 
     /**
@@ -14,7 +29,7 @@ class PatientObserver
      */
     public function created(Patient $patient): void
     {
-        $this->auditLogger->record('created', $patient, newValues: $patient->getAttributes());
+        $this->auditLogger->record('created', $patient, newValues: $this->auditableAttributes($patient->getAttributes()));
     }
 
     /**
@@ -22,7 +37,7 @@ class PatientObserver
      */
     public function updated(Patient $patient): void
     {
-        $this->auditLogger->record('updated', $patient, $patient->getPrevious(), $patient->getChanges());
+        $this->auditLogger->record('updated', $patient, $this->auditableAttributes($patient->getPrevious()), $this->auditableAttributes($patient->getChanges()));
     }
 
     /**
@@ -30,7 +45,7 @@ class PatientObserver
      */
     public function deleted(Patient $patient): void
     {
-        $this->auditLogger->record('deleted', $patient, oldValues: $patient->getAttributes());
+        $this->auditLogger->record('deleted', $patient, oldValues: $this->auditableAttributes($patient->getAttributes()));
     }
 
     /**
@@ -38,7 +53,7 @@ class PatientObserver
      */
     public function restored(Patient $patient): void
     {
-        $this->auditLogger->record('restored', $patient, newValues: $patient->getAttributes());
+        $this->auditLogger->record('restored', $patient, newValues: $this->auditableAttributes($patient->getAttributes()));
     }
 
     /**
@@ -46,6 +61,14 @@ class PatientObserver
      */
     public function forceDeleted(Patient $patient): void
     {
-        $this->auditLogger->record('force_deleted', $patient, oldValues: $patient->getAttributes());
+        $this->auditLogger->record('force_deleted', $patient, oldValues: $this->auditableAttributes($patient->getAttributes()));
+    }
+
+    /** @param array<string, mixed> $attributes
+     * @return array<string, mixed>
+     */
+    private function auditableAttributes(array $attributes): array
+    {
+        return array_diff_key($attributes, array_flip(self::SENSITIVE_ATTRIBUTES));
     }
 }

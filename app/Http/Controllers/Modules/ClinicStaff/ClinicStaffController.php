@@ -56,6 +56,7 @@ class ClinicStaffController extends Controller
             $user = User::query()->create([
                 'name' => $data['name'],
                 'email' => Str::lower($data['email']),
+                'license_number' => $data['license_number'] ?? null,
                 'password' => $data['password'],
             ]);
 
@@ -70,7 +71,7 @@ class ClinicStaffController extends Controller
         Gate::authorize('update', $user);
 
         return Inertia::render('ClinicStaff/Edit', [
-            'user' => $user->load('roles:id,name'),
+            'user' => $user->load('roles:id,name')->makeVisible('license_number'),
             'assignableRoles' => $this->assignableRoles(),
         ]);
     }
@@ -83,6 +84,7 @@ class ClinicStaffController extends Controller
             $attributes = [
                 'name' => $data['name'],
                 'email' => Str::lower($data['email']),
+                'license_number' => $data['license_number'] ?? null,
             ];
 
             if (($data['password'] ?? '') !== '') {

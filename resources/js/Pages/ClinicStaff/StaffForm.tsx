@@ -6,7 +6,7 @@ import { ClinicStaffAssignableRole, RoleSummary } from '@/types';
 import { Link, useForm } from '@inertiajs/react';
 import { FormEvent } from 'react';
 
-type ClinicStaffUser = { id: number; name: string; email: string; roles: RoleSummary[] };
+type ClinicStaffUser = { id: number; name: string; email: string; license_number?: string | null; roles: RoleSummary[] };
 
 export default function StaffForm({ user, assignableRoles }: { user?: ClinicStaffUser; assignableRoles: ClinicStaffAssignableRole[] }) {
     const form = useForm({
@@ -14,6 +14,7 @@ export default function StaffForm({ user, assignableRoles }: { user?: ClinicStaf
         email: user?.email ?? '',
         password: '',
         password_confirmation: '',
+        license_number: user?.license_number ?? '',
         roles: user?.roles.map((role) => role.name) ?? [],
     });
 
@@ -35,10 +36,12 @@ export default function StaffForm({ user, assignableRoles }: { user?: ClinicStaf
                 <div><InputLabel htmlFor="clinic_staff_name" value="Nombre" /><TextInput id="clinic_staff_name" value={form.data.name} onChange={(event) => form.setData('name', event.target.value)} className="mt-1 block w-full" required /><InputError message={form.errors.name} className="mt-2" /></div>
                 <div><InputLabel htmlFor="clinic_staff_email" value="Correo electrónico" /><TextInput id="clinic_staff_email" type="email" value={form.data.email} onChange={(event) => form.setData('email', event.target.value)} className="mt-1 block w-full" required /><InputError message={form.errors.email} className="mt-2" /></div>
             </div>
+            {form.data.roles.includes('DENTIST') && <div><InputLabel htmlFor="clinic_staff_license" value="Número de matrícula profesional" /><TextInput id="clinic_staff_license" value={form.data.license_number} onChange={(event) => form.setData('license_number', event.target.value)} className="mt-1 block w-full" /><InputError message={form.errors.license_number} className="mt-2" /></div>}
             <div className="grid gap-5 sm:grid-cols-2">
                 <div><InputLabel htmlFor="clinic_staff_password" value={user ? 'Nueva contraseña (opcional)' : 'Contraseña'} /><TextInput id="clinic_staff_password" type="password" value={form.data.password} onChange={(event) => form.setData('password', event.target.value)} className="mt-1 block w-full" required={!user} /><InputError message={form.errors.password} className="mt-2" /></div>
                 <div><InputLabel htmlFor="clinic_staff_password_confirmation" value="Confirmar contraseña" /><TextInput id="clinic_staff_password_confirmation" type="password" value={form.data.password_confirmation} onChange={(event) => form.setData('password_confirmation', event.target.value)} className="mt-1 block w-full" required={!user} /></div>
             </div>
+            {form.data.roles.includes('DENTIST') && <div><InputLabel htmlFor="clinic_staff_license" value="Número de matrícula profesional" /><TextInput id="clinic_staff_license" value={form.data.license_number} onChange={(event) => form.setData('license_number', event.target.value)} className="mt-1 block w-full" /><InputError message={form.errors.license_number} className="mt-2" /></div>}
             <fieldset>
                 <legend className="text-sm font-medium text-slate-700">Roles disponibles para el personal de la clínica</legend>
                 <div className="mt-3 grid gap-3 sm:grid-cols-2">

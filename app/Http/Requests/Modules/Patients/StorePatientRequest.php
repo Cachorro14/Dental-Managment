@@ -33,6 +33,17 @@ class StorePatientRequest extends FormRequest
             'emergency_contact_name' => ['nullable', 'string', 'max:200'],
             'emergency_contact_phone' => ['nullable', 'string', 'max:40'],
             'medical_notes' => ['nullable', 'string', 'max:5000'],
+            'insurance_provider' => ['nullable', 'string', 'max:255'],
+            'insurance_member_number' => ['nullable', 'string', 'max:100'],
+            'marital_status' => ['nullable', 'string', 'max:40'],
+            'nationality' => ['nullable', 'string', 'max:100'],
+            'document_type' => ['nullable', 'string', 'max:40'],
+            'document_number' => ['nullable', 'string', 'max:80'],
+            'mobile_phone' => ['nullable', 'string', 'max:40'],
+            'occupation' => ['nullable', 'string', 'max:255'],
+            'insurance_holder' => ['nullable', 'string', 'max:255'],
+            'workplace' => ['nullable', 'string', 'max:255'],
+            'job_title' => ['nullable', 'string', 'max:255'],
         ];
     }
 }

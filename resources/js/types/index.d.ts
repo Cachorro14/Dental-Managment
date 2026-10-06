@@ -2,6 +2,8 @@ export interface User {
     id: number;
     name: string;
     email: string;
+    license_number?: string | null;
+    license_number?: string | null;
     email_verified_at?: string;
 }
 
@@ -91,6 +93,28 @@ export interface Patient {
     emergency_contact_name: string | null;
     emergency_contact_phone: string | null;
     medical_notes: string | null;
+    insurance_provider: string | null;
+    insurance_member_number: string | null;
+    marital_status: string | null;
+    nationality: string | null;
+    document_type: string | null;
+    document_number: string | null;
+    mobile_phone: string | null;
+    occupation: string | null;
+    insurance_holder: string | null;
+    workplace: string | null;
+    job_title: string | null;
+    insurance_provider: string | null;
+    insurance_member_number: string | null;
+    marital_status: string | null;
+    nationality: string | null;
+    document_type: string | null;
+    document_number: string | null;
+    mobile_phone: string | null;
+    occupation: string | null;
+    insurance_holder: string | null;
+    workplace: string | null;
+    job_title: string | null;
     deleted_at?: string | null;
 }
 
@@ -109,6 +133,17 @@ export interface ClinicalHistory {
     family_history: string | null;
     habits: string | null;
     clinical_notes: string | null;
+    intake_responses?: Record<string, unknown> | null;
+    assessment_data?: Record<string, unknown> | null;
+    intake_updated_at?: string | null;
+    assessment_updated_at?: string | null;
+    reviewed_at?: string | null;
+    responsible_dentist_id?: number | null;
+    canViewAssessment?: boolean;
+    canViewIntake?: boolean;
+    canEditIntake?: boolean;
+    canEditAssessment?: boolean;
+    canPrint?: boolean;
 }
 
 export type OdontogramStatus =

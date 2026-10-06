@@ -32,6 +32,17 @@ class Patient extends Model
         'emergency_contact_name',
         'emergency_contact_phone',
         'medical_notes',
+        'insurance_provider',
+        'insurance_member_number',
+        'marital_status',
+        'nationality',
+        'document_type',
+        'document_number',
+        'mobile_phone',
+        'occupation',
+        'insurance_holder',
+        'workplace',
+        'job_title',
     ];
 
     protected function casts(): array
@@ -74,5 +85,14 @@ class Patient extends Model
     {
         return $dentist->hasRole('DENTIST')
             && $this->dentists()->whereKey($dentist->getKey())->exists();
+    }
+
+    protected static function booted(): void
+    {
+        static::forceDeleting(function (Patient $patient): void {
+            if ($patient->clinicalHistory()->exists()) {
+                throw new \LogicException('Los pacientes con historia clínica no pueden eliminarse físicamente.');
+            }
+        });
     }
 }
