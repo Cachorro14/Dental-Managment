@@ -1,4 +1,5 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import ActionLink from '@/Components/ActionLink';
 import ToothLoader from '@/Components/ToothLoader';
 import { Paginated, PageProps, RoleSummary } from '@/types';
 import { Head, Link, router, usePage } from '@inertiajs/react';
@@ -46,7 +47,7 @@ function UsersList({ users, searchFilter, permissions }: { users: Paginated<Admi
                             <button className="min-h-11 rounded-xl theme-accent-button px-4 py-2 text-sm font-semibold theme-content-inverse shadow-sm transition hover:text-accent-button">Buscar</button>
                         </form>
                         <div className="flex flex-wrap gap-3">
-                            {canViewRoles && <Link href={route('admin.roles.index')} className="theme-content-secondary inline-flex min-h-11 flex-1 items-center justify-center rounded-xl border theme-outline-strong bg-surface-raised px-4 py-2 text-sm font-semibold transition hover:bg-surface-sunken sm:flex-none">Gestionar roles</Link>}
+                            {canViewRoles && <ActionLink href={route('admin.roles.index')} icon="users" variant="accent" className="flex-1 sm:flex-none">Gestionar roles</ActionLink>}
                             {canCreate && <Link href={route('admin.users.create')} className="inline-flex min-h-11 flex-1 items-center justify-center rounded-xl theme-accent-button px-4 py-2 text-sm font-semibold theme-content-inverse shadow-sm transition hover:text-accent-button sm:flex-none">Nuevo usuario</Link>}
                         </div>
                     </div>
@@ -78,7 +79,7 @@ function RoleBadges({ roles }: { roles: RoleSummary[] }) {
 }
 
 function UserActions({ user, canUpdate, canDelete, remove }: { user: AdminUser; canUpdate: boolean; canDelete: boolean; remove: (user: AdminUser) => void }) {
-    return <div className="flex gap-3 text-sm">{canUpdate && <Link href={route('admin.users.edit', user.id)} className="theme-accent font-semibold hover:underline">Editar</Link>}{canDelete && <button type="button" onClick={() => remove(user)} className="theme-danger-foreground font-semibold hover:underline">Eliminar</button>}</div>;
+    return <div className="flex flex-wrap justify-end gap-2 text-sm">{canUpdate && <Link href={route('admin.users.edit', user.id)} className="table-action-button">Editar</Link>}{canDelete && <button type="button" onClick={() => remove(user)} className="table-action-button">Eliminar</button>}</div>;
 }
 
 function Pagination({ links }: { links: Paginated<AdminUser>['links'] }) {

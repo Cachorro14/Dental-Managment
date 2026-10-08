@@ -209,6 +209,27 @@ class AppointmentsTest extends TestCase
         ]);
     }
 
+    public function test_clinic_admin_dentist_can_choose_the_dentist_for_an_appointment(): void
+    {
+        $adminDentist = User::factory()->create();
+        $adminDentist->assignRole(['CLINIC_ADMIN', 'DENTIST']);
+        $otherDentist = User::factory()->create();
+        $otherDentist->assignRole('DENTIST');
+        $patient = Patient::factory()->create();
+
+        $response = $this->actingAs($adminDentist)->post(route('appointments.store'), [
+            'patient_id' => $patient->id,
+            'dentist_id' => $otherDentist->id,
+            'scheduled_at' => '2030-01-01 10:00',
+            'duration_minutes' => 30,
+            'status' => 'scheduled',
+        ]);
+
+        $appointment = Appointment::query()->firstOrFail();
+        $response->assertRedirect(route('appointments.show', $appointment));
+        $this->assertSame($otherDentist->id, $appointment->dentist_id);
+    }
+
     public function test_authorized_user_can_delete_an_appointment(): void
     {
         $user = User::factory()->create();

@@ -129,11 +129,27 @@ class ClinicalHistoryController extends Controller
         Gate::authorize('print', $patient->clinicalHistory ?? new ClinicalHistory(['patient_id' => $patient->id]));
 
         $clinicalHistory = $patient->clinicalHistory()->firstOrNew(['patient_id' => $patient->id]);
+        $odontogram = $patient->odontogramAssessments()->with(['creator:id,name', 'entries.findings'])->latest('assessed_at')->first();
 
         return Inertia::render('ClinicalHistory/Print', [
             'patient' => $patient->makeHidden(['medical_notes']),
             'clinicalHistory' => $clinicalHistory->makeHidden(['intake_updated_by', 'assessment_updated_by', 'reviewed_by']),
             'responsibleDentist' => User::query()->find($clinicalHistory->responsible_dentist_id, ['id', 'name', 'license_number']),
+            'odontogram' => $odontogram ? [
+                'assessed_at' => $odontogram->assessed_at->format('d/m/Y H:i'),
+                'created_by' => $odontogram->creator?->name,
+                'notes' => $odontogram->notes,
+                'entries' => $odontogram->entries->map(fn ($entry): array => [
+                    'tooth_number' => $entry->tooth_number,
+                    'status' => $entry->status,
+                    'notes' => $entry->notes,
+                    'findings' => $entry->findings->map(fn ($finding): array => [
+                        'surface' => $finding->surface,
+                        'condition' => $finding->condition,
+                        'severity' => $finding->severity,
+                    ])->values()->all(),
+                ])->values()->all(),
+            ] : null,
         ]);
     }
 }

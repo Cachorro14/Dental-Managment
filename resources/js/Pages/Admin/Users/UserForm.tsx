@@ -1,4 +1,5 @@
 import InputError from "@/Components/InputError";
+import ActionLink from "@/Components/ActionLink";
 import InputLabel from "@/Components/InputLabel";
 import PrimaryButton from "@/Components/PrimaryButton";
 import TextInput from "@/Components/TextInput";
@@ -175,12 +176,7 @@ export default function UserForm({
                 <PrimaryButton disabled={form.processing}>
                     {user ? "Guardar cambios" : "Crear usuario"}
                 </PrimaryButton>
-                <Link
-                    href={route("admin.users.index")}
-                    className="theme-content-secondary inline-flex items-center justify-center rounded-md border theme-outline-strong bg-surface-raised px-4 py-2 text-xs font-semibold uppercase tracking-widest transition hover:bg-surface-sunken focus:outline-none focus:ring-2 focus:ring-accent"
-                >
-                    Cancelar
-                </Link>
+                <ActionLink href={route("admin.users.index")} icon="close" variant="danger">Cancelar</ActionLink>
             </div>
         </form>
     );

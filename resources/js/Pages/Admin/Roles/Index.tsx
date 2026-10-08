@@ -1,4 +1,5 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import ActionLink from '@/Components/ActionLink';
 import { PageProps } from '@/types';
 import { Head, Link, router, usePage } from '@inertiajs/react';
 
@@ -27,7 +28,7 @@ export default function Index({ roles }: { roles: Role[] }) {
                     <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                         <p className="max-w-2xl text-sm theme-content-muted">Administra los roles y los permisos que se asignan a los usuarios.</p>
                         <div className="flex gap-3">
-                            {canViewUsers && <Link href={route('admin.users.index')} className="theme-content-secondary inline-flex min-h-11 flex-1 items-center justify-center rounded-xl border theme-outline-strong bg-surface-raised px-4 py-2 text-sm font-semibold transition hover:bg-surface-sunken sm:flex-none">Usuarios</Link>}
+                            {canViewUsers && <ActionLink href={route('admin.users.index')} icon="users" variant="accent" className="flex-1 sm:flex-none">Usuarios</ActionLink>}
                             {canCreate && <Link href={route('admin.roles.create')} className="inline-flex min-h-11 flex-1 items-center justify-center rounded-xl theme-accent-button px-4 py-2 text-sm font-semibold theme-content-inverse shadow-sm transition hover:text-accent-button sm:flex-none">Nuevo rol</Link>}
                         </div>
                     </div>

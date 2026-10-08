@@ -1,6 +1,7 @@
 import InputError from '@/Components/InputError';
 import PrimaryButton from '@/Components/PrimaryButton';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import ActionLink from '@/Components/ActionLink';
 import { DentistSummary, Patient } from '@/types';
 import { Head, Link, useForm } from '@inertiajs/react';
 import { FormEvent } from 'react';
@@ -52,7 +53,7 @@ export default function AssignDentists({
                         <InputError message={form.errors.dentists} />
                         <div className="flex flex-col gap-3 sm:flex-row">
                             <PrimaryButton disabled={form.processing}>Guardar asignación</PrimaryButton>
-                            <Link href={route('patients.show', patient.id)} className="theme-content-secondary inline-flex min-h-11 items-center justify-center rounded-xl border theme-outline-strong bg-surface-raised px-4 py-2 text-sm font-semibold transition hover:bg-surface-sunken">Volver al paciente</Link>
+                            <ActionLink href={route('patients.show', patient.id)} icon="arrow-left" variant="info">Volver al paciente</ActionLink>
                         </div>
                     </form>
                 </div>

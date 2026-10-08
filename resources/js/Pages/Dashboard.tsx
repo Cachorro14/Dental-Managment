@@ -1,4 +1,5 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import ActionLink from '@/Components/ActionLink';
 import ToothLoader from '@/Components/ToothLoader';
 import { DashboardData, PageProps } from '@/types';
 import { Head, Link, usePage } from '@inertiajs/react';
@@ -46,7 +47,7 @@ export default function Dashboard() {
                                     <p className="theme-danger-foreground text-sm font-semibold">Seguimiento financiero</p>
                                     <h2 className="mt-1 text-xl font-bold theme-content">Pacientes con adeudo</h2>
                                 </div>
-                                <Link href={route('billing.index')} className="theme-danger inline-flex min-h-11 items-center rounded-xl border px-4 py-2 text-sm font-semibold transition hover:opacity-80 focus:outline-none focus:ring-2 focus:ring-accent">Ver estado de cuenta</Link>
+                                <ActionLink href={route('billing.index')} icon="file" variant="danger">Ver estado de cuenta</ActionLink>
                             </div>
                             {dashboard.debtors.length === 0 ? (
                                 <p className="mt-5 rounded-xl theme-success rounded-xl border p-4 text-sm font-medium">No hay adeudos pendientes.</p>

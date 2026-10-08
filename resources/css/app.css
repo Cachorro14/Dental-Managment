@@ -46,6 +46,7 @@
     --danger-surface: #fef2f2;
     --danger-outline: #fecaca;
     --danger-content: #991b1b;
+    --danger-solid: #dc2626;
 }
 
 [data-theme='dark'] {
@@ -56,6 +57,7 @@
     --content: #f8fafc;
     --content-secondary: #cbd5e1;
     --content-muted: #94a3b8;
+    --content-hover: #263145;
     --outline: #334155;
     --outline-strong: #475569;
     --accent: #60a5fa;
@@ -73,6 +75,7 @@
     --danger-surface: #450a0a;
     --danger-outline: #b91c1c;
     --danger-content: #fecaca;
+    --danger-solid: #b91c1c;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -84,6 +87,7 @@
         --content: #f8fafc;
         --content-secondary: #cbd5e1;
         --content-muted: #94a3b8;
+        --content-hover: #263145;
         --outline: #334155;
         --outline-strong: #475569;
         --accent: #60a5fa;
@@ -101,6 +105,16 @@
         --danger-surface: #450a0a;
         --danger-outline: #b91c1c;
         --danger-content: #fecaca;
+        --danger-solid: #b91c1c;
+    }
+
+    [data-theme='system'] :is(.hover\:bg-surface-sunken:hover, .focus\:bg-surface-sunken:focus) {
+        color: var(--content-hover);
+    }
+
+    [data-theme='system'] :is(.hover\:bg-surface-sunken:hover, .focus\:bg-surface-sunken:focus):is(.theme-content, .theme-content-secondary, .theme-content-muted),
+    [data-theme='system'] :is(.hover\:bg-surface-sunken:hover, .focus\:bg-surface-sunken:focus) :is(.theme-content, .theme-content-secondary, .theme-content-muted) {
+        color: var(--content-hover);
     }
 }
 
@@ -167,6 +181,25 @@ input[type='file']:focus { border-color: var(--accent); box-shadow: 0 0 0 3px co
 .theme-accent { color: var(--accent); }
 .theme-accent-button { background-color: var(--accent); color: var(--accent-content); }
 .theme-accent-button:hover { background-color: var(--accent-hover); }
+.action-button { border-color: var(--accent); background-color: var(--accent); color: var(--accent-content); box-shadow: 0 0 12px color-mix(in srgb, var(--accent) 38%, transparent); }
+.action-button-accent:hover,
+.action-button-info:hover,
+.action-button-neutral:hover { border-color: var(--info-outline); background-color: var(--info-surface); color: var(--info-content); box-shadow: 0 0 20px color-mix(in srgb, var(--info-outline) 65%, transparent); }
+.action-button-danger { border-color: var(--danger-solid); background-color: var(--danger-solid); color: #ffffff; box-shadow: 0 0 12px color-mix(in srgb, var(--danger-solid) 42%, transparent); }
+.action-button-danger:hover { border-color: var(--danger-outline); background-color: var(--danger-surface); color: var(--danger-content); box-shadow: 0 0 20px color-mix(in srgb, var(--danger-outline) 75%, transparent); }
+.table-action-button { display: inline-flex; min-height: 2.5rem; align-items: center; justify-content: center; border: 1px solid var(--accent); border-radius: 0.75rem; background-color: var(--accent); padding: 0.5rem 0.875rem; color: var(--accent-content); font-size: 0.875rem; font-weight: 600; box-shadow: 0 0 10px color-mix(in srgb, var(--accent) 35%, transparent); transition: background-color 150ms ease, border-color 150ms ease, color 150ms ease, box-shadow 150ms ease; }
+.table-action-button:hover { border-color: var(--info-outline); background-color: var(--info-surface); color: var(--info-content); box-shadow: 0 0 18px color-mix(in srgb, var(--info-outline) 65%, transparent); }
+.table-action-button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+[data-theme='dark'] :is(.hover\:bg-surface-sunken:hover, .focus\:bg-surface-sunken:focus) {
+    color: var(--content-hover);
+}
+
+[data-theme='dark'] :is(.hover\:bg-surface-sunken:hover, .focus\:bg-surface-sunken:focus):is(.theme-content, .theme-content-secondary, .theme-content-muted),
+[data-theme='dark'] :is(.hover\:bg-surface-sunken:hover, .focus\:bg-surface-sunken:focus) :is(.theme-content, .theme-content-secondary, .theme-content-muted) {
+    color: var(--content-hover);
+}
+
 .theme-info, .theme-info-box { border-color: var(--info-outline); background-color: var(--info-surface); color: var(--info-content); }
 .theme-success { border-color: var(--success-outline); background-color: var(--success-surface); color: var(--success-content); }
 .theme-warning { border-color: var(--warning-outline); background-color: var(--warning-surface); color: var(--warning-content); }

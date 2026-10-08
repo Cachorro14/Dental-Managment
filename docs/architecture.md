@@ -20,6 +20,7 @@ app/
     Treatments/
     Inventory/
     Billing/
+    Reports/
 ```
 
 ```text

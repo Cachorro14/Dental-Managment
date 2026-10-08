@@ -1,4 +1,5 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import ActionLink from '@/Components/ActionLink';
 import ToothLoader from '@/Components/ToothLoader';
 import { Appointment, PageProps, Paginated } from '@/types';
 import { Head, Link, router, usePage } from '@inertiajs/react';
@@ -25,7 +26,7 @@ export default function Index({ appointments, filters }: PageProps<{ appointment
                             <input type="date" value={date} onChange={(event) => setDate(event.target.value)} className="theme-content min-w-0 rounded-xl border-outline-strong bg-surface-raised shadow-sm focus:border-accent focus:ring-accent" />
                             <button className="theme-accent-button rounded-xl px-4 py-2 text-sm font-semibold transition hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 focus:ring-offset-surface-raised">Filtrar</button>
                         </form>
-                        {canCreateAppointments && <Link href={route('appointments.create')} className="theme-accent-button inline-flex min-h-11 items-center justify-center rounded-xl px-4 py-2 text-sm font-semibold shadow-sm transition hover:opacity-90 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 focus:ring-offset-surface-raised">Nueva cita</Link>}
+                        {canCreateAppointments && <ActionLink href={route('appointments.create')} icon="file" variant="accent">Nueva cita</ActionLink>}
                     </div>
 
                     {appointments ? <section className="theme-card overflow-hidden rounded-2xl border theme-outline shadow-sm">
@@ -34,14 +35,14 @@ export default function Index({ appointments, filters }: PageProps<{ appointment
                                 <div className="theme-info mx-auto flex h-14 w-14 items-center justify-center rounded-2xl border text-2xl">+</div>
                                 <h3 className="mt-5 text-lg font-semibold theme-content">No hay citas para esta fecha</h3>
                                 <p className="mt-2 text-sm theme-content-muted">Programa una cita nueva o selecciona otra fecha para consultar la agenda.</p>
-                                {canCreateAppointments && <Link href={route('appointments.create')} className="theme-accent-button mt-6 inline-flex min-h-11 items-center rounded-xl px-4 py-2 text-sm font-semibold transition hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-accent">Programar cita</Link>}
+                                {canCreateAppointments && <ActionLink href={route('appointments.create')} icon="file" variant="accent" className="mt-6">Programar cita</ActionLink>}
                             </div>
                         ) : (
                             <>
                                 <div className="overflow-x-auto">
                                      <table className="min-w-full divide-y divide-outline">
-                                        <thead className="bg-surface-sunken"><tr><th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider theme-content-muted">Fecha</th><th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider theme-content-muted">Paciente</th><th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider theme-content-muted">Dentista</th><th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider theme-content-muted">Estado</th><th className="px-6 py-4" /></tr></thead>
-                                        <tbody className="divide-y divide-outline">{appointments.data.map((appointment) => <tr key={appointment.id} className="transition hover:bg-surface-sunken"><td className="whitespace-nowrap px-6 py-4 text-sm theme-content-secondary">{new Date(appointment.scheduled_at).toLocaleString('es-ES')}</td><td className="whitespace-nowrap px-6 py-4 text-sm font-semibold theme-content">{appointment.patient?.first_name} {appointment.patient?.last_name}</td><td className="whitespace-nowrap px-6 py-4 text-sm theme-content-secondary">{appointment.dentist?.name ?? 'Sin asignar'}</td><td className="whitespace-nowrap px-6 py-4"><span className={`rounded-full border px-2.5 py-1 text-xs font-semibold ${statusStyles[appointment.status]}`}>{statusLabels[appointment.status]}</span></td><td className="whitespace-nowrap px-6 py-4 text-right text-sm"><Link href={route('appointments.show', appointment.id)} className="theme-accent font-semibold transition hover:underline">Ver</Link></td></tr>)}</tbody>
+                                         <thead className="theme-page"><tr><th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider theme-content-muted">Fecha</th><th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider theme-content-muted">Paciente</th><th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider theme-content-muted">Dentista</th><th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider theme-content-muted">Estado</th><th className="px-6 py-4" /></tr></thead>
+                                         <tbody className="divide-y divide-outline">{appointments.data.map((appointment) => <tr key={appointment.id} className="transition hover:bg-surface-sunken"><td className="whitespace-nowrap px-6 py-4 text-sm theme-content-secondary">{new Date(appointment.scheduled_at).toLocaleString('es-ES')}</td><td className="whitespace-nowrap px-6 py-4 text-sm font-semibold theme-content">{appointment.patient?.first_name} {appointment.patient?.last_name}</td><td className="whitespace-nowrap px-6 py-4 text-sm theme-content-secondary">{appointment.dentist?.name ?? 'Sin asignar'}</td><td className="whitespace-nowrap px-6 py-4"><span className={`rounded-full border px-2.5 py-1 text-xs font-semibold ${statusStyles[appointment.status]}`}>{statusLabels[appointment.status]}</span></td><td className="whitespace-nowrap px-6 py-4 text-right text-sm"><Link href={route('appointments.show', appointment.id)} className="table-action-button">Ver</Link></td></tr>)}</tbody>
                                     </table>
                                 </div>
                                 <Pagination links={appointments.links} />

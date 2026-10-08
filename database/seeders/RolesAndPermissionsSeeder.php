@@ -65,6 +65,10 @@ class RolesAndPermissionsSeeder extends Seeder
             'billing.charge',
             'billing.payment',
             'billing.void',
+            'inventory.view',
+            'inventory.create',
+            'inventory.adjust',
+            'reports.view',
         ];
 
         foreach ($permissions as $permission) {
@@ -133,6 +137,10 @@ class RolesAndPermissionsSeeder extends Seeder
             'billing.charge',
             'billing.payment',
             'billing.void',
+            'inventory.view',
+            'inventory.create',
+            'inventory.adjust',
+            'reports.view',
         ]);
 
         $receptionist->syncPermissions([
@@ -152,6 +160,9 @@ class RolesAndPermissionsSeeder extends Seeder
             'billing.view',
             'billing.charge',
             'billing.payment',
+            'inventory.view',
+            'inventory.adjust',
+            'reports.view',
         ]);
 
         $dentist->syncPermissions([
@@ -177,6 +188,10 @@ class RolesAndPermissionsSeeder extends Seeder
             'billing.view',
             'billing.charge',
             'billing.payment',
+            'inventory.view',
+            'inventory.create',
+            'inventory.adjust',
+            'reports.view',
         ]);
     }
 }

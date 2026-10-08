@@ -25,9 +25,9 @@ All customers use the same repository and codebase. Differences are expressed th
 The application is a modular monolith. Laravel and React/Inertia live in the same repository. Do not create microservices or separate frontend repositories.
 
 - Core capabilities: authentication, users, roles, permissions, modules, features, settings, audit log, and system administration.
-- Business capabilities: Patients, appointments, clinical history, odontogram, treatments, and the initial Billing workflow are implemented. Inventory and reports remain to be built.
+- Business capabilities: Patients, appointments, clinical history, odontogram, treatments, the initial Billing workflow, Inventory, and operational Reports are implemented.
 - Billing is a historical ledger of patient charges/debts and payments, including payment method; it computes patient balances, preserves voided entries, and does not process transactions.
-- Appointment reminders are planned through WhatsApp, pending research into integration options, requirements, costs, consent, and operational workflow.
+- Appointment reminders are integrated with Meta Cloud API, including consent tracking, manual and configurable automatic sending, webhook verification, and appointment confirmations. Production credentials, approved templates, webhook setup, and scheduler operation still need environment configuration and validation.
 - Backend authorization is authoritative. Frontend gates are UX only.
 - Use Form Requests for validation, policies for resource authorization, and thin controllers.
 - Do not add repositories, interfaces, or abstractions without a concrete need.
@@ -47,7 +47,7 @@ Completed:
 
 In progress:
 
-- Phase 8: Billing's initial workflow is implemented; Inventory and Reports remain pending. WhatsApp appointment reminders require research before implementation.
+- Phase 8: Billing's initial workflow, Inventory, operational Reports, and the printable clinical document with the latest odontogram are implemented. WhatsApp production configuration and operational validation are still required.
 
 ## Confirmed Decisions
 

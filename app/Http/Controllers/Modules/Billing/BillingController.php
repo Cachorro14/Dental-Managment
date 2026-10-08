@@ -80,7 +80,7 @@ class BillingController extends Controller
             'canRegisterPayment' => request()->user()->can('payment', [BillingEntry::class, $patient]),
             'canVoid' => request()->user()->can('billing.void') && request()->user()->hasRole('CLINIC_ADMIN'),
             'treatments' => $patient->treatments()
-                ->when(request()->user()->hasRole('DENTIST'), fn ($query) => $query->where('dentist_id', request()->user()->id))
+                ->when(request()->user()->isDentistOnly(), fn ($query) => $query->where('dentist_id', request()->user()->id))
                 ->whereDoesntHave('billingEntry')
                 ->whereIn('status', ['planned', 'in_progress', 'completed'])
                 ->orderBy('name')

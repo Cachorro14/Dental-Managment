@@ -42,7 +42,7 @@ class TreatmentController extends Controller
     public function store(StoreTreatmentRequest $request, Patient $patient): RedirectResponse
     {
         $data = $request->validated();
-        $data['dentist_id'] = $request->user()->hasRole('DENTIST') ? $request->user()->id : null;
+        $data['dentist_id'] = $request->user()->isDentistOnly() ? $request->user()->id : null;
         $data['created_by'] = $request->user()->id;
         $data['completed_at'] = $data['status'] === 'completed' ? today() : null;
 

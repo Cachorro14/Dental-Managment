@@ -1,4 +1,5 @@
 import InputError from '@/Components/InputError';
+import ActionLink from '@/Components/ActionLink';
 import InputLabel from '@/Components/InputLabel';
 import PrimaryButton from '@/Components/PrimaryButton';
 import TextInput from '@/Components/TextInput';
@@ -63,7 +64,7 @@ export default function StaffForm({ user, assignableRoles, canManageWhatsAppCons
             </fieldset>
             <div className="flex flex-col gap-3 sm:flex-row">
                 <PrimaryButton disabled={form.processing}>{user ? 'Guardar cambios' : 'Crear cuenta'}</PrimaryButton>
-                <Link href={route('clinic-staff.index')} className="theme-content-secondary inline-flex min-h-11 items-center justify-center rounded-xl border theme-outline-strong bg-surface-raised px-4 py-2 text-sm font-semibold transition hover:bg-surface-sunken">Cancelar</Link>
+                <ActionLink href={route('clinic-staff.index')} icon="close" variant="danger">Cancelar</ActionLink>
             </div>
         </form>
     );

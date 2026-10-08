@@ -1,6 +1,7 @@
 import InputError from '@/Components/InputError';
 import PrimaryButton from '@/Components/PrimaryButton';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import ActionLink from '@/Components/ActionLink';
 import ToothLoader from '@/Components/ToothLoader';
 import { OdontogramAssessmentSummary, OdontogramEntry, OdontogramFinding, OdontogramStatus, OdontogramSurface, Patient } from '@/types';
 import { Head, Link, useForm } from '@inertiajs/react';
@@ -197,7 +198,7 @@ function EditLoaded({
                         <label className="block text-sm font-medium theme-content-secondary">Notas de la evaluación<textarea disabled={!canEdit} value={data.notes} onChange={(event) => setData('notes', event.target.value)} rows={3} maxLength={5000} className="mt-1 block w-full rounded-xl theme-outline-strong text-sm" placeholder="Notas generales de esta evaluación" /></label>
                         <div className="flex flex-col gap-3 sm:flex-row">
                             {canEdit && <PrimaryButton disabled={processing}>Guardar evaluación</PrimaryButton>}
-                            <Link href={route('patients.show', patient.id)} className="theme-content-secondary inline-flex min-h-11 items-center justify-center rounded-xl border theme-outline-strong bg-surface-raised px-4 py-2 text-sm font-semibold hover:bg-surface-sunken">Volver al paciente</Link>
+                            <ActionLink href={route('patients.show', patient.id)} icon="arrow-left" variant="info">Volver al paciente</ActionLink>
                         </div>
                     </form>
                     <p className="text-xs theme-content-muted">El diagrama es una referencia visual; el profesional registra e interpreta los hallazgos clínicos.</p>

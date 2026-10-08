@@ -40,4 +40,9 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->belongsToMany(Patient::class, 'dentist_patient', 'dentist_id', 'patient_id')
             ->withTimestamps();
     }
+
+    public function isDentistOnly(): bool
+    {
+        return $this->hasRole('DENTIST') && ! $this->hasRole('CLINIC_ADMIN');
+    }
 }

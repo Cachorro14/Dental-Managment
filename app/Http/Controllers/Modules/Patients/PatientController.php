@@ -26,20 +26,29 @@ class PatientController extends Controller
         $search = $request->string('search')->trim()->toString();
 
         $user = $request->user();
+        $showAssignedDentists = $user->can('patients.view_all') && ! $user->isDentistOnly();
 
         return Inertia::render('Patients/Index', [
             'patients' => Inertia::defer(fn () => Patient::query()
+                ->when($showAssignedDentists, fn ($query) => $query->with('dentists:id,name'))
                 ->when(! $user->can('patients.view_all'), fn ($query) => $query->whereHas('dentists', fn ($dentists) => $dentists->whereKey($user->id)))
-                ->when($search !== '', fn ($query) => $query->where(function ($query) use ($search): void {
+                ->when($search !== '', fn ($query) => $query->where(function ($query) use ($search, $showAssignedDentists): void {
                     $query->where('first_name', 'like', "%{$search}%")
                         ->orWhere('last_name', 'like', "%{$search}%")
                         ->orWhere('email', 'like', "%{$search}%");
+
+                    if ($showAssignedDentists) {
+                        $query->orWhereHas('dentists', fn ($dentists) => $dentists
+                            ->where('name', 'like', "%{$search}%")
+                            ->orWhere('email', 'like', "%{$search}%"));
+                    }
                 }))
                 ->orderBy('last_name')
                 ->orderBy('first_name')
                 ->paginate(15)
                 ->withQueryString()),
             'filters' => ['search' => $search],
+            'showAssignedDentists' => $showAssignedDentists,
         ]);
     }
 
@@ -85,7 +94,7 @@ class PatientController extends Controller
 
             $user = $request->user();
 
-            if ($user->hasRole('DENTIST')) {
+            if ($user->isDentistOnly()) {
                 $patient->dentists()->attach($user->id);
             }
 

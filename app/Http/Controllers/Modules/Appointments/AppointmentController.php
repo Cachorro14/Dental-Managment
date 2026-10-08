@@ -43,7 +43,7 @@ class AppointmentController extends Controller
 
         return Inertia::render('Appointments/Create', [
             'formOptions' => Inertia::defer(fn (): array => $this->formOptions(request()->user())),
-            'isDentist' => request()->user()->hasRole('DENTIST'),
+            'isDentist' => request()->user()->isDentistOnly(),
         ]);
     }
 
@@ -51,7 +51,7 @@ class AppointmentController extends Controller
     {
         $data = $request->validated();
 
-        if ($request->user()->hasRole('DENTIST')) {
+        if ($request->user()->isDentistOnly()) {
             $data['dentist_id'] = $request->user()->id;
         }
 
@@ -99,7 +99,7 @@ class AppointmentController extends Controller
         return Inertia::render('Appointments/Edit', [
             'appointment' => $appointment,
             'formOptions' => Inertia::defer(fn (): array => $this->formOptions(request()->user())),
-            'isDentist' => request()->user()->hasRole('DENTIST'),
+            'isDentist' => request()->user()->isDentistOnly(),
         ]);
     }
 
@@ -107,7 +107,7 @@ class AppointmentController extends Controller
     {
         $data = $request->validated();
 
-        if ($request->user()->hasRole('DENTIST')) {
+        if ($request->user()->isDentistOnly()) {
             $data['dentist_id'] = $appointment->dentist_id;
         }
 

@@ -1,4 +1,5 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import ActionLink from '@/Components/ActionLink';
 import { Deferred, Head, Link } from '@inertiajs/react';
 
 type PatientSummary = { id: number; first_name: string; last_name: string };
@@ -37,7 +38,7 @@ export default function Index({ patient, treatments, canCreate, canUpdate }: { p
                                             <p className="text-sm theme-content-secondary">{treatment.tooth_number ? `Pieza ${treatment.tooth_number} · ` : ''}{statuses[treatment.status] ?? treatment.status} · {Number(treatment.cost).toFixed(2)}</p>
                                             <p className="text-xs theme-content-muted">{treatment.completed_at ? `Finalizado: ${treatment.completed_at}` : treatment.scheduled_for ? `Programado: ${treatment.scheduled_for}` : 'Sin fecha programada'}{treatment.dentist ? ` · ${treatment.dentist.name}` : ''}</p>
                                         </div>
-                                        {canUpdate && <Link href={route('treatments.edit', [patient.id, treatment.id])} className="theme-content-secondary inline-flex min-h-11 items-center justify-center rounded-xl border theme-outline-strong bg-surface-raised px-4 text-sm font-semibold">Editar</Link>}
+                                         {canUpdate && <ActionLink href={route('treatments.edit', [patient.id, treatment.id])} icon="edit" variant="accent">Editar</ActionLink>}
                                     </article>)}
                                 </div>}
                                 {treatments.last_page > 1 && <nav aria-label="Paginación de tratamientos" className="flex flex-wrap gap-2 border-t theme-outline p-4">{treatments.links.map((link, index) => link.url ? <Link key={index} href={link.url} className={`rounded-lg px-3 py-2 text-sm ${link.active ? 'theme-accent-button' : 'theme-muted-surface theme-content-secondary'}`}>{paginationLabel(link.label)}</Link> : <span key={index} className="theme-content-muted rounded-lg theme-page px-3 py-2 text-sm">{paginationLabel(link.label)}</span>)}</nav>}

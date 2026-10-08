@@ -75,6 +75,25 @@ class TreatmentsTest extends TestCase
         $this->assertSame(today()->toDateString(), $treatment->completed_at->toDateString());
     }
 
+    public function test_clinic_admin_dentist_creates_a_treatment_without_forcing_their_dentist_id(): void
+    {
+        $adminDentist = User::factory()->create();
+        $adminDentist->assignRole(['CLINIC_ADMIN', 'DENTIST']);
+        $patient = Patient::factory()->create();
+
+        $this->actingAs($adminDentist)->post(route('treatments.store', $patient), [
+            'name' => 'Limpieza dental',
+            'cost' => '500',
+            'status' => 'planned',
+        ])->assertRedirect(route('treatments.index', $patient));
+
+        $this->assertDatabaseHas('treatments', [
+            'patient_id' => $patient->id,
+            'created_by' => $adminDentist->id,
+            'dentist_id' => null,
+        ]);
+    }
+
     public function test_clinic_admin_can_update_a_treatment_and_its_audit_log(): void
     {
         $user = User::factory()->create();

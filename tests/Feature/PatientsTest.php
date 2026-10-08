@@ -125,6 +125,42 @@ class PatientsTest extends TestCase
                 ->loadDeferredProps(fn (Assert $deferred) => $deferred->has('patients.data', 1)));
     }
 
+    public function test_receptionist_can_search_patients_by_assigned_dentist_and_see_their_names(): void
+    {
+        $receptionist = User::factory()->create();
+        $receptionist->assignRole('RECEPTIONIST');
+        $dentist = User::factory()->create(['name' => 'Dr. Laura Martinez']);
+        $dentist->assignRole('DENTIST');
+        $assignedPatient = Patient::factory()->create();
+        $assignedPatient->dentists()->attach($dentist);
+        Patient::factory()->create();
+
+        $this->actingAs($receptionist)
+            ->get(route('patients.index', ['search' => 'Laura']))
+            ->assertInertia(fn (Assert $page) => $page
+                ->where('showAssignedDentists', true)
+                ->loadDeferredProps(fn (Assert $deferred) => $deferred
+                    ->has('patients.data', 1)
+                    ->where('patients.data.0.id', $assignedPatient->id)
+                    ->where('patients.data.0.dentists.0.name', 'Dr. Laura Martinez')));
+    }
+
+    public function test_dentist_does_not_receive_assigned_dentists_in_patient_index(): void
+    {
+        $dentist = User::factory()->create();
+        $dentist->assignRole('DENTIST');
+        $patient = Patient::factory()->create();
+        $patient->dentists()->attach($dentist);
+
+        $this->actingAs($dentist)
+            ->get(route('patients.index'))
+            ->assertInertia(fn (Assert $page) => $page
+                ->where('showAssignedDentists', false)
+                ->loadDeferredProps(fn (Assert $deferred) => $deferred
+                    ->has('patients.data', 1)
+                    ->missing('patients.data.0.dentists')));
+    }
+
     public function test_clinic_admin_can_assign_multiple_dentists_to_a_patient(): void
     {
         $admin = User::factory()->create();
@@ -197,6 +233,10 @@ class PatientsTest extends TestCase
         $adminDentist = User::factory()->create();
         $adminDentist->assignRole(['CLINIC_ADMIN', 'DENTIST']);
         $unassignedPatient = Patient::factory()->create();
+
+        $this->actingAs($adminDentist)
+            ->get(route('patients.index'))
+            ->assertInertia(fn (Assert $page) => $page->where('showAssignedDentists', true));
 
         $this->actingAs($adminDentist)
             ->get(route('patients.show', $unassignedPatient))

@@ -1,19 +1,27 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import ActionLink from '@/Components/ActionLink';
 import ToothLoader from '@/Components/ToothLoader';
 import { PageProps, Paginated, Patient } from '@/types';
 import { Head, Link, router, usePage } from '@inertiajs/react';
-import { FormEvent, useState } from 'react';
+import { useEffect, useState } from 'react';
 
-export default function Index({ patients, filters }: PageProps<{ patients?: Paginated<Patient>; filters: { search: string } }>) {
+export default function Index({ patients, filters, showAssignedDentists }: PageProps<{ patients?: Paginated<Patient>; filters: { search: string }; showAssignedDentists: boolean }>) {
     const { auth } = usePage<PageProps>().props;
     const canCreatePatients = auth.permissions.includes('patients.create');
     const canUpdatePatients = auth.permissions.includes('patients.update');
     const [search, setSearch] = useState(filters.search);
 
-    const submit = (event: FormEvent) => {
-        event.preventDefault();
-        router.get(route('patients.index'), { search }, { preserveState: true, replace: true });
-    };
+    useEffect(() => {
+        if (search === filters.search) {
+            return;
+        }
+
+        const timeout = window.setTimeout(() => {
+            router.get(route('patients.index'), { search }, { preserveState: true, replace: true });
+        }, 300);
+
+        return () => window.clearTimeout(timeout);
+    }, [filters.search, search]);
 
     return (
         <AuthenticatedLayout header={<h2 className="text-xl font-semibold leading-tight theme-content">Pacientes</h2>}>
@@ -21,11 +29,8 @@ export default function Index({ patients, filters }: PageProps<{ patients?: Pagi
             <div className="min-h-[calc(100vh-5rem)] theme-page px-4 py-8 sm:px-6 lg:px-8">
                 <div className="mx-auto max-w-7xl space-y-6">
                     <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                        <form onSubmit={submit} className="flex w-full gap-3 sm:max-w-xl">
-                            <input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Buscar por nombre" className="min-w-0 flex-1 rounded-xl theme-outline-strong shadow-sm focus:border-accent focus:ring-accent" />
-                            <button className="theme-accent-button rounded-xl px-4 py-2 text-sm font-semibold shadow-sm transition hover:opacity-90 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 focus:ring-offset-surface-raised">Buscar</button>
-                        </form>
-                        {canCreatePatients && <Link href={route('patients.create')} className="theme-accent-button inline-flex min-h-11 items-center justify-center rounded-xl px-4 py-2 text-sm font-semibold shadow-sm transition hover:opacity-90 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 focus:ring-offset-surface-raised">Nuevo paciente</Link>}
+                        <input value={search} onChange={(event) => setSearch(event.target.value)} placeholder={showAssignedDentists ? 'Buscar por nombre, correo o doctor' : 'Buscar por nombre o correo'} className="w-full rounded-xl theme-outline-strong shadow-sm focus:border-accent focus:ring-accent sm:max-w-xl" />
+                        {canCreatePatients && <ActionLink href={route('patients.create')} icon="users" variant="accent">Nuevo paciente</ActionLink>}
                     </div>
 
                     {patients ? <section className="overflow-hidden rounded-2xl border theme-outline theme-card shadow-sm">
@@ -45,6 +50,7 @@ export default function Index({ patients, filters }: PageProps<{ patients?: Pagi
                                                 <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider theme-content-muted">Paciente</th>
                                                 <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider theme-content-muted">Telefono</th>
                                                 <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider theme-content-muted">Correo</th>
+                                                {showAssignedDentists && <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider theme-content-muted">Doctor</th>}
                                                 {canUpdatePatients && <th className="px-6 py-4 text-right text-xs font-semibold uppercase tracking-wider theme-content-muted">Acciones</th>}
                                             </tr>
                                         </thead>
@@ -67,7 +73,8 @@ export default function Index({ patients, filters }: PageProps<{ patients?: Pagi
                                                     <td className="whitespace-nowrap px-6 py-4 text-sm font-semibold theme-content"><Link href={route('patients.show', patient.id)} onClick={(event) => event.stopPropagation()} className="theme-accent transition hover:underline">{patient.first_name} {patient.last_name}</Link></td>
                                                     <td className="whitespace-nowrap px-6 py-4 text-sm theme-content-secondary">{patient.phone ?? '-'}</td>
                                                     <td className="whitespace-nowrap px-6 py-4 text-sm theme-content-secondary">{patient.email ?? '-'}</td>
-                                                    {canUpdatePatients && <td className="whitespace-nowrap px-6 py-4 text-right text-sm"><Link href={route('patients.edit', patient.id)} onClick={(event) => event.stopPropagation()} className="theme-accent font-semibold transition hover:underline">Editar</Link></td>}
+                                                    {showAssignedDentists && <td className="px-6 py-4 text-sm theme-content-secondary">{patient.dentists?.map((dentist) => dentist.name).join(', ') || '-'}</td>}
+                                                     {canUpdatePatients && <td className="whitespace-nowrap px-6 py-4 text-right text-sm"><Link href={route('patients.edit', patient.id)} onClick={(event) => event.stopPropagation()} className="table-action-button">Editar</Link></td>}
                                                 </tr>
                                             ))}
                                         </tbody>

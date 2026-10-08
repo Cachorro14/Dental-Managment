@@ -1,6 +1,8 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import ActionButton from '@/Components/ActionButton';
+import ActionLink from '@/Components/ActionLink';
 import { PageProps, Patient } from '@/types';
-import { Head, Link, useForm, usePage } from '@inertiajs/react';
+import { Head, useForm, usePage } from '@inertiajs/react';
 
 export default function Show({ patient, patientActions, canManageWhatsAppConsent = false, whatsappConsentRecordedBy }: { patient: Patient; patientActions: { update: boolean; assignDentists: boolean; questionnaire: boolean; clinicalHistory: boolean; odontogram: boolean }; canManageWhatsAppConsent?: boolean; whatsappConsentRecordedBy?: string | null }) {
     const { auth, system } = usePage<PageProps>().props;
@@ -51,23 +53,33 @@ export default function Show({ patient, patientActions, canManageWhatsAppConsent
                             <h1 className="text-2xl font-semibold theme-content">{patientName}</h1>
                             <p className="mt-1 text-sm theme-content-muted">Paciente #{patient.id}</p>
                         </div>
-                        <div className="flex flex-wrap gap-3">
-                            {canUpdate && <Link href={route('patients.edit', patient.id)} className="theme-accent-button inline-flex min-h-11 items-center justify-center rounded-xl px-4 py-2 text-sm font-semibold hover:opacity-90">Editar</Link>}
-                            {canAssignDentists && <Link href={route('patients.dentists.edit', patient.id)} className="theme-content-secondary inline-flex min-h-11 items-center justify-center rounded-xl border theme-outline-strong bg-surface-raised px-4 py-2 text-sm font-semibold">Asignar doctores</Link>}
-                            {canViewQuestionnaire && <Link href={route('clinical-history.questionnaire', patient.id)} className="theme-info inline-flex min-h-11 items-center justify-center rounded-xl border px-4 py-2 text-sm font-semibold">Cuestionario paciente</Link>}
-                            {canViewClinicalHistory && <Link href={route('clinical-history.edit', patient.id)} className="theme-accent-button inline-flex min-h-11 items-center justify-center rounded-xl px-4 py-2 text-sm font-semibold hover:opacity-90">Historia clínica</Link>}
-                            {patientActions.odontogram && canViewOdontogram && <Link href={route('odontogram.edit', patient.id)} className="theme-accent-button inline-flex min-h-11 items-center justify-center rounded-xl px-4 py-2 text-sm font-semibold hover:opacity-90">Odontograma</Link>}
-                            {canViewTreatments && <Link href={route('treatments.index', patient.id)} className="theme-accent-button inline-flex min-h-11 items-center justify-center rounded-xl px-4 py-2 text-sm font-semibold hover:opacity-90">Tratamientos</Link>}
-                            {canViewBilling && <Link href={route('billing.show', patient.id)} className="theme-danger inline-flex min-h-11 items-center justify-center rounded-xl border px-4 py-2 text-sm font-semibold">Estado de cuenta</Link>}
-                            {canDelete && <button type="button" onClick={remove} disabled={processing} className="theme-danger inline-flex min-h-11 items-center justify-center rounded-xl border px-4 py-2 text-sm font-semibold disabled:opacity-50">Archivar</button>}
-                        </div>
+                         <div className="flex flex-wrap gap-3">
+                             {canUpdate && <ActionLink href={route('patients.edit', patient.id)} icon="edit" variant="accent">Editar</ActionLink>}
+                            {canAssignDentists && <ActionLink href={route('patients.dentists.edit', patient.id)} icon="users" variant="accent">Asignar doctores</ActionLink>}
+                            {canViewQuestionnaire && <ActionLink href={route('clinical-history.questionnaire', patient.id)} icon="file" variant="info">Cuestionario paciente</ActionLink>}
+                            {canViewClinicalHistory && <ActionLink href={route('clinical-history.edit', patient.id)} icon="file" variant="accent">Historia clínica</ActionLink>}
+                            {patientActions.odontogram && canViewOdontogram && <ActionLink href={route('odontogram.edit', patient.id)} icon="tooth" variant="accent">Odontograma</ActionLink>}
+                            {canViewTreatments && <ActionLink href={route('treatments.index', patient.id)} icon="file" variant="accent">Tratamientos</ActionLink>}
+                            {canViewBilling && <ActionLink href={route('billing.show', patient.id)} icon="file" variant="danger">Estado de cuenta</ActionLink>}
+                            {canDelete && <ActionButton type="button" onClick={remove} disabled={processing} icon="archive" variant="danger">Archivar</ActionButton>}
+                         </div>
                     </section>
 
                     <dl className="grid gap-6 rounded-2xl theme-card p-6 shadow-sm sm:grid-cols-2">
                         {details.map((detail) => <div key={detail.label}><dt className="text-sm theme-content-muted">{detail.label}</dt><dd className="mt-1 whitespace-pre-wrap theme-content">{detail.value || '-'}</dd></div>)}
-                    </dl>
-                    {canManageWhatsAppConsent && <section className="theme-success rounded-2xl border p-5"><h2 className="font-semibold">Recordatorios por WhatsApp</h2><p className="mt-1 text-sm">Teléfono: {patient.phone || 'No registrado'} · Consentimiento físico: {patient.whatsapp_reminder_consent ? 'Registrado' : 'No registrado'}</p>{patient.whatsapp_reminder_consent_recorded_at && <p className="mt-1 text-xs">Registrado el {new Date(patient.whatsapp_reminder_consent_recorded_at).toLocaleString('es-MX')}{whatsappConsentRecordedBy ? ` por ${whatsappConsentRecordedBy}` : ''}.</p>}</section>}
-                </div>
+                     </dl>
+                     {canManageWhatsAppConsent && <section className="theme-success rounded-2xl border p-5"><h2 className="font-semibold">Recordatorios por WhatsApp</h2><p className="mt-1 text-sm">Teléfono: {patient.phone || 'No registrado'} · Consentimiento físico: {patient.whatsapp_reminder_consent ? 'Registrado' : 'No registrado'}</p>{patient.whatsapp_reminder_consent_recorded_at && <p className="mt-1 text-xs">Registrado el {new Date(patient.whatsapp_reminder_consent_recorded_at).toLocaleString('es-MX')}{whatsappConsentRecordedBy ? ` por ${whatsappConsentRecordedBy}` : ''}.</p>}</section>}
+                     <div className="flex justify-end">
+                         <ActionLink
+                             href={route('patients.index')}
+                             icon="arrow-left"
+                             variant="accent"
+                             className="!border-lime-400 !bg-lime-400 !text-slate-950 shadow-[0_0_18px_rgba(163,230,53,0.45)] hover:!border-lime-300 hover:!bg-lime-950 hover:!text-lime-300 hover:shadow-[0_0_24px_rgba(163,230,53,0.65)]"
+                         >
+                             Regresar
+                         </ActionLink>
+                     </div>
+                 </div>
             </div>
         </AuthenticatedLayout>
     );

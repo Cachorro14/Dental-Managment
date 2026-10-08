@@ -120,6 +120,7 @@ export interface Patient {
     workplace: string | null;
     job_title: string | null;
     deleted_at?: string | null;
+    dentists?: DentistSummary[];
 }
 
 export interface DentistSummary {

@@ -8,11 +8,13 @@ use App\Core\WhatsApp\WhatsAppMessageSender;
 use App\Models\Modules\Appointments\Appointment;
 use App\Models\Modules\Billing\BillingEntry;
 use App\Models\Modules\ClinicalHistory\ClinicalHistory;
+use App\Models\Modules\Inventory\InventoryItem;
 use App\Models\Modules\Odontogram\OdontogramEntry;
 use App\Models\Modules\Patients\Patient;
 use App\Models\Modules\Treatments\Treatment;
 use App\Models\User;
 use App\Observers\Modules\Billing\BillingEntryObserver;
+use App\Observers\Modules\Inventory\InventoryItemObserver;
 use App\Observers\Modules\Patients\PatientObserver;
 use App\Observers\Modules\Treatments\TreatmentObserver;
 use App\Policies\Modules\Appointments\AppointmentPolicy;
@@ -55,5 +57,6 @@ class AppServiceProvider extends ServiceProvider
         Patient::observe(PatientObserver::class);
         Treatment::observe(TreatmentObserver::class);
         BillingEntry::observe(BillingEntryObserver::class);
+        InventoryItem::observe(InventoryItemObserver::class);
     }
 }

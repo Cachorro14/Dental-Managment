@@ -19,8 +19,9 @@ final class ModuleCatalog
             'CLINICAL_HISTORY' => ['label' => 'Clinical History', 'dependencies' => ['PATIENTS']],
             'ODONTOGRAM' => ['label' => 'Odontogram', 'dependencies' => ['PATIENTS', 'CLINICAL_HISTORY']],
             'TREATMENTS' => ['label' => 'Treatments', 'dependencies' => ['PATIENTS']],
-            'INVENTORY' => ['label' => 'Inventory', 'dependencies' => []],
+            'INVENTORY' => ['label' => 'Inventario', 'dependencies' => []],
             'BILLING' => ['label' => 'Billing', 'dependencies' => []],
+            'REPORTS' => ['label' => 'Reportes', 'dependencies' => []],
         ];
     }
 

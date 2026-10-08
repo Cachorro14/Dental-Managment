@@ -15,9 +15,11 @@ use App\Http\Controllers\Modules\Billing\BillingController;
 use App\Http\Controllers\Modules\Billing\TreatmentChargeController;
 use App\Http\Controllers\Modules\ClinicalHistory\ClinicalHistoryController;
 use App\Http\Controllers\Modules\ClinicStaff\ClinicStaffController;
+use App\Http\Controllers\Modules\Inventory\InventoryController;
 use App\Http\Controllers\Modules\Odontogram\OdontogramController;
 use App\Http\Controllers\Modules\Patients\PatientController;
 use App\Http\Controllers\Modules\Patients\PatientDentistAssignmentController;
+use App\Http\Controllers\Modules\Reports\ReportController;
 use App\Http\Controllers\Modules\Treatments\TreatmentController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\WhatsApp\WhatsAppWebhookController;
@@ -238,5 +240,15 @@ Route::middleware(['auth', 'module:BILLING'])
             ->middleware(['permission:billing.charge', 'module:TREATMENTS'])
             ->name('treatments.charge');
     });
+
+Route::middleware(['auth', 'module:INVENTORY'])->prefix('inventory')->name('inventory.')->group(function () {
+    Route::get('/', [InventoryController::class, 'index'])->middleware('permission:inventory.view')->name('index');
+    Route::post('/', [InventoryController::class, 'store'])->middleware('permission:inventory.create')->name('store');
+    Route::post('/{inventoryItem}/movements', [InventoryController::class, 'movement'])->middleware('permission:inventory.adjust')->name('movements.store');
+});
+
+Route::get('/reports', [ReportController::class, 'index'])
+    ->middleware(['auth', 'module:REPORTS', 'permission:reports.view'])
+    ->name('reports.index');
 
 require __DIR__.'/auth.php';

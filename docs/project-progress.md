@@ -6,7 +6,7 @@ Este archivo conserva el avance del proyecto entre conversaciones. El todo list 
 
 - Fase actual: Fase 8
 - Estado: En progreso
-- Siguiente objetivo: investigación de recordatorios de citas por WhatsApp; completar Inventory y Reports sigue pendiente.
+- Siguiente objetivo: completar Reports y validar el documento clínico imprimible en el flujo de pruebas.
 - Última actualización: 2026-10-05
 
 ## Fases
@@ -68,10 +68,12 @@ Este archivo conserva el avance del proyecto entre conversaciones. El todo list 
 - Treatments: registro, edición, seguimiento de estado y auditoría completados. No se ofrecerá eliminación para preservar el historial clínico de lo realizado al paciente.
 - Billing: estado de cuenta por paciente implementado con cargos, pagos parciales, métodos de pago, saldo calculado, auditoría y anulación administrativa conservando el historial. La aplicación no procesa transacciones.
 - El dashboard muestra hasta los 10 adeudos más altos en rojo y negritas a usuarios con acceso financiero.
-- Inventory solo existe en el catálogo; Reports aún no está registrado ni implementado.
-- Recordatorios de citas por WhatsApp: pendiente investigar alternativas de integración, requisitos, costos, consentimiento, plantillas y flujo operativo antes de definir la solución.
+- Inventory: artículos, existencias, mínimos, movimientos de entrada/salida, permisos, auditoría y pantalla operativa implementados.
+- Reports: panel inicial de indicadores de pacientes, citas, tratamientos, inventario y facturación implementado.
+- Recordatorios de citas por WhatsApp: integración implementada con Meta Cloud API, envíos manuales y automáticos configurables, gestión y auditoría de consentimiento, webhook verificado, confirmación de citas y pruebas. Pendiente configurar credenciales, plantillas aprobadas y webhook en el entorno de producción, y habilitar/validar el scheduler operativo.
 - Odontogram: pendiente revisar si se retira o se completa el flujo legado de entradas individuales que coexiste con las evaluaciones actuales.
 - Datos iniciales de Clinical History y Odontogram: pendientes de definir; no son bloqueantes para el flujo funcional actual.
+- Documento clínico: la vista de impresión incluye la historia clínica y la última evaluación del odontograma; el navegador permite guardarla como PDF. Falta validar el formato con usuarios clínicos.
 
 ## Historial
 

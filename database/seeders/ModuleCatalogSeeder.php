@@ -21,7 +21,7 @@ class ModuleCatalogSeeder extends Seeder
         foreach ($catalog->modules() as $code => $module) {
             ModuleState::query()->updateOrCreate(
                 ['code' => $code],
-                ['enabled' => in_array($code, ['USER_MANAGEMENT', 'PATIENTS', 'APPOINTMENTS', 'CLINIC_STAFF'], true)],
+                ['enabled' => in_array($code, ['USER_MANAGEMENT', 'PATIENTS', 'APPOINTMENTS', 'CLINIC_STAFF', 'INVENTORY', 'REPORTS'], true)],
             );
         }
 
@@ -37,9 +37,9 @@ class ModuleCatalogSeeder extends Seeder
 
         $moduleRoles = [
             'SUPER_ADMIN' => array_values(array_diff(array_keys($catalog->modules()), ['CLINIC_STAFF'])),
-            'CLINIC_ADMIN' => ['APPOINTMENTS', 'BILLING', 'CLINIC_STAFF', 'CLINICAL_HISTORY', 'ODONTOGRAM', 'PATIENTS', 'TREATMENTS'],
-            'RECEPTIONIST' => ['APPOINTMENTS', 'BILLING', 'CLINICAL_HISTORY', 'ODONTOGRAM', 'PATIENTS', 'TREATMENTS'],
-            'DENTIST' => ['APPOINTMENTS', 'BILLING', 'CLINICAL_HISTORY', 'ODONTOGRAM', 'PATIENTS', 'TREATMENTS'],
+            'CLINIC_ADMIN' => ['APPOINTMENTS', 'BILLING', 'CLINIC_STAFF', 'CLINICAL_HISTORY', 'ODONTOGRAM', 'PATIENTS', 'TREATMENTS', 'INVENTORY', 'REPORTS'],
+            'RECEPTIONIST' => ['APPOINTMENTS', 'BILLING', 'CLINICAL_HISTORY', 'ODONTOGRAM', 'PATIENTS', 'TREATMENTS', 'INVENTORY', 'REPORTS'],
+            'DENTIST' => ['APPOINTMENTS', 'BILLING', 'CLINICAL_HISTORY', 'ODONTOGRAM', 'PATIENTS', 'TREATMENTS', 'INVENTORY', 'REPORTS'],
         ];
 
         foreach ($moduleRoles as $roleName => $modules) {
