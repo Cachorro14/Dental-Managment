@@ -63,7 +63,7 @@ export default function StaffForm({ user, assignableRoles, canManageWhatsAppCons
                 <InputError message={form.errors.roles} className="mt-2" />
             </fieldset>
             <div className="flex flex-col gap-3 sm:flex-row">
-                <PrimaryButton disabled={form.processing}>{user ? 'Guardar cambios' : 'Crear cuenta'}</PrimaryButton>
+                <PrimaryButton icon={user ? 'save' : 'add'} disabled={form.processing}>{user ? 'Guardar cambios' : 'Crear cuenta'}</PrimaryButton>
                 <ActionLink href={route('clinic-staff.index')} icon="close" variant="danger">Cancelar</ActionLink>
             </div>
         </form>

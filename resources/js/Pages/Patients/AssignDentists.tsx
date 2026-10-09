@@ -52,7 +52,7 @@ export default function AssignDentists({
                         )}
                         <InputError message={form.errors.dentists} />
                         <div className="flex flex-col gap-3 sm:flex-row">
-                            <PrimaryButton disabled={form.processing}>Guardar asignación</PrimaryButton>
+                            <PrimaryButton icon="save" disabled={form.processing}>Guardar asignación</PrimaryButton>
                             <ActionLink href={route('patients.show', patient.id)} icon="arrow-left" variant="info">Volver al paciente</ActionLink>
                         </div>
                     </form>

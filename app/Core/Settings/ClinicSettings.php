@@ -17,7 +17,7 @@ final class ClinicSettings
             'clinic.logo' => null,
             'clinic.timezone' => (string) config('app.timezone', 'UTC'),
             'clinic.locale' => (string) config('app.locale', 'en'),
-            'clinic.currency' => 'USD',
+            'clinic.currency' => 'MXN',
             'branding.name' => (string) config('app.name', 'Dental Clinic'),
             'branding.logo' => null,
             'branding.icon' => null,

@@ -111,7 +111,7 @@ export default function Register() {
                         Ya tienes una cuenta?
                     </Link>
 
-                    <PrimaryButton className="ms-4" disabled={processing}>
+                    <PrimaryButton icon="add" className="ms-4" disabled={processing}>
                         Crear cuenta
                     </PrimaryButton>
                 </div>

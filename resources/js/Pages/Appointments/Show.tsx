@@ -1,4 +1,6 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import ActionButton from '@/Components/ActionButton';
+import ActionLink from '@/Components/ActionLink';
 import { Appointment, PageProps } from '@/types';
 import { Head, Link, router, useForm, usePage } from '@inertiajs/react';
 
@@ -35,8 +37,8 @@ export default function Show({ appointment, canSendWhatsAppReminder = false, can
             <div className="py-12">
                 <div className="mx-auto max-w-4xl space-y-6 sm:px-6 lg:px-8">
                     {(canUpdate || canDelete) && <div className="flex flex-wrap justify-end gap-3">
-                        {canUpdate && <Link href={route('appointments.edit', appointment.id)} className="inline-flex min-h-11 items-center rounded-xl theme-accent-button px-4 py-2 text-sm font-semibold theme-content-inverse">Editar</Link>}
-                        {canDelete && <button type="button" onClick={remove} className="inline-flex min-h-11 items-center rounded-xl bg-red-600 px-4 py-2 text-sm font-semibold theme-content-inverse">Eliminar</button>}
+                        {canUpdate && <ActionLink href={route('appointments.edit', appointment.id)} icon="edit" variant="accent">Editar</ActionLink>}
+                        {canDelete && <ActionButton type="button" onClick={remove} icon="trash" variant="danger">Eliminar</ActionButton>}
                     </div>}
                     <dl className="space-y-4 rounded-2xl theme-card p-6 shadow-sm">
                         <div><dt className="text-sm theme-content-muted">Paciente</dt><dd className="mt-1 text-lg font-semibold theme-content">{appointment.patient?.first_name} {appointment.patient?.last_name}</dd></div>
@@ -53,7 +55,7 @@ export default function Show({ appointment, canSendWhatsAppReminder = false, can
                             <div className="theme-success rounded-xl border p-4"><p className="font-semibold">Paciente</p><p className="mt-1 text-sm">Teléfono: {appointment.patient?.phone || 'No registrado'}</p>{canManageWhatsAppConsent ? <label className="mt-3 flex min-h-11 items-start gap-3 text-sm"><input type="checkbox" checked={Boolean(appointment.patient?.whatsapp_reminder_consent)} disabled={consentForm.processing} onChange={(event) => changePatientConsent(event.target.checked)} className="mt-1 rounded border-current focus:ring-2 focus:ring-accent" /><span>Consentimiento físico registrado para recordatorios de citas por WhatsApp.</span></label> : <p className="mt-1 text-sm">Consentimiento físico: {appointment.patient?.whatsapp_reminder_consent ? 'Registrado' : 'No registrado'}</p>}{patientConsentRecordedBy && <p className="mt-2 text-xs">Último registro efectuado por {patientConsentRecordedBy}.</p>}{consentForm.errors.consent_given && <p className="theme-danger mt-2 border-0 bg-transparent p-0 text-sm">{consentForm.errors.consent_given}</p>}{patientConsentAudit.length > 0 && <ul className="mt-3 space-y-1 border-t border-current/20 pt-3 text-xs">{patientConsentAudit.map((audit, index) => <li key={`${audit.recorded_at}-${index}`}>{audit.consent_given ? 'Autorizó' : 'Revocó'} · {new Date(audit.recorded_at).toLocaleString('es-MX')}</li>)}</ul>}</div>
                             <div className="theme-info rounded-xl border p-4"><p className="font-semibold">Dentista asignado</p><p className="mt-1 text-sm">{appointment.dentist?.name ?? 'Sin asignar'} · {appointment.dentist?.phone ?? 'Sin teléfono WhatsApp'}</p><p className="mt-1 text-sm">Consentimiento físico: {appointment.dentist?.whatsapp_appointment_consent ? 'Registrado' : 'No registrado'}</p>{canNotifyDentistWhatsApp && <p className="mt-2 text-xs">El teléfono y el consentimiento se administran en la cuenta del personal.</p>}</div>
                         </div>
-                        <button type="button" disabled={!canSendReminder} onClick={() => router.post(route('appointments.reminders.whatsapp.store', appointment.id))} className="theme-accent-button inline-flex min-h-11 items-center justify-center rounded-xl px-4 py-2 text-sm font-semibold transition hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-accent disabled:cursor-not-allowed disabled:opacity-50">Enviar recordatorio al paciente</button>
+                        <ActionButton type="button" disabled={!canSendReminder} onClick={() => router.post(route('appointments.reminders.whatsapp.store', appointment.id))} icon="send" variant="accent">Enviar recordatorio al paciente</ActionButton>
                         {!canSendReminder && <p className="theme-content-secondary text-sm">El envío requiere que los recordatorios estén habilitados, permiso, consentimiento físico vigente, teléfono y cita programada en el futuro.</p>}
                         {whatsappAutomaticReminderEnabled && <p className="text-sm theme-content-secondary">Recordatorio automático configurado para aproximadamente 24 horas antes; se volverán a comprobar consentimiento y teléfono al enviarlo.</p>}
                         {canNotifyDentist && <p className="theme-info rounded-lg border px-3 py-2 text-sm">El dentista puede recibir una notificación cuando el paciente confirme su asistencia.</p>}

@@ -173,7 +173,7 @@ export default function UserForm({
                 <InputError message={form.errors.roles} className="mt-2" />
             </div>
             <div className="flex flex-col gap-3 sm:flex-row">
-                <PrimaryButton disabled={form.processing}>
+                <PrimaryButton icon={user ? 'save' : 'add'} disabled={form.processing}>
                     {user ? "Guardar cambios" : "Crear usuario"}
                 </PrimaryButton>
                 <ActionLink href={route("admin.users.index")} icon="close" variant="danger">Cancelar</ActionLink>

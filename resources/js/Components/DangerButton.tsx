@@ -1,11 +1,13 @@
-import { ButtonHTMLAttributes } from 'react';
+import Icon, { IconName } from '@/Components/Icon';
+import { ButtonHTMLAttributes, PropsWithChildren } from 'react';
 
 export default function DangerButton({
     className = '',
     disabled,
     children,
+    icon,
     ...props
-}: ButtonHTMLAttributes<HTMLButtonElement>) {
+}: PropsWithChildren<ButtonHTMLAttributes<HTMLButtonElement> & { icon?: IconName }>) {
     return (
         <button
             {...props}
@@ -16,7 +18,8 @@ export default function DangerButton({
             }
             disabled={disabled}
         >
-            {children}
+            {icon && <Icon name={icon} />}
+            <span>{children}</span>
         </button>
     );
 }

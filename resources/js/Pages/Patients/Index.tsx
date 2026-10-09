@@ -1,4 +1,5 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import ActionButton from '@/Components/ActionButton';
 import ActionLink from '@/Components/ActionLink';
 import ToothLoader from '@/Components/ToothLoader';
 import { PageProps, Paginated, Patient } from '@/types';
@@ -9,7 +10,14 @@ export default function Index({ patients, filters, showAssignedDentists }: PageP
     const { auth } = usePage<PageProps>().props;
     const canCreatePatients = auth.permissions.includes('patients.create');
     const canUpdatePatients = auth.permissions.includes('patients.update');
+    const canArchivePatients = auth.permissions.includes('patients.delete');
     const [search, setSearch] = useState(filters.search);
+
+    const archive = (patient: Patient) => {
+        if (window.confirm(`¿Archivar a ${patient.first_name} ${patient.last_name}?`)) {
+            router.delete(route('patients.destroy', patient.id), { preserveScroll: true });
+        }
+    };
 
     useEffect(() => {
         if (search === filters.search) {
@@ -51,7 +59,7 @@ export default function Index({ patients, filters, showAssignedDentists }: PageP
                                                 <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider theme-content-muted">Telefono</th>
                                                 <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider theme-content-muted">Correo</th>
                                                 {showAssignedDentists && <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider theme-content-muted">Doctor</th>}
-                                                {canUpdatePatients && <th className="px-6 py-4 text-right text-xs font-semibold uppercase tracking-wider theme-content-muted">Acciones</th>}
+                                                {(canUpdatePatients || canArchivePatients) && <th className="px-6 py-4 text-right text-xs font-semibold uppercase tracking-wider theme-content-muted">Acciones</th>}
                                             </tr>
                                         </thead>
                                         <tbody className="divide-y divide-outline theme-card">
@@ -74,7 +82,7 @@ export default function Index({ patients, filters, showAssignedDentists }: PageP
                                                     <td className="whitespace-nowrap px-6 py-4 text-sm theme-content-secondary">{patient.phone ?? '-'}</td>
                                                     <td className="whitespace-nowrap px-6 py-4 text-sm theme-content-secondary">{patient.email ?? '-'}</td>
                                                     {showAssignedDentists && <td className="px-6 py-4 text-sm theme-content-secondary">{patient.dentists?.map((dentist) => dentist.name).join(', ') || '-'}</td>}
-                                                     {canUpdatePatients && <td className="whitespace-nowrap px-6 py-4 text-right text-sm"><Link href={route('patients.edit', patient.id)} onClick={(event) => event.stopPropagation()} className="table-action-button">Editar</Link></td>}
+                                                     {(canUpdatePatients || canArchivePatients) && <td className="whitespace-nowrap px-6 py-4 text-right text-sm"><div className="flex flex-wrap justify-end gap-2">{canUpdatePatients && <Link href={route('patients.edit', patient.id)} onClick={(event) => event.stopPropagation()} className="table-action-button">Editar</Link>}{canArchivePatients && <ActionButton type="button" onClick={(event) => { event.stopPropagation(); archive(patient); }} icon="archive" variant="danger">Archivar</ActionButton>}</div></td>}
                                                 </tr>
                                             ))}
                                         </tbody>

@@ -1,12 +1,14 @@
-import { ButtonHTMLAttributes } from 'react';
+import Icon, { IconName } from '@/Components/Icon';
+import { ButtonHTMLAttributes, PropsWithChildren } from 'react';
 
 export default function SecondaryButton({
     type = 'button',
     className = '',
     disabled,
     children,
+    icon,
     ...props
-}: ButtonHTMLAttributes<HTMLButtonElement>) {
+}: PropsWithChildren<ButtonHTMLAttributes<HTMLButtonElement> & { icon?: IconName }>) {
     return (
         <button
             {...props}
@@ -18,7 +20,8 @@ export default function SecondaryButton({
             }
             disabled={disabled}
         >
-            {children}
+            {icon && <Icon name={icon} />}
+            <span>{children}</span>
         </button>
     );
 }

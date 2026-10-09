@@ -90,7 +90,7 @@ export default function ResetPassword({
                 </div>
 
                 <div className="mt-4 flex items-center justify-end">
-                    <PrimaryButton className="ms-4" disabled={processing}>
+                    <PrimaryButton icon="save" className="ms-4" disabled={processing}>
                         Restablecer contrasena
                     </PrimaryButton>
                 </div>

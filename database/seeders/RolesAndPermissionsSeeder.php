@@ -121,6 +121,7 @@ class RolesAndPermissionsSeeder extends Seeder
             'patients.view_all',
             'patients.assign_dentists',
             'patients.update',
+            'patients.delete',
             'settings.view',
             'settings.update',
             'odontogram.view',

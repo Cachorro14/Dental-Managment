@@ -1,5 +1,6 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import ActionLink from '@/Components/ActionLink';
+import Icon from '@/Components/Icon';
 import { PageProps } from '@/types';
 import { Head, Link, router, usePage } from '@inertiajs/react';
 
@@ -36,7 +37,7 @@ export default function Index({ roles }: { roles: Role[] }) {
                         {roles.map((role) => <article key={role.id} className="rounded-2xl border theme-outline theme-card p-5 shadow-sm">
                             <div className="flex items-start justify-between gap-4"><div><h2 className="text-lg font-semibold theme-content">{role.name}</h2><p className="mt-1 text-sm theme-content-muted">{role.users_count} usuario(s)</p></div>{canUpdate && <Link href={route('admin.roles.edit', role.id)} className="theme-accent text-sm font-semibold hover:underline">Editar</Link>}</div>
                             <div className="mt-5 flex flex-wrap gap-2">{role.permissions.map((permission) => <span key={permission.id} className="rounded-full theme-muted-surface px-2.5 py-1 text-xs theme-content-secondary">{permission.name}</span>)}</div>
-                            {canDelete && !systemRoles.includes(role.name) && <button type="button" onClick={() => remove(role)} className="theme-danger-foreground mt-5 text-sm font-semibold hover:underline">Eliminar rol</button>}
+                            {canDelete && !systemRoles.includes(role.name) && <button type="button" onClick={() => remove(role)} className="theme-danger-foreground mt-5 inline-flex items-center gap-2 text-sm font-semibold hover:underline"><Icon name="trash" />Eliminar rol</button>}
                         </article>)}
                     </div>
                 </div>

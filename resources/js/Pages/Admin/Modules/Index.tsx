@@ -1,4 +1,5 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import ActionButton from '@/Components/ActionButton';
 import { Module, PageProps, RoleSummary } from '@/types';
 import { Head, router, useForm, usePage } from '@inertiajs/react';
 import { useState } from 'react';
@@ -47,7 +48,7 @@ export default function Index({ modules, roles, assignments }: Props) {
                                 <span>{module.label}</span>
                             </label>)}
                         </div>
-                        {canUpdate && <button type="button" onClick={saveRoleModules} disabled={form.processing || !selectedRole} className="mt-6 inline-flex min-h-11 w-full items-center justify-center rounded-xl theme-accent-button px-4 py-2 text-sm font-semibold theme-content-inverse transition hover:opacity-90 disabled:opacity-50">Guardar acceso del rol</button>}
+                        {canUpdate && <ActionButton type="button" onClick={saveRoleModules} disabled={form.processing || !selectedRole} icon="save" variant="accent" className="mt-6 w-full">Guardar acceso del rol</ActionButton>}
                     </section>
                 </div>
             </div>

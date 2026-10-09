@@ -158,7 +158,7 @@ export default function PatientForm({ patient, canManageWhatsAppConsent = false,
                 {patient?.whatsapp_reminder_consent_recorded_at && <p className="mt-2 text-xs theme-content">Registrado el {new Date(patient.whatsapp_reminder_consent_recorded_at).toLocaleString('es-MX')}{whatsappConsentRecordedBy ? ` por ${whatsappConsentRecordedBy}` : ''}.</p>}
             </fieldset>}
 
-            <PrimaryButton disabled={processing}>{editing ? 'Guardar paciente' : 'Crear paciente'}</PrimaryButton>
+            <PrimaryButton icon={editing ? 'save' : 'add'} disabled={processing}>{editing ? 'Guardar paciente' : 'Crear paciente'}</PrimaryButton>
         </form>
     );
 }

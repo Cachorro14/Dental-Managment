@@ -84,7 +84,7 @@ export default function TreatmentForm({
                 </div>
             </div>
             <div className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
-                <PrimaryButton disabled={form.processing}>{submitLabel}</PrimaryButton>
+                <PrimaryButton icon={method === 'patch' ? 'save' : 'add'} disabled={form.processing}>{submitLabel}</PrimaryButton>
             </div>
         </form>
     );

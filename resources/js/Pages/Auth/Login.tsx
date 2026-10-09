@@ -102,7 +102,7 @@ export default function Login({
                         </Link>
                     )}
 
-                        <PrimaryButton className="justify-center sm:ms-0" disabled={processing}>
+                        <PrimaryButton icon="lock" className="justify-center sm:ms-0" disabled={processing}>
                         Ingresar
                     </PrimaryButton>
                 </div>

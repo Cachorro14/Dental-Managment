@@ -37,5 +37,6 @@ class DatabaseSeeder extends Seeder
 
         $this->call(TreatmentSeeder::class);
         $this->call(BillingEntrySeeder::class);
+        $this->call(DemoDataSeeder::class);
     }
 }

@@ -2,6 +2,7 @@ import InputError from '@/Components/InputError';
 import PrimaryButton from '@/Components/PrimaryButton';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import ActionLink from '@/Components/ActionLink';
+import Icon from '@/Components/Icon';
 import ToothLoader from '@/Components/ToothLoader';
 import { OdontogramAssessmentSummary, OdontogramEntry, OdontogramFinding, OdontogramStatus, OdontogramSurface, Patient } from '@/types';
 import { Head, Link, useForm } from '@inertiajs/react';
@@ -184,7 +185,7 @@ function EditLoaded({
                                         <label className="text-sm font-medium theme-content-secondary">Severidad registrada<select disabled={!canEdit} value={severity} onChange={(event) => setSeverity(event.target.value as OdontogramFinding['severity'])} className="mt-1 block w-full rounded-xl theme-outline-strong text-sm">{severities.map((item) => <option key={item.value} value={item.value}>{item.label}</option>)}</select></label>
                                     </div>
                                     <label className="mt-3 block text-sm font-medium theme-content-secondary">Detalle<textarea disabled={!canEdit} value={findingNotes} onChange={(event) => setFindingNotes(event.target.value)} rows={2} maxLength={1000} className="mt-1 block w-full rounded-xl theme-outline-strong text-sm" placeholder="Descripción clínica del hallazgo" /></label>
-                                    {canEdit && <button type="button" onClick={addFinding} className="theme-accent-button mt-3 inline-flex min-h-11 items-center justify-center rounded-xl px-4 py-2 text-sm font-semibold hover:opacity-90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent">Agregar hallazgo</button>}
+                                    {canEdit && <button type="button" onClick={addFinding} className="theme-accent-button mt-3 inline-flex min-h-11 items-center justify-center gap-2 rounded-xl px-4 py-2 text-sm font-semibold hover:opacity-90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"><Icon name="add" />Agregar hallazgo</button>}
                                     <InputError message={errors[`entries.${selectedIndex}.findings` as keyof typeof errors]} />
                                 </div>
                                 <div className="rounded-2xl border theme-outline p-5">
@@ -197,7 +198,7 @@ function EditLoaded({
                         <InputError message={errors.entries} />
                         <label className="block text-sm font-medium theme-content-secondary">Notas de la evaluación<textarea disabled={!canEdit} value={data.notes} onChange={(event) => setData('notes', event.target.value)} rows={3} maxLength={5000} className="mt-1 block w-full rounded-xl theme-outline-strong text-sm" placeholder="Notas generales de esta evaluación" /></label>
                         <div className="flex flex-col gap-3 sm:flex-row">
-                            {canEdit && <PrimaryButton disabled={processing}>Guardar evaluación</PrimaryButton>}
+                            {canEdit && <PrimaryButton icon="save" disabled={processing}>Guardar evaluación</PrimaryButton>}
                             <ActionLink href={route('patients.show', patient.id)} icon="arrow-left" variant="info">Volver al paciente</ActionLink>
                         </div>
                     </form>

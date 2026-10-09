@@ -1,5 +1,7 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import ActionButton from '@/Components/ActionButton';
 import ActionLink from '@/Components/ActionLink';
+import Icon from '@/Components/Icon';
 import ToothLoader from '@/Components/ToothLoader';
 import { Appointment, PageProps, Paginated } from '@/types';
 import { Head, Link, router, usePage } from '@inertiajs/react';
@@ -9,11 +11,19 @@ const statusLabels: Record<Appointment['status'], string> = { scheduled: 'Progra
 const statusStyles: Record<Appointment['status'], string> = { scheduled: 'theme-warning', confirmed: 'theme-info', completed: 'theme-success', cancelled: 'theme-muted-surface theme-content-muted' };
 
 export default function Index({ appointments, filters }: PageProps<{ appointments?: Paginated<Appointment>; filters: { date: string } }>) {
-    const canCreateAppointments = usePage<PageProps>().props.auth.permissions.includes('appointments.create');
+    const permissions = usePage<PageProps>().props.auth.permissions;
+    const canCreateAppointments = permissions.includes('appointments.create');
+    const canUpdateAppointments = permissions.includes('appointments.update');
+    const canDeleteAppointments = permissions.includes('appointments.delete');
     const [date, setDate] = useState(filters.date);
     const submit = (event: FormEvent) => {
         event.preventDefault();
         router.get(route('appointments.index'), { date }, { preserveState: true, replace: true });
+    };
+    const remove = (appointment: Appointment) => {
+        if (window.confirm('¿Eliminar esta cita?')) {
+            router.delete(route('appointments.destroy', appointment.id), { preserveScroll: true });
+        }
     };
 
     return (
@@ -24,7 +34,7 @@ export default function Index({ appointments, filters }: PageProps<{ appointment
                     <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                         <form onSubmit={submit} className="flex w-full gap-3 sm:w-auto">
                             <input type="date" value={date} onChange={(event) => setDate(event.target.value)} className="theme-content min-w-0 rounded-xl border-outline-strong bg-surface-raised shadow-sm focus:border-accent focus:ring-accent" />
-                            <button className="theme-accent-button rounded-xl px-4 py-2 text-sm font-semibold transition hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 focus:ring-offset-surface-raised">Filtrar</button>
+                            <button className="theme-accent-button inline-flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-semibold transition hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 focus:ring-offset-surface-raised"><Icon name="filter" />Filtrar</button>
                         </form>
                         {canCreateAppointments && <ActionLink href={route('appointments.create')} icon="file" variant="accent">Nueva cita</ActionLink>}
                     </div>
@@ -41,9 +51,9 @@ export default function Index({ appointments, filters }: PageProps<{ appointment
                             <>
                                 <div className="overflow-x-auto">
                                      <table className="min-w-full divide-y divide-outline">
-                                         <thead className="theme-page"><tr><th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider theme-content-muted">Fecha</th><th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider theme-content-muted">Paciente</th><th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider theme-content-muted">Dentista</th><th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider theme-content-muted">Estado</th><th className="px-6 py-4" /></tr></thead>
-                                         <tbody className="divide-y divide-outline">{appointments.data.map((appointment) => <tr key={appointment.id} className="transition hover:bg-surface-sunken"><td className="whitespace-nowrap px-6 py-4 text-sm theme-content-secondary">{new Date(appointment.scheduled_at).toLocaleString('es-ES')}</td><td className="whitespace-nowrap px-6 py-4 text-sm font-semibold theme-content">{appointment.patient?.first_name} {appointment.patient?.last_name}</td><td className="whitespace-nowrap px-6 py-4 text-sm theme-content-secondary">{appointment.dentist?.name ?? 'Sin asignar'}</td><td className="whitespace-nowrap px-6 py-4"><span className={`rounded-full border px-2.5 py-1 text-xs font-semibold ${statusStyles[appointment.status]}`}>{statusLabels[appointment.status]}</span></td><td className="whitespace-nowrap px-6 py-4 text-right text-sm"><Link href={route('appointments.show', appointment.id)} className="table-action-button">Ver</Link></td></tr>)}</tbody>
-                                    </table>
+                                          <thead className="theme-page"><tr><th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider theme-content-muted">Fecha</th><th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider theme-content-muted">Paciente</th><th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider theme-content-muted">Dentista</th><th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider theme-content-muted">Estado</th>{(canUpdateAppointments || canDeleteAppointments) && <th className="px-6 py-4 text-right text-xs font-semibold uppercase tracking-wider theme-content-muted">Acciones</th>}</tr></thead>
+                                          <tbody className="divide-y divide-outline">{appointments.data.map((appointment) => <tr key={appointment.id} className="cursor-pointer transition hover:bg-surface-sunken focus:bg-surface-sunken focus:outline-none" onClick={() => router.visit(route('appointments.show', appointment.id))} onKeyDown={(event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); router.visit(route('appointments.show', appointment.id)); } }} role="link" tabIndex={0} aria-label={`Ver cita de ${appointment.patient?.first_name} ${appointment.patient?.last_name}`}> <td className="whitespace-nowrap px-6 py-4 text-sm theme-content-secondary">{new Date(appointment.scheduled_at).toLocaleString('es-ES')}</td><td className="whitespace-nowrap px-6 py-4 text-sm font-semibold theme-content">{appointment.patient?.first_name} {appointment.patient?.last_name}</td><td className="whitespace-nowrap px-6 py-4 text-sm theme-content-secondary">{appointment.dentist?.name ?? 'Sin asignar'}</td><td className="whitespace-nowrap px-6 py-4"><span className={`rounded-full border px-2.5 py-1 text-xs font-semibold ${statusStyles[appointment.status]}`}>{statusLabels[appointment.status]}</span></td>{(canUpdateAppointments || canDeleteAppointments) && <td className="whitespace-nowrap px-6 py-4 text-right text-sm"><div className="flex flex-wrap justify-end gap-2">{canUpdateAppointments && <Link href={route('appointments.edit', appointment.id)} onClick={(event) => event.stopPropagation()} className="table-action-button">Editar</Link>}{canDeleteAppointments && <ActionButton type="button" onClick={(event) => { event.stopPropagation(); remove(appointment); }} icon="archive" variant="danger">Eliminar</ActionButton>}</div></td>}</tr>)}</tbody>
+                                     </table>
                                 </div>
                                 <Pagination links={appointments.links} />
                             </>

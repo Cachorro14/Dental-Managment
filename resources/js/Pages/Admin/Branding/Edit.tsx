@@ -38,7 +38,7 @@ export default function Edit({ branding }: PageProps<{ branding: Branding }>) {
                             <div><InputLabel htmlFor="logo" value="Logotipo" /><input id="logo" type="file" accept=".jpg,.jpeg,.png,.webp,.svg" disabled={!canUpdate} onChange={setFile('logo')} className="mt-2 block w-full text-sm theme-content-secondary disabled:cursor-not-allowed" /><InputError message={form.errors.logo} className="mt-2" />{branding.logoUrl && <img src={branding.logoUrl} alt="Logotipo actual" className="mt-3 h-16 w-16 rounded-xl border theme-outline object-contain p-2" />}</div>
                             <div><InputLabel htmlFor="icon" value="Icono" /><input id="icon" type="file" accept=".ico,.png,.svg" disabled={!canUpdate} onChange={setFile('icon')} className="mt-2 block w-full text-sm theme-content-secondary disabled:cursor-not-allowed" /><InputError message={form.errors.icon} className="mt-2" />{branding.iconUrl && <img src={branding.iconUrl} alt="Icono actual" className="mt-3 h-16 w-16 rounded-xl border theme-outline object-contain p-2" />}</div>
                         </div>
-                        {canUpdate && <PrimaryButton disabled={form.processing}>Guardar apariencia</PrimaryButton>}
+                        {canUpdate && <PrimaryButton icon="save" disabled={form.processing}>Guardar apariencia</PrimaryButton>}
                     </form>
                 </div>
             </div>
