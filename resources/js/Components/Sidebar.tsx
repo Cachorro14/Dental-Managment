@@ -20,9 +20,9 @@ export default function Sidebar({
 
     return (
         <>
-            {open && <button type="button" aria-label="Cerrar menu" className="fixed inset-0 z-40 bg-slate-950/50 lg:hidden" onClick={onClose} />}
-            <aside className={`portal-sidebar fixed inset-y-0 left-0 z-50 flex w-72 flex-col border-r shadow-2xl transition-transform duration-300 ease-out lg:translate-x-0 ${open ? 'translate-x-0' : '-translate-x-full'}`}>
-                <div className="flex h-20 items-center justify-between border-b px-6">
+            {open && <button type="button" aria-label="Cerrar menu" className="theme-overlay fixed inset-0 z-40 lg:hidden" onClick={onClose} />}
+            <aside className={`portal-sidebar fixed inset-y-0 left-0 z-50 flex w-72 flex-col border-r shadow-xl transition-transform duration-300 ease-out lg:translate-x-0 ${open ? 'translate-x-0' : '-translate-x-full'}`}>
+                <div className="flex h-16 items-center justify-between border-b px-5">
                     <Link href={route('dashboard')} className="flex min-w-0 items-center gap-3" onClick={onClose}>
                         {branding.logoUrl ? <span className="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-full bg-surface-raised"><img src={branding.logoUrl} alt={branding.name} className="h-full w-full object-cover" /></span> : <ClinicMark className="h-10 w-10 shrink-0 text-accent" />}
                         <span className="portal-sidebar-brand truncate text-sm font-semibold">{branding.name}</span>
@@ -32,7 +32,7 @@ export default function Sidebar({
                     </button>
                 </div>
 
-                <nav className="flex-1 space-y-7 overflow-y-auto px-4 py-6" aria-label="Navegacion principal">
+                <nav className="flex-1 space-y-6 overflow-y-auto px-3 py-5" aria-label="Navegacion principal">
                     <div>
                         <p className="portal-sidebar-heading mb-3 px-3 text-[11px] font-semibold uppercase tracking-[0.18em]">Principal</p>
                         <div className="space-y-1">{items.filter((item) => ['dashboard', 'patients', 'appointments'].includes(item.icon)).map((item) => <SidebarLink key={item.href} item={item} onClick={onClose} />)}{remindersEnabled && items.some((item) => item.icon === 'appointments') && <p className="portal-sidebar-muted px-3 pt-2 text-xs">Recordatorios disponibles desde el detalle de cada cita.</p>}</div>
@@ -47,7 +47,7 @@ export default function Sidebar({
                     </div>}
                 </nav>
 
-                <div className="portal-sidebar-footer border-t p-4">
+                    <div className="portal-sidebar-footer border-t p-3">
                     <div className="portal-sidebar-user mb-3 flex min-w-0 items-center gap-3 rounded-xl px-3 py-3">
                         <div className="portal-sidebar-avatar flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-sm font-bold">{auth.user?.name.charAt(0).toUpperCase()}</div>
                         <div className="min-w-0"><p className="portal-sidebar-brand truncate text-sm font-semibold">{auth.user?.name}</p><p className="portal-sidebar-muted truncate text-xs">{auth.user?.email}</p></div>

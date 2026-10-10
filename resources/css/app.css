@@ -124,7 +124,7 @@ input:not([type='checkbox']):not([type='radio']):not([type='file']),
 select,
 textarea {
     border-color: var(--outline-strong);
-    background-color: var(--surface-raised);
+    background-color: color-mix(in srgb, var(--surface-raised) 72%, var(--surface));
     color: var(--content);
     transition: border-color 150ms ease, box-shadow 150ms ease, background-color 150ms ease;
 }
@@ -214,18 +214,18 @@ input[type='file']:focus { border-color: var(--accent); box-shadow: 0 0 0 3px co
 .theme-divider { border-color: var(--outline); }
 .theme-selected { border-color: var(--accent); background-color: var(--info-surface); color: var(--info-content); }
 
-.portal-sidebar { border-color: var(--outline); background-color: var(--surface-raised); color: var(--content); }
+.portal-sidebar { border-color: var(--outline); background-color: var(--surface); color: var(--content); }
 .portal-sidebar > div:first-child, .portal-sidebar-footer { border-color: var(--outline); }
 .portal-sidebar-brand { color: var(--content); }
-.portal-sidebar-heading { color: var(--accent); }
+.portal-sidebar-heading { color: var(--content-muted); }
 .portal-sidebar-muted { color: var(--content-muted); }
-.portal-sidebar-user { background-color: var(--surface-sunken); }
+.portal-sidebar-user { border: 1px solid var(--outline); background-color: var(--surface-raised); }
 .portal-sidebar-avatar { background-color: var(--accent); color: var(--accent-content); }
 .portal-sidebar-link { color: var(--content-secondary); }
 .portal-sidebar-link:hover { background-color: var(--surface-sunken); color: var(--content); }
-.portal-sidebar-active { background-color: var(--accent); color: var(--accent-content); }
-.portal-sidebar-active:hover { background-color: var(--accent-hover); color: var(--accent-content); }
-.portal-sidebar-active-dot { background-color: var(--accent-content); }
+.portal-sidebar-active { background-color: var(--info-surface); color: var(--info-content); box-shadow: inset 3px 0 0 var(--accent); }
+.portal-sidebar-active:hover { background-color: var(--info-surface); color: var(--info-content); }
+.portal-sidebar-active-dot { background-color: var(--accent); }
 
 .guest-portal { position: relative; isolation: isolate; background-color: var(--surface-sunken); color: var(--content); }
 .guest-portal::before { position: fixed; z-index: 0; background: linear-gradient(color-mix(in srgb, var(--surface-sunken) 55%, transparent), color-mix(in srgb, var(--surface-sunken) 55%, transparent)), url('/odontogram/Fondo%20dental%20minimalista%20en%20tonos%20aqua.png') center / cover no-repeat; content: ''; inset: 0; pointer-events: none; }

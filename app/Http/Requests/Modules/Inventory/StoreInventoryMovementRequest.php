@@ -14,6 +14,6 @@ class StoreInventoryMovementRequest extends FormRequest
 
     public function rules(): array
     {
-        return ['type' => ['required', Rule::in(['in', 'out'])], 'quantity' => ['required', 'numeric', 'gt:0'], 'reason' => ['required', 'string', 'max:200']];
+        return ['type' => ['required', Rule::in(['in', 'out', 'adjustment', 'waste', 'restock'])], 'quantity' => ['required', 'numeric', 'gt:0'], 'reason' => ['required', 'string', 'max:200']];
     }
 }

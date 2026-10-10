@@ -21,19 +21,25 @@ class AppointmentController extends Controller
     public function index(Request $request): Response
     {
         Gate::authorize('viewAny', Appointment::class);
-        $date = $request->string('date')->trim()->toString();
+        $filters = $request->validate([
+            'from' => ['nullable', 'date'],
+            'to' => ['nullable', 'date', 'after_or_equal:from'],
+        ]);
+        $from = $filters['from'] ?? '';
+        $to = $filters['to'] ?? '';
         $user = $request->user();
 
         return Inertia::render('Appointments/Index', [
             'appointments' => Inertia::defer(fn () => Appointment::query()
                 ->with(['patient:id,first_name,last_name', 'dentist:id,name'])
                 ->when(! $user->can('patients.view_all'), fn ($query) => $query->whereHas('patient.dentists', fn ($dentists) => $dentists->whereKey($user->id)))
-                ->when($date !== '', fn ($query) => $query->whereDate('scheduled_at', $date))
+                ->when($from !== '', fn ($query) => $query->whereDate('scheduled_at', '>=', $from))
+                ->when($to !== '', fn ($query) => $query->whereDate('scheduled_at', '<=', $to))
                 ->orderBy('scheduled_at')
                 ->orderBy('id')
                 ->paginate(15)
                 ->withQueryString()),
-            'filters' => ['date' => $date],
+            'filters' => ['from' => $from, 'to' => $to],
         ]);
     }
 

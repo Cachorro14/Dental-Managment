@@ -5,7 +5,7 @@ import Icon from '@/Components/Icon';
 import ToothLoader from '@/Components/ToothLoader';
 import { Paginated, PageProps, RoleSummary } from '@/types';
 import { Head, Link, router, usePage } from '@inertiajs/react';
-import { FormEvent, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 type AdminUser = { id: number; name: string; email: string; phone?: string | null; roles: RoleSummary[] };
 type UsersPageProps = PageProps<{ users?: Paginated<AdminUser>; filters: { search: string } }>;
@@ -27,10 +27,17 @@ function UsersList({ users, searchFilter, permissions }: { users: Paginated<Admi
     const canDelete = permissions.includes('users.delete');
     const canViewRoles = permissions.includes('roles.view');
 
-    const submit = (event: FormEvent) => {
-        event.preventDefault();
-        router.get(route('admin.users.index'), { search }, { preserveState: true, replace: true });
-    };
+    useEffect(() => {
+        if (search === searchFilter) {
+            return;
+        }
+
+        const timeout = window.setTimeout(() => {
+            router.get(route('admin.users.index'), { search }, { preserveState: true, preserveScroll: true, replace: true });
+        }, 350);
+
+        return () => window.clearTimeout(timeout);
+    }, [search, searchFilter]);
 
     const remove = (user: AdminUser) => {
         if (canDelete && window.confirm(`¿Eliminar a ${user.name}?`)) {
@@ -44,10 +51,9 @@ function UsersList({ users, searchFilter, permissions }: { users: Paginated<Admi
             <div className="min-h-[calc(100vh-5rem)] theme-page px-4 py-8 sm:px-6 lg:px-8">
                 <div className="mx-auto max-w-7xl space-y-6">
                     <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                        <form onSubmit={submit} className="flex w-full gap-3 sm:max-w-xl">
+                        <div className="flex w-full gap-3 sm:max-w-xl">
                             <input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Buscar por nombre o correo" className="min-w-0 flex-1 rounded-xl theme-outline-strong shadow-sm focus:border-accent focus:ring-accent" />
-                            <button className="inline-flex min-h-11 items-center gap-2 rounded-xl theme-accent-button px-4 py-2 text-sm font-semibold theme-content-inverse shadow-sm transition hover:text-accent-button"><Icon name="search" />Buscar</button>
-                        </form>
+                        </div>
                         <div className="flex flex-wrap gap-3">
                             {canViewRoles && <ActionLink href={route('admin.roles.index')} icon="users" variant="accent" className="flex-1 sm:flex-none">Gestionar roles</ActionLink>}
                             {canCreate && <Link href={route('admin.users.create')} className="inline-flex min-h-11 flex-1 items-center justify-center gap-2 rounded-xl theme-accent-button px-4 py-2 text-sm font-semibold theme-content-inverse shadow-sm transition hover:text-accent-button sm:flex-none"><Icon name="add" />Nuevo usuario</Link>}

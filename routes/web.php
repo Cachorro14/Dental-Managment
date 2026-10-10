@@ -244,6 +244,7 @@ Route::middleware(['auth', 'module:BILLING'])
 Route::middleware(['auth', 'module:INVENTORY'])->prefix('inventory')->name('inventory.')->group(function () {
     Route::get('/', [InventoryController::class, 'index'])->middleware('permission:inventory.view')->name('index');
     Route::post('/', [InventoryController::class, 'store'])->middleware('permission:inventory.create')->name('store');
+    Route::patch('/{inventoryItem}', [InventoryController::class, 'update'])->middleware('permission:inventory.update')->name('update');
     Route::post('/{inventoryItem}/movements', [InventoryController::class, 'movement'])->middleware('permission:inventory.adjust')->name('movements.store');
 });
 

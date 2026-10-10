@@ -13,19 +13,19 @@ return new class extends Migration
             ModuleState::query()->updateOrCreate(['code' => $code], ['enabled' => true]);
         }
 
-        foreach (['inventory.view', 'inventory.create', 'inventory.adjust', 'reports.view'] as $permissionName) {
+        foreach (['inventory.view', 'inventory.create', 'inventory.update', 'inventory.adjust', 'reports.view'] as $permissionName) {
             Permission::findOrCreate($permissionName, 'web');
         }
 
         foreach (['CLINIC_ADMIN', 'RECEPTIONIST', 'DENTIST'] as $roleName) {
             $role = Role::query()->where('name', $roleName)->first();
-            $role?->givePermissionTo(['inventory.view', 'inventory.create', 'inventory.adjust', 'reports.view']);
+            $role?->givePermissionTo(['inventory.view', 'inventory.create', 'inventory.update', 'inventory.adjust', 'reports.view']);
         }
     }
 
     public function down(): void
     {
         ModuleState::query()->whereIn('code', ['INVENTORY', 'REPORTS'])->delete();
-        Permission::query()->whereIn('name', ['inventory.view', 'inventory.create', 'inventory.adjust', 'reports.view'])->delete();
+        Permission::query()->whereIn('name', ['inventory.view', 'inventory.create', 'inventory.update', 'inventory.adjust', 'reports.view'])->delete();
     }
 };

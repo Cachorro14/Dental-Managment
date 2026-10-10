@@ -5,21 +5,29 @@ import Icon from '@/Components/Icon';
 import ToothLoader from '@/Components/ToothLoader';
 import { Appointment, PageProps, Paginated } from '@/types';
 import { Head, Link, router, usePage } from '@inertiajs/react';
-import { FormEvent, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 const statusLabels: Record<Appointment['status'], string> = { scheduled: 'Programada', confirmed: 'Confirmada', completed: 'Completada', cancelled: 'Cancelada' };
 const statusStyles: Record<Appointment['status'], string> = { scheduled: 'theme-warning', confirmed: 'theme-info', completed: 'theme-success', cancelled: 'theme-muted-surface theme-content-muted' };
 
-export default function Index({ appointments, filters }: PageProps<{ appointments?: Paginated<Appointment>; filters: { date: string } }>) {
+export default function Index({ appointments, filters }: PageProps<{ appointments?: Paginated<Appointment>; filters: { from: string; to: string } }>) {
     const permissions = usePage<PageProps>().props.auth.permissions;
     const canCreateAppointments = permissions.includes('appointments.create');
     const canUpdateAppointments = permissions.includes('appointments.update');
     const canDeleteAppointments = permissions.includes('appointments.delete');
-    const [date, setDate] = useState(filters.date);
-    const submit = (event: FormEvent) => {
-        event.preventDefault();
-        router.get(route('appointments.index'), { date }, { preserveState: true, replace: true });
-    };
+    const [from, setFrom] = useState(filters.from);
+    const [to, setTo] = useState(filters.to);
+    useEffect(() => {
+        if (from === filters.from && to === filters.to) {
+            return;
+        }
+
+        const timeout = window.setTimeout(() => {
+            router.get(route('appointments.index'), { from, to }, { preserveState: true, preserveScroll: true, replace: true });
+        }, 350);
+
+        return () => window.clearTimeout(timeout);
+    }, [filters.from, filters.to, from, to]);
     const remove = (appointment: Appointment) => {
         if (window.confirm('¿Eliminar esta cita?')) {
             router.delete(route('appointments.destroy', appointment.id), { preserveScroll: true });
@@ -32,10 +40,10 @@ export default function Index({ appointments, filters }: PageProps<{ appointment
             <div className="min-h-[calc(100vh-5rem)] theme-page px-4 py-8 sm:px-6 lg:px-8">
                 <div className="mx-auto max-w-7xl space-y-6">
                     <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                        <form onSubmit={submit} className="flex w-full gap-3 sm:w-auto">
-                            <input type="date" value={date} onChange={(event) => setDate(event.target.value)} className="theme-content min-w-0 rounded-xl border-outline-strong bg-surface-raised shadow-sm focus:border-accent focus:ring-accent" />
-                            <button className="theme-accent-button inline-flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-semibold transition hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 focus:ring-offset-surface-raised"><Icon name="filter" />Filtrar</button>
-                        </form>
+                        <div className="grid w-full gap-3 sm:w-auto sm:grid-cols-2">
+                            <label className="text-sm theme-content-secondary">Desde<input type="date" value={from} max={to || undefined} onChange={(event) => setFrom(event.target.value)} className="theme-content mt-1 block min-h-11 w-full rounded-xl border-outline-strong bg-surface-raised shadow-sm focus:border-accent focus:ring-accent" /></label>
+                            <label className="text-sm theme-content-secondary">Hasta<input type="date" value={to} min={from || undefined} onChange={(event) => setTo(event.target.value)} className="theme-content mt-1 block min-h-11 w-full rounded-xl border-outline-strong bg-surface-raised shadow-sm focus:border-accent focus:ring-accent" /></label>
+                        </div>
                         {canCreateAppointments && <ActionLink href={route('appointments.create')} icon="file" variant="accent">Nueva cita</ActionLink>}
                     </div>
 

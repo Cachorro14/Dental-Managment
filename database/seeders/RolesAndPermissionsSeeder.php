@@ -67,6 +67,7 @@ class RolesAndPermissionsSeeder extends Seeder
             'billing.void',
             'inventory.view',
             'inventory.create',
+            'inventory.update',
             'inventory.adjust',
             'reports.view',
         ];
@@ -140,6 +141,7 @@ class RolesAndPermissionsSeeder extends Seeder
             'billing.void',
             'inventory.view',
             'inventory.create',
+            'inventory.update',
             'inventory.adjust',
             'reports.view',
         ]);

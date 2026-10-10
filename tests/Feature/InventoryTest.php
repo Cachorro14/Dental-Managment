@@ -31,6 +31,8 @@ class InventoryTest extends TestCase
             'name' => 'Guantes',
             'sku' => 'G-001',
             'category' => 'Protección',
+            'description' => 'Guantes de nitrilo',
+            'initial_stock' => '2',
             'unit' => 'caja',
             'minimum_stock' => '2',
             'unit_cost' => '150.00',
@@ -38,11 +40,11 @@ class InventoryTest extends TestCase
 
         $item = InventoryItem::query()->firstOrFail();
         $this->actingAs($user)->post(route('inventory.movements.store', $item), [
-            'type' => 'in', 'quantity' => '5', 'reason' => 'Compra inicial',
+            'type' => 'restock', 'quantity' => '5', 'reason' => 'Compra inicial',
         ])->assertRedirect();
 
-        $this->assertDatabaseHas('inventory_items', ['id' => $item->id, 'current_stock' => '5.000']);
-        $this->assertDatabaseHas('inventory_movements', ['inventory_item_id' => $item->id, 'type' => 'in', 'stock_after' => '5.000']);
+        $this->assertDatabaseHas('inventory_items', ['id' => $item->id, 'current_stock' => '7.000']);
+        $this->assertDatabaseHas('inventory_movements', ['inventory_item_id' => $item->id, 'type' => 'restock', 'stock_after' => '7.000']);
         $this->assertDatabaseHas('audit_logs', ['auditable_type' => InventoryItem::class, 'event' => 'updated']);
     }
 
@@ -76,6 +78,31 @@ class InventoryTest extends TestCase
         InventoryItem::factory()->create(['created_by' => $user->id]);
 
         $this->actingAs($user)->get(route('inventory.index'))
-            ->assertInertia(fn (Assert $page) => $page->has('items', 1)->where('canCreate', true)->where('canAdjust', true));
+            ->assertInertia(fn (Assert $page) => $page->has('items.data', 1)->has('summary')->where('canCreate', true)->where('canUpdate', true)->where('canAdjust', true));
+    }
+
+    public function test_inventory_adjustment_sets_the_physical_stock_count(): void
+    {
+        $user = User::factory()->create();
+        $user->assignRole('CLINIC_ADMIN');
+        $item = InventoryItem::factory()->create(['created_by' => $user->id, 'current_stock' => 12]);
+
+        $this->actingAs($user)->post(route('inventory.movements.store', $item), [
+            'type' => 'adjustment', 'quantity' => '9', 'reason' => 'Conteo físico mensual',
+        ])->assertRedirect();
+
+        $this->assertDatabaseHas('inventory_items', ['id' => $item->id, 'current_stock' => '9.000']);
+        $this->assertDatabaseHas('inventory_movements', ['inventory_item_id' => $item->id, 'type' => 'adjustment', 'stock_after' => '9.000']);
+    }
+
+    public function test_inventory_can_be_filtered_by_name_and_category(): void
+    {
+        $user = User::factory()->create();
+        $user->assignRole('CLINIC_ADMIN');
+        InventoryItem::factory()->create(['created_by' => $user->id, 'name' => 'Guantes de nitrilo', 'category' => 'Protección']);
+        InventoryItem::factory()->create(['created_by' => $user->id, 'name' => 'Resina dental', 'category' => 'Restauración']);
+
+        $this->actingAs($user)->get(route('inventory.index', ['search' => 'Guantes', 'category' => 'Protección']))
+            ->assertInertia(fn (Assert $page) => $page->has('items.data', 1)->where('items.data.0.name', 'Guantes de nitrilo'));
     }
 }

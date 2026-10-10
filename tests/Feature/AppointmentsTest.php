@@ -74,8 +74,26 @@ class AppointmentsTest extends TestCase
             ->get(route('appointments.index'))
             ->assertInertia(fn (Assert $page) => $page
                 ->missing('appointments')
-                ->has('filters.date')
+                ->has('filters.from')
+                ->has('filters.to')
                 ->loadDeferredProps(fn (Assert $deferred) => $deferred->has('appointments.data', 0)));
+    }
+
+    public function test_appointment_index_filters_by_date_range(): void
+    {
+        $user = User::factory()->create();
+        $user->assignRole('RECEPTIONIST');
+        $patient = Patient::factory()->create();
+        $insideRange = Appointment::factory()->for($patient)->create(['scheduled_at' => '2030-01-15 10:00']);
+        Appointment::factory()->for($patient)->create(['scheduled_at' => '2030-02-01 10:00']);
+
+        $this->actingAs($user)->get(route('appointments.index', ['from' => '2030-01-10', 'to' => '2030-01-20']))
+            ->assertInertia(fn (Assert $page) => $page
+                ->where('filters.from', '2030-01-10')
+                ->where('filters.to', '2030-01-20')
+                ->loadDeferredProps(fn (Assert $deferred) => $deferred
+                    ->has('appointments.data', 1)
+                    ->where('appointments.data.0.id', $insideRange->id)));
     }
 
     public function test_appointment_form_loads_patient_and_dentist_options_after_rendering(): void
