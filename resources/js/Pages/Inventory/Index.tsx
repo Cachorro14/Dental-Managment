@@ -685,7 +685,7 @@ function ItemModal({
                                     e.target.files?.[0] ?? null,
                                 )
                             }
-                            className="theme-content block w-full text-sm file:mr-4 file:rounded-lg file:border-0 file:bg-surface-sunken file:px-3 file:py-2 file:font-semibold file:theme-content"
+                            className="block w-full text-sm"
                         />
                     </Field>
                     <Field label="Observaciones" error={form.errors.notes}>

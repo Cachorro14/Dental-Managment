@@ -163,9 +163,11 @@ input:not([type='checkbox']):not([type='radio']):disabled,
 select:disabled,
 textarea:disabled { cursor: not-allowed; background-color: var(--surface-sunken); color: var(--content-muted); opacity: 0.75; }
 
-input[type='file'] { border: 1px solid var(--outline-strong); background-color: var(--surface-sunken); color: var(--content-secondary); padding: 0.55rem 0.7rem; }
+input[type='file'] { border: 1px solid var(--outline-strong); background-color: var(--surface-raised); color: var(--content-secondary); padding: 0.35rem; }
+input[type='file']::file-selector-button { margin-right: 0.75rem; border: 0; border-radius: 0.75rem; background-color: var(--accent); padding: 0.5rem 0.75rem; color: var(--accent-content); font-weight: 600; cursor: pointer; transition: background-color 150ms ease; }
+input[type='file']::file-selector-button:hover { background-color: var(--accent-hover); }
 input[type='file']:hover { border-color: var(--accent); }
-input[type='file']:focus { border-color: var(--accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 30%, transparent); outline: none; }
+input[type='file']:focus-visible { border-color: var(--accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 30%, transparent); outline: none; }
 
 .theme-root { background-color: var(--surface-sunken); color: var(--content); }
 .portal-header { border-color: var(--outline); background-color: color-mix(in srgb, var(--surface-raised) 95%, transparent); }
