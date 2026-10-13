@@ -97,7 +97,6 @@ Route::middleware('auth')->group(function () {
 Route::middleware(['auth', 'permission:modules.view'])->prefix('admin/modules')->name('admin.modules.')->group(function () {
     Route::get('/', [ModuleManagementController::class, 'index'])->name('index');
     Route::patch('/{module}', [ModuleManagementController::class, 'update'])->middleware('permission:modules.update')->name('update');
-    Route::put('/roles', [ModuleManagementController::class, 'updateRoleModules'])->middleware('permission:modules.update')->name('roles.update');
 });
 
 Route::middleware(['auth', 'permission:branding.view'])->prefix('admin/branding')->name('admin.branding.')->group(function () {

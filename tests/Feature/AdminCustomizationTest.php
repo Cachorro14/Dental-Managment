@@ -7,7 +7,6 @@ use App\Models\User;
 use Database\Seeders\ModuleCatalogSeeder;
 use Database\Seeders\RolesAndPermissionsSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Spatie\Permission\Models\Role;
 use Tests\TestCase;
 
 class AdminCustomizationTest extends TestCase
@@ -21,23 +20,17 @@ class AdminCustomizationTest extends TestCase
         $this->seed(ModuleCatalogSeeder::class);
     }
 
-    public function test_super_admin_can_assign_modules_to_a_role(): void
+    public function test_super_admin_can_view_module_management_without_role_assignments(): void
     {
         $admin = User::factory()->create();
         $admin->assignRole('SUPER_ADMIN');
-        $role = Role::query()->where('name', 'RECEPTIONIST')->firstOrFail();
 
         $this->actingAs($admin)
-            ->put(route('admin.modules.roles.update'), [
-                'role_id' => $role->id,
-                'modules' => ['PATIENTS', 'APPOINTMENTS'],
-            ])
-            ->assertRedirect();
-
-        $this->assertDatabaseHas('module_role', [
-            'role_id' => $role->id,
-            'module_code' => 'APPOINTMENTS',
-        ]);
+            ->get(route('admin.modules.index'))
+            ->assertInertia(fn ($page) => $page
+                ->has('modules')
+                ->missing('roles')
+                ->missing('assignments'));
     }
 
     public function test_users_without_module_management_permission_are_forbidden(): void
