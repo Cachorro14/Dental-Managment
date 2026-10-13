@@ -36,7 +36,7 @@ class BillingController extends Controller
                     ->whereNull('voided_at');
             }, 'payments_total')
             ->when(! $user->can('patients.view_all'), fn ($query) => $query->whereHas('dentists', fn ($dentists) => $dentists->whereKey($user->id)))
-            ->whereRaw('(SELECT COALESCE(SUM(charges.amount), 0) FROM billing_entries AS charges WHERE charges.patient_id = patients.id AND charges.type = ? AND charges.voided_at IS NULL) > (SELECT COALESCE(SUM(payments.amount), 0) FROM billing_entries AS payments WHERE payments.patient_id = patients.id AND payments.type = ? AND payments.voided_at IS NULL)', ['charge', 'payment'])
+            ->whereHas('billingEntries', fn ($query) => $query->whereNull('voided_at'))
             ->get(['id', 'first_name', 'last_name'])
             ->map(function (Patient $patient): array {
                 $balance = bcsub((string) ($patient->charges_total ?? '0.00'), (string) ($patient->payments_total ?? '0.00'), 2);
@@ -48,7 +48,6 @@ class BillingController extends Controller
                     'balance' => $balance,
                 ];
             })
-            ->filter(fn (array $patient): bool => bccomp($patient['balance'], '0.00', 2) > 0)
             ->sortByDesc('balance')
             ->values();
 

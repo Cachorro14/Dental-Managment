@@ -158,6 +158,30 @@ class BillingTest extends TestCase
         $this->actingAs($dentist)->get(route('billing.show', $otherPatient))->assertForbidden();
     }
 
+    public function test_billing_index_lists_all_patients_with_active_account_statements(): void
+    {
+        $user = User::factory()->create();
+        $user->assignRole('CLINIC_ADMIN');
+        $patientWithBalance = Patient::factory()->create();
+        $settledPatient = Patient::factory()->create();
+        $patientWithoutEntries = Patient::factory()->create();
+        BillingEntry::factory()->create(['patient_id' => $patientWithBalance->id, 'created_by' => $user->id, 'amount' => '500.00']);
+        BillingEntry::factory()->create(['patient_id' => $settledPatient->id, 'created_by' => $user->id, 'amount' => '300.00']);
+        BillingEntry::factory()->payment()->create(['patient_id' => $settledPatient->id, 'created_by' => $user->id, 'amount' => '300.00']);
+
+        $this->actingAs($user)->get(route('billing.index'))
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('Billing/Index')
+                ->has('patients', 2)
+                ->where('patients.0.id', $patientWithBalance->id)
+                ->where('patients.0.balance', '500.00')
+                ->where('patients.1.id', $settledPatient->id)
+                ->where('patients.1.balance', '0.00')
+                ->missing('patients.2'));
+
+        $this->assertDatabaseMissing('billing_entries', ['patient_id' => $patientWithoutEntries->id]);
+    }
+
     public function test_dashboard_shows_ten_highest_debts_only_to_finance_users(): void
     {
         $user = User::factory()->create();
