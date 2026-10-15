@@ -29,7 +29,14 @@ class DashboardController extends Controller
                 'appointmentsToday' => $appointmentsEnabled && $user->can('appointments.view') ? Appointment::query()->whereDate('scheduled_at', today())->count() : null,
                 'pendingAppointments' => $appointmentsEnabled && $user->can('appointments.view') ? Appointment::query()->whereIn('status', ['scheduled', 'confirmed'])->where('scheduled_at', '>=', now())->count() : null,
                 'upcoming' => $appointmentsEnabled && $user->can('appointments.view')
-                    ? Appointment::query()->with('patient:id,first_name,last_name')->whereIn('status', ['scheduled', 'confirmed'])->where('scheduled_at', '>=', now())->orderBy('scheduled_at')->limit(5)->get(['id', 'patient_id', 'scheduled_at', 'status'])
+                    ? Appointment::query()
+                        ->with('patient:id,first_name,last_name')
+                        ->whereIn('status', ['scheduled', 'confirmed'])
+                        ->where('scheduled_at', '>=', now())
+                        ->when(! $user->can('patients.view_all'), fn ($query) => $query->whereHas('patient.dentists', fn ($dentists) => $dentists->whereKey($user->id)))
+                        ->orderBy('scheduled_at')
+                        ->limit(5)
+                        ->get(['id', 'patient_id', 'scheduled_at', 'status'])
                     : [],
                 'debtors' => $billingEnabled
                     ? Patient::query()

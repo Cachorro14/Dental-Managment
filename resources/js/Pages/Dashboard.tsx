@@ -85,7 +85,17 @@ export default function Dashboard() {
                                 <p className="mt-5 rounded-xl theme-page p-4 text-sm theme-content-muted">No hay citas próximas para mostrar.</p>
                             ) : (
                                 <ul className="mt-5 space-y-3">
-                                    {dashboard.upcoming.map((appointment) => <li key={appointment.id} className="flex items-center justify-between gap-3 rounded-xl theme-page p-3"><div><p className="text-sm font-semibold theme-content">{appointment.patient.first_name} {appointment.patient.last_name}</p><p className="mt-1 text-xs theme-content-muted">{new Date(appointment.scheduled_at).toLocaleString('es-MX')}</p></div><span className="theme-info rounded-full border px-2.5 py-1 text-xs font-semibold">{appointment.status === 'confirmed' ? 'Confirmada' : 'Programada'}</span></li>)}
+                                    {dashboard.upcoming.map((appointment) => <li key={appointment.id}>
+                                        {canViewAppointments ? (
+                                            <Link href={route('appointments.show', appointment.id)} className="flex min-h-11 items-center justify-between gap-3 rounded-xl theme-page p-3 transition hover:bg-surface-sunken focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent">
+                                                <div><p className="text-sm font-semibold theme-content">{appointment.patient.first_name} {appointment.patient.last_name}</p><p className="mt-1 text-xs theme-content-muted">{new Date(appointment.scheduled_at).toLocaleString('es-MX')}</p></div><span className="theme-info rounded-full border px-2.5 py-1 text-xs font-semibold">{appointment.status === 'confirmed' ? 'Confirmada' : 'Programada'}</span>
+                                            </Link>
+                                        ) : (
+                                            <div className="flex items-center justify-between gap-3 rounded-xl theme-page p-3">
+                                                <div><p className="text-sm font-semibold theme-content">{appointment.patient.first_name} {appointment.patient.last_name}</p><p className="mt-1 text-xs theme-content-muted">{new Date(appointment.scheduled_at).toLocaleString('es-MX')}</p></div><span className="theme-info rounded-full border px-2.5 py-1 text-xs font-semibold">{appointment.status === 'confirmed' ? 'Confirmada' : 'Programada'}</span>
+                                            </div>
+                                        )}
+                                    </li>)}
                                 </ul>
                             )}
                         </div>
