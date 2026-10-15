@@ -57,7 +57,7 @@ export default function Show(props: {
             <Head title={`Estado de cuenta - ${patientName}`} />
             <div className="px-4 py-8 sm:px-6 lg:px-8">
                 <div className="mx-auto max-w-6xl space-y-6">
-                    <header className="flex flex-wrap items-end justify-between gap-4"><div><Link href={route('billing.index')} className="theme-accent text-sm font-semibold hover:underline">← Estados de cuenta</Link><h1 className="theme-content mt-2 text-2xl font-bold">Estado de cuenta</h1><p className="theme-content-secondary mt-1">{patientName} · #{props.patient.id}</p></div><div className="theme-danger rounded-2xl border px-5 py-4"><p className="text-sm font-semibold">Saldo pendiente</p><p className="mt-1 text-2xl font-bold tabular-nums">{formatAmount(props.balance)}</p></div></header>
+                    <header className="flex flex-wrap items-end justify-between gap-4"><div><Link href={route('patients.show', props.patient.id)} className="theme-accent text-sm font-semibold hover:underline">← Volver al paciente</Link><h1 className="theme-content mt-2 text-2xl font-bold">Estado de cuenta</h1><p className="theme-content-secondary mt-1">{patientName} · #{props.patient.id}</p></div><div className="theme-danger rounded-2xl border px-5 py-4"><p className="text-sm font-semibold">Saldo pendiente</p><p className="mt-1 text-2xl font-bold tabular-nums">{formatAmount(props.balance)}</p></div></header>
 
                     <section className="grid gap-4 sm:grid-cols-2"><Summary label="Cargos vigentes" value={formatAmount(props.chargesTotal)} /><Summary label="Pagos registrados" value={formatAmount(props.paymentsTotal)} /></section>
 

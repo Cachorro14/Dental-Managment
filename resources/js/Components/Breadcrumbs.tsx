@@ -36,8 +36,12 @@ function getBreadcrumbItems(): BreadcrumbItem[] {
         return [{ label: 'Panel principal' }];
     }
 
+    if (route().current('patients.dentists.*')) {
+        return patientFeatureBreadcrumb('Asignar profesionales', undefined, 'patients.dentists.edit');
+    }
+
     if (route().current('patients.*')) {
-        return moduleBreadcrumb('Pacientes', 'patients.index', patientPageLabel());
+        return patientBreadcrumb();
     }
 
     if (route().current('appointments.*')) {
@@ -45,19 +49,21 @@ function getBreadcrumbItems(): BreadcrumbItem[] {
     }
 
     if (route().current('clinical-history.*')) {
-        return nestedPatientBreadcrumb('Historia clínica', clinicalHistoryPageLabel(), 'clinical-history.edit');
+        return patientFeatureBreadcrumb('Historia clínica', clinicalHistoryPageLabel(), 'clinical-history.edit');
     }
 
     if (route().current('odontogram.*')) {
-        return nestedPatientBreadcrumb('Odontograma', 'Evaluación', 'odontogram.edit');
+        return patientFeatureBreadcrumb('Odontograma', odontogramPageLabel(), 'odontogram.edit');
     }
 
     if (route().current('treatments.*')) {
-        return nestedPatientBreadcrumb('Tratamientos', treatmentPageLabel(), 'treatments.index');
+        return patientFeatureBreadcrumb('Tratamientos', treatmentPageLabel(), 'treatments.index');
     }
 
     if (route().current('billing.*')) {
-        return moduleBreadcrumb('Finanzas', 'billing.index', billingPageLabel());
+        return route().current('billing.show')
+            ? patientFeatureBreadcrumb('Finanzas', 'Estado de cuenta', 'billing.show')
+            : moduleBreadcrumb('Finanzas', 'billing.index');
     }
 
     if (route().current('inventory.*')) {
@@ -109,6 +115,33 @@ function moduleBreadcrumb(label: string, indexRoute: string, currentLabel?: stri
     return items;
 }
 
+function patientBreadcrumb(): BreadcrumbItem[] {
+    const items: BreadcrumbItem[] = [{ label: 'Pacientes', href: route('patients.index') }];
+
+    if (route().current('patients.index')) {
+        return [{ label: 'Pacientes' }];
+    }
+
+    if (route().current('patients.create')) {
+        items.push({ label: 'Nuevo paciente' });
+
+        return items;
+    }
+
+    const patientId = route().params.patient;
+    items.push({ label: 'Paciente', href: route('patients.show', patientId) });
+
+    const currentLabel = patientPageLabel();
+
+    if (currentLabel !== 'Datos del paciente') {
+        items.push({ label: currentLabel });
+    } else {
+        items[1] = { label: currentLabel };
+    }
+
+    return items;
+}
+
 function adminBreadcrumb(label: string, indexRoute: string, currentLabel: string): BreadcrumbItem[] {
     const items: BreadcrumbItem[] = [{ label: 'Administración' }, { label, href: route(indexRoute) }];
 
@@ -119,22 +152,25 @@ function adminBreadcrumb(label: string, indexRoute: string, currentLabel: string
     return items;
 }
 
-function nestedPatientBreadcrumb(label: string, currentLabel: string | undefined, indexRoute: string): BreadcrumbItem[] {
+function patientFeatureBreadcrumb(label: string, currentLabel: string | undefined, indexRoute: string): BreadcrumbItem[] {
+    const patientId = route().params.patient;
     const items: BreadcrumbItem[] = [
         { label: 'Pacientes', href: route('patients.index') },
-        { label, href: route(indexRoute, route().params.patient) },
+        { label: 'Paciente', href: route('patients.show', patientId) },
     ];
 
-    if (currentLabel) {
+    items.push({ label, href: route(indexRoute, patientId) });
+
+    if (currentLabel && currentLabel !== label) {
         items.push({ label: currentLabel });
     }
 
     return items;
 }
 
-function patientPageLabel(): string | undefined {
-    if (route().current('patients.index')) {
-        return undefined;
+function patientPageLabel(): string {
+    if (route().current('patients.show')) {
+        return 'Datos del paciente';
     }
 
     if (route().current('patients.create')) {
@@ -169,7 +205,15 @@ function appointmentPageLabel(): string | undefined {
 }
 
 function clinicalHistoryPageLabel(): string {
-    return route().current('clinical-history.questionnaire') ? 'Cuestionario' : 'Evaluación';
+    if (route().current('clinical-history.questionnaire')) {
+        return 'Cuestionario';
+    }
+
+    return route().current('clinical-history.print') ? 'Vista para imprimir' : 'Evaluación';
+}
+
+function odontogramPageLabel(): string | undefined {
+    return route().current('odontogram.assessments.show') ? 'Evaluación anterior' : undefined;
 }
 
 function treatmentPageLabel(): string | undefined {
@@ -178,10 +222,6 @@ function treatmentPageLabel(): string | undefined {
     }
 
     return route().current('treatments.create') ? 'Registrar tratamiento' : 'Editar tratamiento';
-}
-
-function billingPageLabel(): string | undefined {
-    return route().current('billing.show') ? 'Estado de cuenta' : undefined;
 }
 
 function clinicStaffPageLabel(): string | undefined {
