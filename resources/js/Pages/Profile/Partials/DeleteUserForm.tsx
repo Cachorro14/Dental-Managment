@@ -3,7 +3,7 @@ import ActionButton from '@/Components/ActionButton';
 import InputError from '@/Components/InputError';
 import InputLabel from '@/Components/InputLabel';
 import Modal from '@/Components/Modal';
-import TextInput from '@/Components/TextInput';
+import PasswordInput from '@/Components/PasswordInput';
 import { useForm } from '@inertiajs/react';
 import { FormEventHandler, useRef, useState } from 'react';
 
@@ -88,9 +88,8 @@ export default function DeleteUserForm({
                             className="sr-only"
                         />
 
-                        <TextInput
+                        <PasswordInput
                             id="password"
-                            type="password"
                             name="password"
                             ref={passwordInput}
                             value={data.password}

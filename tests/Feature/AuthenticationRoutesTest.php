@@ -25,6 +25,21 @@ class AuthenticationRoutesTest extends TestCase
             ->assertRedirect(route('login'));
     }
 
+    public function test_welcome_page_contains_the_login_form(): void
+    {
+        $this->get('/')
+            ->assertOk()
+            ->assertInertia(fn ($page) => $page
+                ->component('Welcome')
+                ->where('canResetPassword', true));
+
+        $this->get(route('login'))
+            ->assertOk()
+            ->assertInertia(fn ($page) => $page
+                ->component('Welcome')
+                ->where('canResetPassword', true));
+    }
+
     public function test_authenticated_user_can_access_dashboard(): void
     {
         $user = User::factory()->create();

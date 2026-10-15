@@ -1,6 +1,7 @@
 import InputError from '@/Components/InputError';
 import ActionLink from '@/Components/ActionLink';
 import InputLabel from '@/Components/InputLabel';
+import PasswordInput from '@/Components/PasswordInput';
 import PrimaryButton from '@/Components/PrimaryButton';
 import TextInput from '@/Components/TextInput';
 import { ClinicStaffAssignableRole, RoleSummary } from '@/types';
@@ -47,8 +48,8 @@ export default function StaffForm({ user, assignableRoles, canManageWhatsAppCons
             </fieldset>}
             {form.data.roles.includes('DENTIST') && <div><InputLabel htmlFor="clinic_staff_license" value="Número de matrícula profesional" /><TextInput id="clinic_staff_license" value={form.data.license_number} onChange={(event) => form.setData('license_number', event.target.value)} className="mt-1 block w-full" /><InputError message={form.errors.license_number} className="mt-2" /></div>}
             <div className="grid gap-5 sm:grid-cols-2">
-                <div><InputLabel htmlFor="clinic_staff_password" value={user ? 'Nueva contraseña (opcional)' : 'Contraseña'} /><TextInput id="clinic_staff_password" type="password" value={form.data.password} onChange={(event) => form.setData('password', event.target.value)} className="mt-1 block w-full" required={!user} /><InputError message={form.errors.password} className="mt-2" /></div>
-                <div><InputLabel htmlFor="clinic_staff_password_confirmation" value="Confirmar contraseña" /><TextInput id="clinic_staff_password_confirmation" type="password" value={form.data.password_confirmation} onChange={(event) => form.setData('password_confirmation', event.target.value)} className="mt-1 block w-full" required={!user} /></div>
+                <div><InputLabel htmlFor="clinic_staff_password" value={user ? 'Nueva contraseña (opcional)' : 'Contraseña'} /><PasswordInput id="clinic_staff_password" value={form.data.password} onChange={(event) => form.setData('password', event.target.value)} className="mt-1 block w-full" required={!user} /><InputError message={form.errors.password} className="mt-2" /></div>
+                <div><InputLabel htmlFor="clinic_staff_password_confirmation" value="Confirmar contraseña" /><PasswordInput id="clinic_staff_password_confirmation" value={form.data.password_confirmation} onChange={(event) => form.setData('password_confirmation', event.target.value)} className="mt-1 block w-full" required={!user} /></div>
             </div>
             {form.data.roles.includes('DENTIST') && <div><InputLabel htmlFor="clinic_staff_license" value="Número de matrícula profesional" /><TextInput id="clinic_staff_license" value={form.data.license_number} onChange={(event) => form.setData('license_number', event.target.value)} className="mt-1 block w-full" /><InputError message={form.errors.license_number} className="mt-2" /></div>}
             <fieldset>

@@ -1,5 +1,6 @@
 import Checkbox from '@/Components/Checkbox';
 import InputError from '@/Components/InputError';
+import PasswordInput from '@/Components/PasswordInput';
 import PrimaryButton from '@/Components/PrimaryButton';
 import TextInput from '@/Components/TextInput';
 import GuestLayout from '@/Layouts/GuestLayout';
@@ -39,37 +40,34 @@ export default function Login({
                 )}
 
                 <form onSubmit={submit} className="space-y-5">
-                <div className="relative">
+                <div className="space-y-2">
+                    <label htmlFor="email" className="theme-content-secondary block text-sm font-medium">Correo electrónico</label>
                     <TextInput
                         id="email"
                         type="email"
                         name="email"
                         value={data.email}
-                        className="peer block w-full placeholder:text-transparent"
-                        placeholder=" "
+                        className="block w-full"
                         aria-label="Correo electronico"
                         autoComplete="username"
                         isFocused={true}
                         onChange={(e) => setData('email', e.target.value)}
                     />
-                    <label htmlFor="email" className="theme-content-muted pointer-events-none absolute mt-[-2.55rem] ms-5 text-sm transition-opacity peer-focus:opacity-0 peer-[:not(:placeholder-shown)]:opacity-0">Correo electrónico</label>
 
                     <InputError message={errors.email} className="mt-2" />
                 </div>
 
-                <div className="relative">
-                    <TextInput
+                <div className="space-y-2">
+                    <label htmlFor="password" className="theme-content-secondary block text-sm font-medium">Contraseña</label>
+                    <PasswordInput
                         id="password"
-                        type="password"
                         name="password"
                         value={data.password}
-                        className="peer block w-full placeholder:text-transparent"
-                        placeholder=" "
+                        className="block w-full"
                         aria-label="Contrasena"
                         autoComplete="current-password"
                         onChange={(e) => setData('password', e.target.value)}
                     />
-                    <label htmlFor="password" className="theme-content-muted pointer-events-none absolute mt-[-2.55rem] ms-5 text-sm transition-opacity peer-focus:opacity-0 peer-[:not(:placeholder-shown)]:opacity-0">Contraseña</label>
 
                     <InputError message={errors.password} className="mt-2" />
                 </div>

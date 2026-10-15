@@ -1,6 +1,7 @@
 import InputError from "@/Components/InputError";
 import ActionLink from "@/Components/ActionLink";
 import InputLabel from "@/Components/InputLabel";
+import PasswordInput from "@/Components/PasswordInput";
 import PrimaryButton from "@/Components/PrimaryButton";
 import TextInput from "@/Components/TextInput";
 import { RoleSummary } from "@/types";
@@ -117,9 +118,8 @@ export default function UserForm({
                             user ? "Nueva contrasena (opcional)" : "Contrasena"
                         }
                     />
-                    <TextInput
+                    <PasswordInput
                         id="password"
-                        type="password"
                         value={form.data.password}
                         onChange={(event) =>
                             form.setData("password", event.target.value)
@@ -137,9 +137,8 @@ export default function UserForm({
                         htmlFor="password_confirmation"
                         value="Confirmar contrasena"
                     />
-                    <TextInput
+                    <PasswordInput
                         id="password_confirmation"
-                        type="password"
                         value={form.data.password_confirmation}
                         onChange={(event) =>
                             form.setData(
