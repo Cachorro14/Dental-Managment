@@ -1,8 +1,8 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import { SkeletonList } from '@/Components/Skeleton';
 import ActionButton from '@/Components/ActionButton';
 import ActionLink from '@/Components/ActionLink';
 import Icon from '@/Components/Icon';
-import ToothLoader from '@/Components/ToothLoader';
 import { Paginated, PageProps, RoleSummary } from '@/types';
 import { Head, Link, router, usePage } from '@inertiajs/react';
 import { useEffect, useState } from 'react';
@@ -14,7 +14,7 @@ export default function Index({ users, filters }: UsersPageProps) {
     const { auth } = usePage<PageProps>().props;
 
     if (!users) {
-        return <AuthenticatedLayout header={<PageHeader />}><Head title="Usuarios y roles" /><div className="min-h-[calc(100vh-5rem)] theme-page px-4 py-8 sm:px-6 lg:px-8"><div className="mx-auto max-w-7xl rounded-2xl border theme-outline theme-card shadow-sm"><ToothLoader label="Cargando usuarios" compact /></div></div></AuthenticatedLayout>;
+        return <AuthenticatedLayout header={<PageHeader />}><Head title="Usuarios y roles" /><div className="min-h-[calc(100vh-5rem)] theme-page px-4 py-8 sm:px-6 lg:px-8"><div className="mx-auto max-w-7xl rounded-2xl border theme-outline theme-card shadow-sm"><SkeletonList label="Cargando usuarios" /></div></div></AuthenticatedLayout>;
     }
 
     return <UsersList users={users} searchFilter={filters.search} permissions={auth.permissions} />;

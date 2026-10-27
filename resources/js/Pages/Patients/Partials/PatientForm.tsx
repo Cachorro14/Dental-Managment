@@ -5,6 +5,7 @@ import TextInput from '@/Components/TextInput';
 import { Patient } from '@/types';
 import { FormEventHandler } from 'react';
 import { useForm } from '@inertiajs/react';
+import { formatDateTime } from '@/utils/date';
 
 type PatientFormData = {
     first_name: string;
@@ -155,7 +156,7 @@ export default function PatientForm({ patient, canManageWhatsAppConsent = false,
                 </label>
                 <InputError message={errors.whatsapp_reminder_consent as string | undefined} className="mt-2" />
                 <p className="mt-2 text-xs theme-content">Solo se utilizará para comunicaciones operativas sobre citas. Desmarca la casilla si el consentimiento fue revocado.</p>
-                {patient?.whatsapp_reminder_consent_recorded_at && <p className="mt-2 text-xs theme-content">Registrado el {new Date(patient.whatsapp_reminder_consent_recorded_at).toLocaleString('es-MX')}{whatsappConsentRecordedBy ? ` por ${whatsappConsentRecordedBy}` : ''}.</p>}
+                {patient?.whatsapp_reminder_consent_recorded_at && <p className="mt-2 text-xs theme-content">Registrado el {formatDateTime(patient.whatsapp_reminder_consent_recorded_at)}{whatsappConsentRecordedBy ? ` por ${whatsappConsentRecordedBy}` : ''}.</p>}
             </fieldset>}
 
             <PrimaryButton icon={editing ? 'save' : 'add'} disabled={processing}>{editing ? 'Guardar paciente' : 'Crear paciente'}</PrimaryButton>

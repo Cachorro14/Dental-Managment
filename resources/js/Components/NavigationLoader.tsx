@@ -1,4 +1,3 @@
-import ToothLoader from '@/Components/ToothLoader';
 import { router } from '@inertiajs/react';
 import { useEffect, useRef, useState } from 'react';
 
@@ -43,11 +42,5 @@ export default function NavigationLoader() {
         return null;
     }
 
-    return (
-        <div className="theme-overlay fixed inset-0 z-[100] flex items-center justify-center px-4 backdrop-blur-[1px]" aria-label="Cargando página">
-            <div className="theme-card w-full max-w-xs rounded-2xl border theme-outline p-5 shadow-xl">
-                <ToothLoader label="Cargando sección…" compact />
-            </div>
-        </div>
-    );
+    return <div className="nav-progress" role="progressbar" aria-label="Cargando página" />;
 }

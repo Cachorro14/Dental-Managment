@@ -1,7 +1,7 @@
 import InputLabel from '@/Components/InputLabel';
+import { SkeletonFields } from '@/Components/Skeleton';
 import PrimaryButton from '@/Components/PrimaryButton';
 import TextInput from '@/Components/TextInput';
-import ToothLoader from '@/Components/ToothLoader';
 import { Appointment, Patient } from '@/types';
 import { useForm } from '@inertiajs/react';
 import { FormEvent } from 'react';
@@ -33,7 +33,7 @@ export default function Form({ appointment, patients, dentists, isDentist }: Pro
 
     return (
         <form onSubmit={submit} className="space-y-6 rounded-lg theme-card p-6 shadow-sm">
-            {!optionsLoaded && <div className="rounded-xl theme-page"><ToothLoader label="Cargando pacientes y dentistas" compact /></div>}
+            {!optionsLoaded && <SkeletonFields label="Cargando pacientes y dentistas" />}
             {optionsLoaded && patients.length === 0 && <p className="rounded-xl theme-warning p-4 text-sm theme-content">No hay pacientes disponibles para tu cuenta. Solicita al administrador de la clínica que revise las asignaciones.</p>}
             <div><InputLabel htmlFor="patient_id" value="Paciente" /><select id="patient_id" disabled={!optionsLoaded} value={form.data.patient_id} onChange={(e) => form.setData('patient_id', e.target.value)} className="theme-content mt-1 block w-full rounded-xl border-outline-strong bg-surface-raised shadow-sm disabled:cursor-wait disabled:bg-surface-sunken"><option value="">Selecciona un paciente</option>{patients?.map((patient) => <option key={patient.id} value={patient.id}>{patient.last_name}, {patient.first_name}</option>)}</select>{form.errors.patient_id && <p className="theme-danger mt-1 rounded-md px-2 py-1 text-sm">{form.errors.patient_id}</p>}</div>
             {isDentist ? <p className="theme-info rounded-xl border p-4 text-sm">{appointment ? 'Esta cita conservará el dentista asignado.' : 'La nueva cita se asignará a tu cuenta como dentista.'}</p> : <div><InputLabel htmlFor="dentist_id" value="Dentista" /><select id="dentist_id" disabled={!optionsLoaded} value={form.data.dentist_id} onChange={(e) => form.setData('dentist_id', e.target.value)} className="theme-content mt-1 block w-full rounded-xl border-outline-strong bg-surface-raised disabled:cursor-wait disabled:bg-surface-sunken"><option value="">Sin asignar</option>{dentists?.map((dentist) => <option key={dentist.id} value={dentist.id}>{dentist.name}</option>)}</select></div>}

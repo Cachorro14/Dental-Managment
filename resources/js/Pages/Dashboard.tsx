@@ -1,8 +1,9 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import { SkeletonLines, SkeletonMetrics } from '@/Components/Skeleton';
 import ActionLink from '@/Components/ActionLink';
-import ToothLoader from '@/Components/ToothLoader';
 import { DashboardData, PageProps } from '@/types';
 import { Head, Link, usePage } from '@inertiajs/react';
+import { formatDateTime } from '@/utils/date';
 
 export default function Dashboard() {
     const { auth, system, branding, dashboard } = usePage<PageProps<{ dashboard?: DashboardData }>>().props;
@@ -37,7 +38,7 @@ export default function Dashboard() {
                             <Metric label="Actividad clínica" value="Activa" hint="Sistema operativo" accent="bg-success-outline" />
                         </section>
                     ) : (
-                        <section className="rounded-2xl border theme-outline theme-card shadow-sm"><ToothLoader label="Cargando resumen" compact /></section>
+                        <SkeletonMetrics label="Cargando resumen" />
                     )}
 
                     {canViewBilling && dashboard?.debtors !== null && dashboard?.debtors !== undefined && (
@@ -81,18 +82,18 @@ export default function Dashboard() {
                         <div className="rounded-2xl border theme-outline theme-card p-6 shadow-sm">
                             <p className="theme-accent text-sm font-medium">Agenda próxima</p>
                             <h2 className="mt-1 text-xl font-semibold theme-content">Próximas citas</h2>
-                            {!dashboard ? <ToothLoader label="Cargando agenda" compact /> : dashboard.upcoming.length === 0 ? (
+                            {!dashboard ? <SkeletonLines label="Cargando agenda" /> : dashboard.upcoming.length === 0 ? (
                                 <p className="mt-5 rounded-xl theme-page p-4 text-sm theme-content-muted">No hay citas próximas para mostrar.</p>
                             ) : (
                                 <ul className="mt-5 space-y-3">
                                     {dashboard.upcoming.map((appointment) => <li key={appointment.id}>
                                         {canViewAppointments ? (
                                             <Link href={route('appointments.show', appointment.id)} className="flex min-h-11 items-center justify-between gap-3 rounded-xl theme-page p-3 transition hover:bg-surface-sunken focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent">
-                                                <div><p className="text-sm font-semibold theme-content">{appointment.patient.first_name} {appointment.patient.last_name}</p><p className="mt-1 text-xs theme-content-muted">{new Date(appointment.scheduled_at).toLocaleString('es-MX')}</p></div><span className="theme-info rounded-full border px-2.5 py-1 text-xs font-semibold">{appointment.status === 'confirmed' ? 'Confirmada' : 'Programada'}</span>
+                                                <div><p className="text-sm font-semibold theme-content">{appointment.patient.first_name} {appointment.patient.last_name}</p><p className="mt-1 text-xs theme-content-muted">{formatDateTime(appointment.scheduled_at)}</p></div><span className="theme-info rounded-full border px-2.5 py-1 text-xs font-semibold">{appointment.status === 'confirmed' ? 'Confirmada' : 'Programada'}</span>
                                             </Link>
                                         ) : (
                                             <div className="flex items-center justify-between gap-3 rounded-xl theme-page p-3">
-                                                <div><p className="text-sm font-semibold theme-content">{appointment.patient.first_name} {appointment.patient.last_name}</p><p className="mt-1 text-xs theme-content-muted">{new Date(appointment.scheduled_at).toLocaleString('es-MX')}</p></div><span className="theme-info rounded-full border px-2.5 py-1 text-xs font-semibold">{appointment.status === 'confirmed' ? 'Confirmada' : 'Programada'}</span>
+                                                <div><p className="text-sm font-semibold theme-content">{appointment.patient.first_name} {appointment.patient.last_name}</p><p className="mt-1 text-xs theme-content-muted">{formatDateTime(appointment.scheduled_at)}</p></div><span className="theme-info rounded-full border px-2.5 py-1 text-xs font-semibold">{appointment.status === 'confirmed' ? 'Confirmada' : 'Programada'}</span>
                                             </div>
                                         )}
                                     </li>)}

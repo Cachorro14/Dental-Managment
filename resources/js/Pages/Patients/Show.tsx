@@ -2,7 +2,10 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import ActionButton from '@/Components/ActionButton';
 import ActionLink from '@/Components/ActionLink';
 import { PageProps, Patient } from '@/types';
+import { formatDate, formatDateTime } from '@/utils/date';
 import { Head, useForm, usePage } from '@inertiajs/react';
+
+const genderLabels: Record<string, string> = { female: 'Femenino', male: 'Masculino', other: 'Otro' };
 
 export default function Show({ patient, patientActions, canManageWhatsAppConsent = false, whatsappConsentRecordedBy }: { patient: Patient; patientActions: { update: boolean; assignDentists: boolean; questionnaire: boolean; clinicalHistory: boolean; odontogram: boolean }; canManageWhatsAppConsent?: boolean; whatsappConsentRecordedBy?: string | null }) {
     const { auth, system } = usePage<PageProps>().props;
@@ -24,8 +27,8 @@ export default function Show({ patient, patientActions, canManageWhatsAppConsent
 
     const patientName = `${patient.first_name} ${patient.last_name}`;
     const details: Array<{ label: string; value: string | null }> = [
-        { label: 'Fecha de nacimiento', value: patient.date_of_birth },
-        { label: 'Sexo', value: patient.gender },
+        { label: 'Fecha de nacimiento', value: formatDate(patient.date_of_birth) },
+        { label: 'Sexo', value: patient.gender ? genderLabels[patient.gender] ?? patient.gender : null },
         { label: 'Teléfono', value: patient.phone },
         { label: 'Correo electrónico', value: patient.email },
         { label: 'Dirección', value: patient.address },
@@ -53,14 +56,14 @@ export default function Show({ patient, patientActions, canManageWhatsAppConsent
                             <h1 className="text-2xl font-semibold theme-content">{patientName}</h1>
                             <p className="mt-1 text-sm theme-content-muted">Paciente #{patient.id}</p>
                         </div>
-                         <div className="flex flex-wrap gap-3">
+                         <div className="grid grid-cols-2 gap-3 sm:flex sm:flex-wrap">
                              {canUpdate && <ActionLink href={route('patients.edit', patient.id)} icon="edit" variant="accent">Editar</ActionLink>}
                             {canAssignDentists && <ActionLink href={route('patients.dentists.edit', patient.id)} icon="users" variant="accent">Asignar doctores</ActionLink>}
                             {canViewQuestionnaire && <ActionLink href={route('clinical-history.questionnaire', patient.id)} icon="file" variant="info">Cuestionario paciente</ActionLink>}
                             {canViewClinicalHistory && <ActionLink href={route('clinical-history.edit', patient.id)} icon="file" variant="accent">Historia clínica</ActionLink>}
                             {patientActions.odontogram && canViewOdontogram && <ActionLink href={route('odontogram.edit', patient.id)} icon="tooth" variant="accent">Odontograma</ActionLink>}
                             {canViewTreatments && <ActionLink href={route('treatments.index', patient.id)} icon="file" variant="accent">Tratamientos</ActionLink>}
-                            {canViewBilling && <ActionLink href={route('billing.show', patient.id)} icon="file" variant="danger">Estado de cuenta</ActionLink>}
+                            {canViewBilling && <ActionLink href={route('billing.show', patient.id)} icon="file" variant="info">Estado de cuenta</ActionLink>}
                             {canDelete && <ActionButton type="button" onClick={remove} disabled={processing} icon="archive" variant="danger">Archivar</ActionButton>}
                          </div>
                     </section>
@@ -68,7 +71,7 @@ export default function Show({ patient, patientActions, canManageWhatsAppConsent
                     <dl className="grid gap-6 rounded-2xl theme-card p-6 shadow-sm sm:grid-cols-2">
                         {details.map((detail) => <div key={detail.label}><dt className="text-sm theme-content-muted">{detail.label}</dt><dd className="mt-1 whitespace-pre-wrap theme-content">{detail.value || '-'}</dd></div>)}
                      </dl>
-                     {canManageWhatsAppConsent && <section className="theme-success rounded-2xl border p-5"><h2 className="font-semibold">Recordatorios por WhatsApp</h2><p className="mt-1 text-sm">Teléfono: {patient.phone || 'No registrado'} · Consentimiento físico: {patient.whatsapp_reminder_consent ? 'Registrado' : 'No registrado'}</p>{patient.whatsapp_reminder_consent_recorded_at && <p className="mt-1 text-xs">Registrado el {new Date(patient.whatsapp_reminder_consent_recorded_at).toLocaleString('es-MX')}{whatsappConsentRecordedBy ? ` por ${whatsappConsentRecordedBy}` : ''}.</p>}</section>}
+                     {canManageWhatsAppConsent && <section className="theme-success rounded-2xl border p-5"><h2 className="font-semibold">Recordatorios por WhatsApp</h2><p className="mt-1 text-sm">Teléfono: {patient.phone || 'No registrado'} · Consentimiento físico: {patient.whatsapp_reminder_consent ? 'Registrado' : 'No registrado'}</p>{patient.whatsapp_reminder_consent_recorded_at && <p className="mt-1 text-xs">Registrado el {formatDateTime(patient.whatsapp_reminder_consent_recorded_at)}{whatsappConsentRecordedBy ? ` por ${whatsappConsentRecordedBy}` : ''}.</p>}</section>}
                      <div className="flex justify-end">
                          <ActionLink
                              href={route('patients.index')}

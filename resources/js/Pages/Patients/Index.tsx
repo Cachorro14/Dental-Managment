@@ -1,7 +1,7 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import { SkeletonList } from '@/Components/Skeleton';
 import ActionButton from '@/Components/ActionButton';
 import ActionLink from '@/Components/ActionLink';
-import ToothLoader from '@/Components/ToothLoader';
 import { PageProps, Paginated, Patient } from '@/types';
 import { Head, Link, router, usePage } from '@inertiajs/react';
 import { useEffect, useState } from 'react';
@@ -51,7 +51,8 @@ export default function Index({ patients, filters, showAssignedDentists }: PageP
                             </div>
                         ) : (
                             <>
-                                <div className="overflow-x-auto">
+                                <ul className="divide-y divide-outline lg:hidden">{patients.data.map((patient) => <li key={patient.id} className="space-y-3 p-4"><Link href={route('patients.show', patient.id)} className="block min-w-0 rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-accent"><p className="truncate font-semibold theme-accent">{patient.first_name} {patient.last_name}</p><p className="truncate text-sm theme-content-secondary">{patient.phone ?? 'Sin teléfono'}</p><p className="truncate text-sm theme-content-muted">{patient.email ?? 'Sin correo'}</p>{showAssignedDentists && <p className="truncate text-sm theme-content-muted">Doctor: {patient.dentists?.map((dentist) => dentist.name).join(', ') || '-'}</p>}</Link>{(canUpdatePatients || canArchivePatients) && <div className="flex flex-wrap gap-2">{canUpdatePatients && <Link href={route('patients.edit', patient.id)} className="table-action-button">Editar</Link>}{canArchivePatients && <ActionButton type="button" onClick={() => archive(patient)} icon="archive" variant="danger">Archivar</ActionButton>}</div>}</li>)}</ul>
+                                <div className="hidden overflow-x-auto lg:block">
                                     <table className="min-w-full divide-y divide-slate-200">
                                         <thead className="theme-page">
                                             <tr>
@@ -82,7 +83,7 @@ export default function Index({ patients, filters, showAssignedDentists }: PageP
                                                     <td className="whitespace-nowrap px-6 py-4 text-sm theme-content-secondary">{patient.phone ?? '-'}</td>
                                                     <td className="whitespace-nowrap px-6 py-4 text-sm theme-content-secondary">{patient.email ?? '-'}</td>
                                                     {showAssignedDentists && <td className="px-6 py-4 text-sm theme-content-secondary">{patient.dentists?.map((dentist) => dentist.name).join(', ') || '-'}</td>}
-                                                     {(canUpdatePatients || canArchivePatients) && <td className="whitespace-nowrap px-6 py-4 text-right text-sm"><div className="flex flex-wrap justify-end gap-2">{canUpdatePatients && <Link href={route('patients.edit', patient.id)} onClick={(event) => event.stopPropagation()} className="table-action-button">Editar</Link>}{canArchivePatients && <ActionButton type="button" onClick={(event) => { event.stopPropagation(); archive(patient); }} icon="archive" variant="danger">Archivar</ActionButton>}</div></td>}
+                                                     {(canUpdatePatients || canArchivePatients) && <td className="whitespace-nowrap px-6 py-4 text-right text-sm"><div className="flex justify-end gap-2">{canUpdatePatients && <Link href={route('patients.edit', patient.id)} onClick={(event) => event.stopPropagation()} className="table-action-button">Editar</Link>}{canArchivePatients && <ActionButton type="button" onClick={(event) => { event.stopPropagation(); archive(patient); }} icon="archive" variant="danger">Archivar</ActionButton>}</div></td>}
                                                 </tr>
                                             ))}
                                         </tbody>
@@ -91,7 +92,7 @@ export default function Index({ patients, filters, showAssignedDentists }: PageP
                                 <Pagination links={patients.links} />
                             </>
                         )}
-                    </section> : <section className="rounded-2xl border theme-outline theme-card shadow-sm"><ToothLoader label="Cargando pacientes" compact /></section>}
+                    </section> : <section className="overflow-hidden rounded-2xl border theme-outline theme-card shadow-sm"><SkeletonList label="Cargando pacientes" /></section>}
                 </div>
             </div>
         </AuthenticatedLayout>

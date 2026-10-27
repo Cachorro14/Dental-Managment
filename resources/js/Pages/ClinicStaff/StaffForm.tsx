@@ -7,6 +7,7 @@ import TextInput from '@/Components/TextInput';
 import { ClinicStaffAssignableRole, RoleSummary } from '@/types';
 import { Link, useForm } from '@inertiajs/react';
 import { FormEvent } from 'react';
+import { formatDateTime } from '@/utils/date';
 
 type ClinicStaffUser = { id: number; name: string; email: string; phone?: string | null; whatsapp_appointment_consent?: boolean; whatsapp_appointment_consent_recorded_at?: string | null; license_number?: string | null; roles: RoleSummary[] };
 
@@ -44,7 +45,7 @@ export default function StaffForm({ user, assignableRoles, canManageWhatsAppCons
             {canManageWhatsAppConsent && <fieldset className="theme-success rounded-xl border p-4">
                 <label className="flex min-h-11 items-start gap-3 text-sm theme-content"><input type="checkbox" checked={form.data.whatsapp_appointment_consent} onChange={(event) => form.setData('whatsapp_appointment_consent', event.target.checked)} className="mt-1 rounded border-emerald-400 theme-content focus:ring-emerald-500" /><span>Este usuario cuenta con consentimiento físico para recibir avisos operativos de citas por WhatsApp.</span></label>
                 <InputError message={form.errors.whatsapp_appointment_consent as string | undefined} className="mt-2" />
-                {user?.whatsapp_appointment_consent_recorded_at && <p className="mt-2 text-xs theme-content">Última autorización registrada el {new Date(user.whatsapp_appointment_consent_recorded_at).toLocaleString('es-MX')}{whatsappConsentRecordedBy ? ` por ${whatsappConsentRecordedBy}` : ''}.</p>}
+                {user?.whatsapp_appointment_consent_recorded_at && <p className="mt-2 text-xs theme-content">Última autorización registrada el {formatDateTime(user.whatsapp_appointment_consent_recorded_at)}{whatsappConsentRecordedBy ? ` por ${whatsappConsentRecordedBy}` : ''}.</p>}
             </fieldset>}
             {form.data.roles.includes('DENTIST') && <div><InputLabel htmlFor="clinic_staff_license" value="Número de matrícula profesional" /><TextInput id="clinic_staff_license" value={form.data.license_number} onChange={(event) => form.setData('license_number', event.target.value)} className="mt-1 block w-full" /><InputError message={form.errors.license_number} className="mt-2" /></div>}
             <div className="grid gap-5 sm:grid-cols-2">

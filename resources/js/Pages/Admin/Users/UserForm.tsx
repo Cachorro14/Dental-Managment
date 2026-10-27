@@ -7,6 +7,7 @@ import TextInput from "@/Components/TextInput";
 import { RoleSummary } from "@/types";
 import { Link, useForm } from "@inertiajs/react";
 import { FormEvent } from "react";
+import { formatDateTime } from '@/utils/date';
 
 type AdminUser = {
     id: number;
@@ -108,7 +109,7 @@ export default function UserForm({
                     <span>Este usuario cuenta con consentimiento físico para recibir avisos operativos de citas por WhatsApp.</span>
                 </label>
                 <InputError message={form.errors.whatsapp_appointment_consent as string | undefined} className="mt-2" />
-                {user?.whatsapp_appointment_consent_recorded_at && <p className="mt-2 text-xs theme-content">Última autorización registrada el {new Date(user.whatsapp_appointment_consent_recorded_at).toLocaleString('es-MX')}{whatsappConsentRecordedBy ? ` por ${whatsappConsentRecordedBy}` : ''}.</p>}
+                {user?.whatsapp_appointment_consent_recorded_at && <p className="mt-2 text-xs theme-content">Última autorización registrada el {formatDateTime(user.whatsapp_appointment_consent_recorded_at)}{whatsappConsentRecordedBy ? ` por ${whatsappConsentRecordedBy}` : ''}.</p>}
             </fieldset>}
             <div className="grid gap-5 sm:grid-cols-2">
                 <div>

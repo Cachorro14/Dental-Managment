@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Route;
 use Tests\TestCase;
 
 class AuthenticationRoutesTest extends TestCase
@@ -13,10 +14,23 @@ class AuthenticationRoutesTest extends TestCase
     public function test_guest_authentication_routes_are_registered(): void
     {
         $this->assertSame('/login', route('login', absolute: false));
-        $this->assertSame('/register', route('register', absolute: false));
         $this->assertSame('/forgot-password', route('password.request', absolute: false));
         $this->assertSame('/verify-email', route('verification.notice', absolute: false));
         $this->assertSame('/email/verification-notification', route('verification.send', absolute: false));
+    }
+
+    public function test_public_registration_is_disabled(): void
+    {
+        // Accounts are created by clinic administrators only; nobody may self-register.
+        $this->assertFalse(Route::has('register'));
+        $this->get('/register')->assertNotFound();
+        $this->post('/register', [
+            'name' => 'Intruso',
+            'email' => 'intruso@example.com',
+            'password' => 'password',
+            'password_confirmation' => 'password',
+        ])->assertNotFound();
+        $this->assertDatabaseMissing('users', ['email' => 'intruso@example.com']);
     }
 
     public function test_guest_is_redirected_from_dashboard(): void

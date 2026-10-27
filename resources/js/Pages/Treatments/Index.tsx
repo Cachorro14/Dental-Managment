@@ -1,4 +1,5 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import { SkeletonList } from '@/Components/Skeleton';
 import ActionLink from '@/Components/ActionLink';
 import { Deferred, Head, Link } from '@inertiajs/react';
 
@@ -29,7 +30,7 @@ export default function Index({ patient, treatments, canCreate, canUpdate }: { p
                     </section>
                     <section className="overflow-hidden rounded-2xl theme-card shadow-sm">
                         <div className="border-b theme-outline px-5 py-4"><h2 className="font-semibold theme-content">Tratamientos registrados</h2></div>
-                        <Deferred data="treatments" fallback={<p className="p-6 text-sm theme-content-muted">Cargando tratamientos...</p>}>
+                        <Deferred data="treatments" fallback={<SkeletonList label="Cargando tratamientos" />}>
                             {() => <>
                                 {treatments.data.length === 0 ? <p className="p-6 text-sm theme-content-muted">Aún no hay tratamientos registrados para este paciente.</p> : <div className="divide-y divide-outline">
                                     {treatments.data.map((treatment) => <article key={treatment.id} className="flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between">

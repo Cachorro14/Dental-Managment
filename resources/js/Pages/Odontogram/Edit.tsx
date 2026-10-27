@@ -1,12 +1,13 @@
 import InputError from '@/Components/InputError';
+import { SkeletonLines, SkeletonToothChart } from '@/Components/Skeleton';
 import PrimaryButton from '@/Components/PrimaryButton';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import ActionLink from '@/Components/ActionLink';
 import Icon from '@/Components/Icon';
-import ToothLoader from '@/Components/ToothLoader';
 import { OdontogramAssessmentSummary, OdontogramEntry, OdontogramFinding, OdontogramStatus, OdontogramSurface, Patient } from '@/types';
 import { Head, Link, useForm } from '@inertiajs/react';
-import { FormEventHandler, useMemo, useState } from 'react';
+import { FormEventHandler, useMemo, useRef, useState } from 'react';
+import { formatDateTime } from '@/utils/date';
 
 const statuses: Array<{ value: OdontogramStatus; label: string }> = [
     { value: 'not_assessed', label: 'Sin revisar' },
@@ -65,7 +66,7 @@ export default function Edit(props: OdontogramPageProps) {
     if (!props.entries) {
         const { patient } = props;
 
-        return <AuthenticatedLayout header={<div><p className="theme-accent text-sm font-medium">Odontograma</p><h1 className="mt-1 text-2xl font-semibold tracking-tight theme-content">{patient.first_name} {patient.last_name}</h1></div>}><Head title={`Odontograma: ${patient.first_name} ${patient.last_name}`} /><div className="min-h-[calc(100vh-5rem)] theme-page px-4 py-8 sm:px-6 lg:px-8"><div className="theme-card mx-auto max-w-7xl rounded-2xl border theme-outline shadow-sm"><ToothLoader label="Cargando odontograma del paciente" /></div></div></AuthenticatedLayout>;
+        return <AuthenticatedLayout header={<div><p className="theme-accent text-sm font-medium">Odontograma</p><h1 className="mt-1 text-2xl font-semibold tracking-tight theme-content">{patient.first_name} {patient.last_name}</h1></div>}><Head title={`Odontograma: ${patient.first_name} ${patient.last_name}`} /><div className="min-h-[calc(100vh-5rem)] theme-page px-4 py-8 sm:px-6 lg:px-8"><div className="theme-card mx-auto max-w-7xl rounded-2xl border theme-outline shadow-sm"><SkeletonToothChart label="Cargando odontograma del paciente" /></div></div></AuthenticatedLayout>;
     }
 
     return <EditLoaded {...props} entries={props.entries} />;
@@ -93,6 +94,7 @@ function EditLoaded({
     const selectedIndex = data.entries.findIndex((entry) => entry.tooth_number === selectedTooth);
     const selectedEntry = data.entries[selectedIndex];
     const surfaces = useMemo(() => getSurfaces(selectedTooth), [selectedTooth]);
+    const detailRef = useRef<HTMLElement>(null);
     const affectedSurfaces = new Set(selectedEntry?.findings.map((finding) => finding.surface) ?? []).size;
 
     const submit: FormEventHandler = (event) => {
@@ -124,9 +126,24 @@ function EditLoaded({
             : entry));
     };
 
-    const teethByQuadrant = [1, 2, 3, 4].map((quadrant) => ({
+    // Dentist's view facing the patient: patient's right side (Q1, Q4) on the left, teeth ordered from the outside in on that side.
+    const selectTooth = (toothNumber: number) => {
+        setSelectedTooth(toothNumber);
+        setSelectedSurface(getSurfaces(toothNumber)[0]);
+
+        // On phones and tablets the detail panel sits far below the tooth grid; bring it into view so the tap has visible feedback.
+        const detail = detailRef.current;
+        if (detail && detail.getBoundingClientRect().top > window.innerHeight * 0.75) {
+            const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            detail.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' });
+        }
+    };
+
+    const teethByQuadrant = [1, 2, 4, 3].map((quadrant) => ({
         quadrant,
-        entries: data.entries.filter((entry) => Math.floor(entry.tooth_number / 10) === quadrant),
+        entries: data.entries
+            .filter((entry) => Math.floor(entry.tooth_number / 10) === quadrant)
+            .sort((a, b) => (quadrant === 1 || quadrant === 4 ? b.tooth_number - a.tooth_number : a.tooth_number - b.tooth_number)),
     }));
 
     return (
@@ -136,7 +153,7 @@ function EditLoaded({
                 <div className="mx-auto max-w-7xl space-y-6">
                     {assessment ? (
                         <div className="theme-info rounded-2xl border p-5 text-sm">
-                            Evaluación del {new Date(assessment.assessed_at).toLocaleString()} · Registrada por {assessment.created_by}
+                            Evaluación del {formatDateTime(assessment.assessed_at)} · Registrada por {assessment.created_by}
                         </div>
                     ) : (
                         <div className="theme-info rounded-2xl border p-5 text-sm">
@@ -144,11 +161,11 @@ function EditLoaded({
                         </div>
                     )}
 
-                    {history === undefined ? <section className="rounded-2xl border theme-outline theme-card p-3"><ToothLoader label="Cargando evaluaciones anteriores" compact /></section> : history.length > 0 && (
+                    {history === undefined ? <section className="rounded-2xl border theme-outline theme-card p-5 pt-0"><SkeletonLines label="Cargando evaluaciones anteriores" lines={2} /></section> : history.length > 0 && (
                         <section className="rounded-2xl border theme-outline theme-card p-5 shadow-sm">
                             <h2 className="text-lg font-semibold theme-content">Evaluaciones anteriores</h2>
                             <ul className="mt-3 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
-                                {history.map((item) => <li key={item.id}><Link className="theme-card block rounded-xl border theme-outline p-3 text-sm hover:border-accent hover:bg-surface-sunken" href={route('odontogram.assessments.show', [patient.id, item.id])}><span className="font-medium theme-content">{new Date(item.assessed_at).toLocaleString()}</span><span className="mt-1 block theme-content-muted">Por {item.created_by}</span></Link></li>)}
+                                {history.map((item) => <li key={item.id}><Link className="theme-card block rounded-xl border theme-outline p-3 text-sm hover:border-accent hover:bg-surface-sunken" href={route('odontogram.assessments.show', [patient.id, item.id])}><span className="font-medium theme-content">{formatDateTime(item.assessed_at)}</span><span className="mt-1 block theme-content-muted">Por {item.created_by}</span></Link></li>)}
                             </ul>
                         </section>
                     )}
@@ -161,14 +178,14 @@ function EditLoaded({
                                     <div key={quadrant} className="rounded-2xl border theme-outline p-4">
                                         <h3 className="mb-3 text-sm font-semibold theme-content-secondary">{quadrantLabels[quadrant]}</h3>
                                         <div className="grid grid-cols-4 gap-2">
-                                {quadrantEntries.map((entry) => <button key={entry.tooth_number} type="button" onClick={() => { setSelectedTooth(entry.tooth_number); setSelectedSurface(getSurfaces(entry.tooth_number)[0]); }} aria-pressed={selectedTooth === entry.tooth_number} className={`rounded-xl border p-2 text-center transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent ${selectedTooth === entry.tooth_number ? 'border-accent theme-info' : 'theme-outline hover:border-accent'}`}><ToothIcon toothNumber={entry.tooth_number} status={entry.status} severity={highestSeverity(entry.findings)} /><span className="mt-1 block text-xs font-bold theme-content-secondary">{entry.tooth_number}</span><span className="block text-[10px] theme-content-muted">{new Set(entry.findings.map((finding) => finding.surface)).size} sup.</span></button>)}
+                                {quadrantEntries.map((entry) => <button key={entry.tooth_number} type="button" onClick={() => selectTooth(entry.tooth_number)} aria-pressed={selectedTooth === entry.tooth_number} className={`rounded-xl border p-2 text-center transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent ${selectedTooth === entry.tooth_number ? 'border-accent theme-info' : 'theme-outline hover:border-accent'}`}><ToothIcon toothNumber={entry.tooth_number} status={entry.status} severity={highestSeverity(entry.findings)} /><span className="mt-1 block text-xs font-bold theme-content-secondary">{entry.tooth_number}</span><span className="block text-[10px] theme-content-muted">{new Set(entry.findings.map((finding) => finding.surface)).size} sup.</span></button>)}
                                         </div>
                                     </div>
                                 ))}
                             </div>
                         </section>
 
-                        {selectedEntry && <section className="grid gap-6 lg:grid-cols-[0.85fr_1.15fr]">
+                        {selectedEntry && <section ref={detailRef} className="grid scroll-mt-20 gap-6 lg:grid-cols-[0.85fr_1.15fr]">
                             <div className="rounded-2xl border theme-outline theme-page p-5">
                                 <div className="flex flex-wrap items-start justify-between gap-3"><div><p className="theme-accent text-xs font-semibold uppercase tracking-wide">Pieza seleccionada</p><h3 className="mt-1 text-2xl font-bold theme-content">{selectedTooth}</h3><p className="text-sm theme-content-secondary">{quadrantLabels[Math.floor(selectedTooth / 10)]}</p></div><span className="theme-card rounded-full border px-3 py-1 text-sm font-medium theme-content-secondary">{affectedSurfaces} hallazgo{affectedSurfaces === 1 ? '' : 's'} registrado{affectedSurfaces === 1 ? '' : 's'}</span></div>
                                 <ToothReferenceImage toothNumber={selectedTooth} />

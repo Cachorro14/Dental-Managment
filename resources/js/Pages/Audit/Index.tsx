@@ -1,7 +1,8 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import ToothLoader from '@/Components/ToothLoader';
+import { SkeletonList } from '@/Components/Skeleton';
 import { AuditLog, PageProps, Paginated } from '@/types';
 import { Head, Link } from '@inertiajs/react';
+import { formatDateTime } from '@/utils/date';
 
 export default function Index({ auditLogs }: PageProps<{ auditLogs?: Paginated<AuditLog> }>) {
     return (
@@ -26,14 +27,14 @@ export default function Index({ auditLogs }: PageProps<{ auditLogs?: Paginated<A
                                             <td className="whitespace-nowrap px-6 py-4 text-sm font-medium theme-content">{log.event}</td>
                                             <td className="whitespace-nowrap px-6 py-4 text-sm theme-content-muted">{log.auditable_type.split('\\').pop()} #{log.auditable_id}</td>
                                             <td className="whitespace-nowrap px-6 py-4 text-sm theme-content-muted">{log.user?.name ?? 'Sistema'}</td>
-                                            <td className="whitespace-nowrap px-6 py-4 text-sm theme-content-muted">{new Date(log.created_at).toLocaleString('es-ES')}</td>
+                                            <td className="whitespace-nowrap px-6 py-4 text-sm theme-content-muted">{formatDateTime(log.created_at)}</td>
                                         </tr>
                                     ))}
                                 </tbody>
                             </table>
                         </div>
                         {auditLogs.links.length > 3 && <nav className="flex gap-2 border-t border-outline p-4">{auditLogs.links.map((link, index) => link.url ? <Link key={index} href={link.url} className={'rounded px-3 py-1 text-sm ' + (link.active ? 'theme-accent-button theme-content-inverse' : 'theme-content-secondary hover:bg-surface-sunken')} dangerouslySetInnerHTML={{ __html: link.label }} /> : <span key={index} className="px-3 py-1 text-sm theme-content-muted" dangerouslySetInnerHTML={{ __html: link.label }} />)}</nav>}
-                    </div> : <div className="rounded-2xl border theme-outline theme-card shadow-sm"><ToothLoader label="Cargando auditoría" compact /></div>}
+                    </div> : <div className="overflow-hidden rounded-2xl border theme-outline theme-card shadow-sm"><SkeletonList label="Cargando auditoría" rows={8} columns={5} /></div>}
                 </div>
             </div>
         </AuthenticatedLayout>
